@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>A Rush of Excitement: My First Musical Role</title>
+<style>*, ::before, ::after { box-sizing: border-box; margin: 0px; padding: 0px; }
+:root { --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3; --brand-bg: #F4F2F8; --paper: #ffffff; --bg: #F7F5F0; --border: #E3DFD5; --text: #2A2A2A; --text-muted: #6E6B65; --charcoal: #3D3D3D; --accent-red: #A32D2D; --accent-teal: #0F6E56; --accent-blue: #185FA5; --accent-amber: #c8900a; --navy: var(--brand-dark); --navy-dark: var(--brand-dark); --accent-purple: var(--brand); }
+body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+.toolbar { position: sticky; top: 0px; z-index: 100; background: rgb(255, 255, 255); border-bottom: 1px solid var(--border); padding: 12px 20px; box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.toolbar-brand { display: flex; align-items: center; gap: 10px; }
+.brand-logo { height: 32px; width: auto; display: block; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { font-size: 13px; font-weight: 700; color: var(--brand-dark); letter-spacing: -0.2px; }
+.brand-text span { font-size: 10.5px; color: var(--text-muted); }
+.teacher-info { font-size: 11px; color: var(--text-muted); padding: 4px 10px; background: rgb(248, 247, 243); border-radius: 12px; border: 1px solid var(--border); }
+.teacher-info strong { color: var(--brand-dark); }
+.tab-group { display: flex; gap: 4px; margin-left: auto; }
+.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
+.tab-btn:hover { background: rgb(245, 245, 242); color: var(--text); }
+.tab-btn.active { background: var(--brand); color: rgb(255, 255, 255); }
+.tab-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.tab-btn .count-badge { display: inline-block; background: rgba(255, 255, 255, 0.25); color: inherit; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; font-weight: 700; }
+.tab-btn:not(.active) .count-badge { background: rgb(224, 221, 214); color: var(--text-muted); }
+.action-btn { padding: 8px 14px; border: 1px solid var(--border); background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.15s; white-space: nowrap; }
+.action-btn:hover { border-color: var(--brand); color: var(--brand-dark); }
+.action-btn.primary { background: var(--brand); color: rgb(255, 255, 255); border-color: var(--brand); }
+.action-btn.primary:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+.action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.input-view { max-width: 880px; margin: 24px auto; padding: 0px 20px; }
+.input-hero { background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%); color: rgb(255, 255, 255); padding: 28px 32px; border-radius: 16px; margin-bottom: 20px; position: relative; overflow: hidden; }
+.input-hero::before { content: ""; position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; opacity: 0.15; background-image: url("data:image/png;base64,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"); background-size: contain; background-repeat: no-repeat; background-position: center center; }
+.input-hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+.input-hero p { font-size: 13px; opacity: 0.9; line-height: 1.7; }
+.input-hero .small { opacity: 0.8; font-size: 12px; margin-top: 8px; }
+.input-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.input-field { display: flex; flex-direction: column; gap: 6px; }
+.input-field label { font-size: 12px; font-weight: 700; color: var(--brand-dark); letter-spacing: 0.03em; }
+.input-field input, .input-field textarea { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13px; color: var(--text); transition: border-color 0.15s; background: rgb(250, 250, 247); }
+.input-field input:focus, .input-field textarea:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
+.passage-area { width: 100%; min-height: 180px; resize: vertical; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13.5px; line-height: 1.7; color: var(--text); background: rgb(250, 250, 247); }
+.passage-area:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
+.action-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
+.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
+.generate-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: rgba(107, 91, 149, 0.3) 0px 4px 12px; }
+.generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.status-box { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.6; display: none; }
+.status-box.visible { display: block; }
+.status-box.loading { background: rgb(254, 249, 240); border: 1px solid rgb(232, 200, 122); color: rgb(122, 69, 0); }
+.status-box.error { background: rgb(254, 242, 242); border: 1px solid rgb(244, 199, 199); color: rgb(154, 32, 16); }
+.status-box.success { background: rgb(225, 245, 238); border: 1px solid rgb(134, 212, 188); color: rgb(8, 80, 65); }
+.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: initial; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
+@keyframes spin { 
+  100% { transform: rotate(360deg); }
+}
+.tips-card { background: rgb(250, 250, 247); border: 1px dashed rgb(204, 204, 204); border-radius: 10px; padding: 16px 20px; font-size: 12px; color: var(--text-muted); line-height: 1.75; }
+.tips-card strong { color: var(--brand-dark); }
+.library-view { max-width: 1080px; margin: 24px auto; padding: 0px 20px; }
+.library-toolbar { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.library-toolbar input, .library-toolbar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 12.5px; background: rgb(250, 250, 247); }
+.library-toolbar input:focus, .library-toolbar select:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); }
+.search-input { flex: 1 1 0%; min-width: 180px; }
+.library-toolbar .count-display { margin-left: auto; font-size: 12px; color: var(--text-muted); }
+.library-toolbar .count-display strong { color: var(--brand-dark); font-weight: 700; }
+.library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.library-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: 0.15s; position: relative; display: flex; flex-direction: column; gap: 10px; }
+.library-card:hover { border-color: var(--brand); box-shadow: rgba(107, 91, 149, 0.15) 0px 4px 14px; transform: translateY(-1px); }
+.library-card.has-selection { border-color: rgb(76, 175, 80); background: rgb(241, 248, 233); }
+.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
+.library-card .fav-btn.active { color: var(--accent-amber); }
+.library-card .fav-btn:hover { color: var(--accent-amber); }
+.card-select-check { position: absolute; top: 12px; left: 12px; cursor: pointer; user-select: none; z-index: 2; }
+.card-select-check input { position: absolute; opacity: 0; pointer-events: none; width: 22px; height: 22px; }
+.card-select-check span { display: inline-block; width: 22px; height: 22px; border: 2px solid rgb(204, 204, 204); border-radius: 6px; background: rgb(255, 255, 255); position: relative; transition: 0.15s; }
+.card-select-check:hover span { border-color: var(--brand); }
+.card-select-check input:checked + span { background: rgb(76, 175, 80); border-color: rgb(76, 175, 80); }
+.card-select-check input:checked + span::after { content: "✓"; color: rgb(255, 255, 255); font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; line-height: 1; }
+.library-card:has(.card-select-input:checked) { border-color: rgb(76, 175, 80); background: rgb(241, 248, 233); }
+.card-meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 10.5px; padding-left: 32px; }
+.card-meta .badge { padding: 2px 8px; background: var(--brand-light); color: var(--brand-dark); border-radius: 10px; font-weight: 700; }
+.card-meta .badge.lesson { background: rgb(243, 241, 233); color: rgb(122, 69, 0); }
+.card-meta .badge.item-code { background: var(--brand); color: rgb(255, 255, 255); }
+.card-meta .badge.author { background: rgb(225, 245, 238); color: var(--accent-teal); }
+.card-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.5; padding-right: 28px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-preview { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding: 6px 10px; background: rgb(250, 250, 247); border-left: 2px solid var(--brand-light); border-radius: 0px 4px 4px 0px; }
+.card-footer { display: flex; gap: 6px; margin-top: 4px; padding-top: 10px; border-top: 1px solid rgb(240, 237, 230); }
+.card-btn { flex: 1 1 0%; padding: 6px 8px; border: 1px solid var(--border); background: rgb(255, 255, 255); color: var(--text-muted); font-family: inherit; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.12s; }
+.card-btn:hover { border-color: var(--brand); color: var(--brand-dark); background: var(--brand-bg); }
+.card-btn.danger:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgb(254, 245, 245); }
+.card-date { font-size: 10px; color: rgb(153, 153, 153); margin-top: 2px; }
+.empty-library { max-width: 440px; margin: 80px auto; text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.empty-library .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.empty-library h2 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.empty-library p { font-size: 13px; line-height: 1.7; }
+.modal-overlay { position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.45); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.modal-overlay.visible { display: flex; }
+.modal { background: rgb(255, 255, 255); border-radius: 14px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; }
+.modal h3 { font-size: 16px; font-weight: 700; color: var(--brand-dark); margin-bottom: 12px; }
+.modal p { font-size: 12.5px; color: var(--text-muted); line-height: 1.7; margin-bottom: 12px; }
+.modal .url-box { background: rgb(250, 250, 247); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: "SF Mono", monospace; font-size: 11px; color: rgb(85, 85, 85); word-break: break-all; max-height: 140px; overflow-y: auto; margin-bottom: 12px; line-height: 1.5; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-close-btn { padding: 8px 16px; background: rgb(245, 245, 242); border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 12px; cursor: pointer; }
+.page { width: 210mm; min-height: 297mm; background: var(--paper); margin: 16px auto; padding: 14mm 15mm; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px; position: relative; break-after: page; }
+.page:last-child { break-after: auto; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1.5px solid var(--border); }
+.logo-area { display: flex; align-items: center; gap: 10px; }
+.print-logo { height: 28px; width: auto; display: block; }
+.logo-text { font-size: 9.5px; color: var(--text-muted); letter-spacing: 0.04em; line-height: 1.3; }
+.logo-text strong { display: block; color: var(--brand-dark); font-size: 12px; letter-spacing: -0.2px; }
+.header-right { text-align: right; font-size: 10.5px; color: var(--text-muted); }
+.header-right .title-line { font-size: 12.5px; font-weight: 700; color: var(--text); }
+.header-right .title-line .analysis-tag { color: var(--brand-dark); font-weight: 700; letter-spacing: 0.04em; }
+.header-right .topic-line { font-size: 10px; margin-top: 2px; }
+.section { margin-bottom: 14px; }
+.section-title { background: var(--brand-dark); color: rgb(255, 255, 255); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 4px 4px 0px 0px; display: flex; align-items: center; gap: 6px; letter-spacing: -0.1px; }
+.section-title .num { display: inline-block; width: 16px; height: 16px; border-radius: 3px; background: rgb(255, 255, 255); color: var(--brand-dark); font-size: 10px; font-weight: 800; text-align: center; line-height: 16px; }
+.info-table { width: 100%; border-collapse: collapse; border-right-color: ; border-right-style: ; border-right-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-left-color: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-top-width: medium; border-top-style: none; border-top-color: currentcolor; font-size: 11.5px; }
+.info-table th, .info-table td { padding: 8px 12px; border: 1px solid var(--border); vertical-align: middle; text-align: left; }
+.info-table th { background: var(--brand-bg); color: var(--brand-dark); font-weight: 700; width: 80px; }
+.passage-label { background: rgb(10, 80, 64); color: rgb(255, 255, 255); font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px 4px 0px 0px; display: inline-flex; align-items: center; gap: 5px; }
+.passage-box { border-right-color: ; border-right-style: ; border-right-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-left-color: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-top-width: medium; border-top-style: none; border-top-color: currentcolor; padding: 12px 14px; font-size: 12px; line-height: 1.85; color: var(--text); background: rgb(250, 250, 247); border-radius: 0px 4px 4px; }
+.passage-box strong { font-weight: 700; color: var(--text); }
+.topic-sentence-label { font-size: 10px; font-weight: 700; color: var(--brand-dark); margin-bottom: 4px; margin-top: 4px; }
+.topic-sentence-box { border: 1px solid var(--border); padding: 10px 12px; background: rgb(248, 247, 243); border-radius: 4px; font-size: 11.5px; line-height: 1.7; margin-bottom: 10px; }
+.topic-sentence-box .en { font-style: italic; color: var(--text); margin-bottom: 4px; }
+.topic-sentence-box .ko { color: var(--text-muted); font-size: 11px; }
+.keyword-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0px; }
+.keyword-chip { display: inline-block; padding: 4px 10px; background: var(--brand-light); border: 1px solid rgb(216, 208, 235); border-radius: 14px; font-size: 11px; color: var(--brand-dark); font-weight: 500; }
+.keyword-chip.highlight { background: rgb(254, 242, 242); border-color: rgb(244, 199, 199); color: var(--accent-red); font-weight: 700; }
+.sentence-block { margin-bottom: 14px; }
+.sentence-title { background: var(--brand-dark); color: rgb(255, 255, 255); font-size: 11.5px; font-weight: 700; padding: 6px 12px; border-radius: 4px 4px 0px 0px; letter-spacing: -0.1px; }
+.sentence-body { border-right-color: ; border-right-style: ; border-right-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-left-color: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-top-width: medium; border-top-style: none; border-top-color: currentcolor; padding: 10px 12px; border-radius: 0px 0px 4px 4px; }
+.sentence-en { font-size: 11.5px; line-height: 1.8; padding: 8px 10px; background: rgb(250, 250, 247); border-radius: 4px; margin-bottom: 8px; }
+.sentence-en strong { font-weight: 700; color: var(--text); }
+.sentence-en .hl-blue { color: var(--brand-dark); font-weight: 700; }
+.sentence-en .hl-red { color: var(--accent-red); font-weight: 700; }
+.sentence-en .hl-teal { color: var(--accent-teal); font-weight: 700; }
+.sentence-en .hl-amber { color: rgb(122, 69, 0); font-weight: 700; }
+.sentence-en .hl-purple { color: var(--accent-purple); font-weight: 700; }
+.analysis-table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-bottom: 6px; }
+.analysis-table thead th { background: var(--brand-light); color: var(--brand-dark); padding: 5px 8px; border: 1px solid rgb(216, 208, 235); font-weight: 700; text-align: left; font-size: 10px; letter-spacing: 0.03em; }
+.analysis-table tbody td { padding: 5px 8px; border: 1px solid var(--border); vertical-align: top; line-height: 1.55; }
+.analysis-table tbody td:nth-child(1) { width: 22%; color: var(--brand-dark); font-weight: 600; background: rgb(250, 250, 248); }
+.analysis-table tbody td:nth-child(2) { width: 38%; font-family: "SF Mono", Consolas, monospace; font-size: 10px; color: rgb(85, 85, 85); }
+.analysis-table tbody td:nth-child(3) { width: 40%; color: var(--text); }
+.direct-trans { background: rgb(243, 241, 233); border-left: 3px solid var(--accent-amber); padding: 7px 10px; font-size: 10.5px; line-height: 1.6; color: var(--text); border-radius: 0px 4px 4px 0px; }
+.direct-trans .trans-label { font-weight: 700; color: rgb(122, 69, 0); margin-right: 4px; }
+.vocab-table { width: 100%; border-collapse: collapse; font-size: 10.5px; border-right-color: ; border-right-style: ; border-right-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-left-color: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-top-width: medium; border-top-style: none; border-top-color: currentcolor; }
+.vocab-table thead th { background: var(--brand-bg); color: var(--brand-dark); padding: 6px 10px; border: 1px solid var(--border); font-weight: 700; text-align: left; font-size: 10px; }
+.vocab-table tbody td { padding: 6px 10px; border: 1px solid var(--border); vertical-align: middle; line-height: 1.5; }
+.vocab-table tbody td:nth-child(1) { font-weight: 700; color: var(--text); width: 22%; }
+.vocab-table tbody td:nth-child(2) { color: var(--text-muted); font-size: 10px; width: 9%; text-align: center; }
+.vocab-table tbody td:nth-child(3) { color: var(--text); width: 28%; }
+.vocab-table tbody td:nth-child(4) { color: var(--text-muted); font-size: 10px; width: 41%; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.transform-box { border: 1px solid var(--border); padding: 10px 12px; border-radius: 4px; background: rgb(255, 255, 255); }
+.transform-box .box-label { font-size: 10.5px; font-weight: 700; color: var(--brand-dark); margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid rgb(238, 238, 238); }
+.transform-box .box-body { font-size: 10.5px; line-height: 1.7; color: var(--text); }
+.transform-box .box-body ul { list-style: none; }
+.transform-box .box-body li { padding-left: 10px; position: relative; }
+.transform-box .box-body li::before { content: "•"; position: absolute; left: 0px; color: var(--brand); }
+.background-box { background: rgb(250, 250, 247); border-top-color: ; border-top-style: ; border-top-width: ; border-right-color: ; border-right-style: ; border-right-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-left: 3px solid var(--brand); border-radius: 0px 4px 4px 0px; padding: 10px 14px; font-size: 10.5px; line-height: 1.75; color: var(--text); }
+.background-box strong { color: var(--brand-dark); font-weight: 700; }
+.structure-table { width: 100%; border-collapse: collapse; font-size: 10.5px; border-right-color: ; border-right-style: ; border-right-width: ; border-bottom-color: ; border-bottom-style: ; border-bottom-width: ; border-left-color: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; border-top-width: medium; border-top-style: none; border-top-color: currentcolor; }
+.structure-table thead th { background: var(--brand-bg); color: var(--brand-dark); padding: 6px 10px; border: 1px solid var(--border); font-weight: 700; text-align: left; font-size: 10px; }
+.structure-table tbody td { padding: 6px 10px; border: 1px solid var(--border); vertical-align: middle; }
+.structure-table tbody td:nth-child(1) { width: 8%; text-align: center; font-weight: 700; }
+.structure-table tbody td:nth-child(2) { width: 20%; font-weight: 600; }
+.structure-table tbody td:nth-child(3) { width: 48%; font-family: "SF Mono", monospace; font-size: 10px; color: rgb(85, 85, 85); }
+.structure-table tbody td:nth-child(4) { width: 24%; text-align: center; }
+.relation-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 700; background: var(--brand-light); color: var(--brand-dark); }
+.relation-tag.pivot { background: rgb(225, 245, 238); color: var(--accent-teal); }
+.relation-tag.conclusion { background: rgb(238, 237, 254); color: var(--accent-purple); }
+.page-footer { position: absolute; bottom: 10mm; left: 15mm; right: 15mm; display: flex; justify-content: space-between; font-size: 9.5px; color: rgb(153, 153, 153); padding-top: 6px; border-top: 1px solid rgb(238, 238, 238); }
+.structure-view { max-width: 780px; margin: 20px auto; padding: 20px; }
+.structure-header { text-align: center; margin-bottom: 20px; }
+.structure-header .badge { display: inline-block; background: var(--brand-dark); color: rgb(255, 255, 255); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 12px; border-radius: 20px; margin-bottom: 8px; }
+.structure-header h1 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.structure-header p { font-size: 12px; color: rgb(136, 136, 136); }
+.diagram-wrap { background: rgb(255, 255, 255); border-radius: 16px; border: 1px solid var(--border); padding: 28px 24px 24px; margin-bottom: 16px; }
+.diagram-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+.node-g { cursor: pointer; transition: opacity 0.15s; }
+.node-g:hover { opacity: 0.82; }
+.detail-wrap { display: none; animation: 0.25s ease 0s 1 normal none running slideIn; }
+.detail-wrap.visible { display: block; }
+@keyframes slideIn { 
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: none; }
+}
+.detail-card { background: rgb(255, 255, 255); border-radius: 14px; border: 1.5px solid rgb(221, 226, 239); overflow: hidden; }
+.detail-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid rgb(238, 238, 238); }
+.detail-step-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.detail-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.detail-body { padding: 14px 18px; }
+.label-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.label-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: rgb(136, 136, 136); background: rgb(240, 240, 236); padding: 2px 8px; border-radius: 4px; }
+.en-box { border-left: 3.5px solid rgb(204, 204, 204); border-radius: 0px 8px 8px 0px; padding: 10px 14px; font-size: 13.5px; line-height: 1.75; color: var(--text); margin-bottom: 10px; background: rgb(248, 247, 243); }
+.hl-navy { color: var(--brand-dark); font-weight: 700; }
+.hl-teal { color: rgb(10, 80, 64); font-weight: 700; }
+.hl-amber { color: rgb(122, 69, 0); font-weight: 700; }
+.hl-red { color: rgb(154, 32, 16); font-weight: 700; }
+.hl-purple { color: rgb(74, 45, 136); font-weight: 700; }
+.ko-box { background: var(--brand-light); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: rgb(51, 51, 51); line-height: 1.7; margin-bottom: 10px; }
+.ko-box strong { color: var(--brand-dark); }
+.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: initial; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
+.point-box strong { color: rgb(154, 96, 0); }
+.close-btn { display: block; width: 100%; margin-top: 12px; padding: 8px; background: none; border: 1px solid rgb(221, 221, 221); border-radius: 8px; font-size: 12px; color: rgb(170, 170, 170); cursor: pointer; font-family: inherit; }
+.close-btn:hover { background: rgb(245, 245, 245); color: rgb(102, 102, 102); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: rgb(102, 102, 102); }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.empty-state { max-width: 520px; margin: 80px auto; text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+.empty-state h2 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.empty-state p { font-size: 13px; line-height: 1.7; }
+.viewing-bar { background: rgb(225, 245, 238); border-bottom: 1px solid rgb(134, 212, 188); padding: 8px 20px; font-size: 12px; color: rgb(8, 80, 65); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.viewing-bar strong { font-weight: 700; }
+.viewing-bar .edit-mode-toggle { padding: 4px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(134, 212, 188); border-radius: 14px; transition: 0.15s; }
+.viewing-bar .edit-mode-toggle:has(input:checked) { background: rgb(122, 69, 0); color: rgb(255, 255, 255); border-color: rgb(122, 69, 0); }
+.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
+.dropdown { position: relative; display: inline-block; }
+.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: hidden; }
+.dropdown.open .dropdown-menu { display: block; }
+.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
+.dropdown-menu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
+.dropdown-menu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.dropdown-menu .submenu-item { position: relative; }
+.dropdown-menu .submenu-trigger { width: 100%; padding: 10px 14px; justify-content: space-between; align-items: center; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; display: flex !important; }
+.dropdown-menu .submenu-item:last-child .submenu-trigger { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
+.dropdown-menu .submenu-trigger .arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.15s; }
+.dropdown-menu .submenu-trigger:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.dropdown-menu .submenu-trigger:hover .arrow { color: var(--brand); }
+.dropdown-menu .submenu { display: none; position: absolute; left: 100%; top: 0px; margin-left: 2px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 260px; z-index: 201; overflow: hidden; }
+.dropdown-menu .submenu-item:hover > .submenu, .dropdown-menu .submenu-item:focus-within > .submenu { display: block; }
+.dropdown-menu .submenu-item:hover > .submenu-trigger { background: var(--brand); color: rgb(255, 255, 255); }
+.dropdown-menu .submenu-item:hover > .submenu-trigger .arrow { color: rgb(255, 255, 255); transform: translateX(2px); }
+.dropdown-menu .submenu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
+.dropdown-menu .submenu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
+.dropdown-menu .submenu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.modal.json-editor { max-width: 900px; width: 90vw; max-height: 85vh; display: flex; flex-direction: column; }
+.json-editor-body { flex: 1 1 0%; min-height: 0px; display: flex; flex-direction: column; gap: 10px; }
+.json-editor-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 1px solid rgb(240, 237, 230); }
+.json-editor-toolbar .info { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+.json-editor-toolbar .info.error { color: var(--accent-red); font-weight: 700; }
+.json-editor-toolbar .info.ok { color: var(--accent-teal); }
+.json-editor-textarea { flex: 1 1 0%; min-height: 400px; font-family: "SF Mono", Consolas, Monaco, monospace; font-size: 12px; line-height: 1.5; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; background: rgb(250, 250, 247); color: var(--text); resize: vertical; width: 100%; tab-size: 2; }
+.json-editor-textarea:focus { outline: none; border-color: var(--brand); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
+.json-editor-textarea.invalid { border-color: var(--accent-red); background: rgb(254, 245, 245); }
+.json-editor-help { font-size: 11px; color: var(--text-muted); line-height: 1.6; background: rgb(250, 250, 247); padding: 8px 12px; border-radius: 6px; border-left: 3px solid var(--brand); }
+.json-editor-help code { background: rgb(255, 255, 255); padding: 1px 5px; border-radius: 3px; font-size: 10.5px; color: var(--brand-dark); }
+body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; transition: outline 0.1s, background-color 0.1s; cursor: text; border-radius: 2px; }
+body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
+body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
+body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+@media print {
+  body { background: rgb(255, 255, 255); }
+  body.edit-mode .page::before { display: none !important; }
+  body.edit-mode [contenteditable="true"] { outline: none !important; background: transparent !important; box-shadow: none !important; }
+  .toolbar { display: none !important; }
+  .viewing-bar { display: none !important; }
+  .tab-panel { display: none !important; }
+  .tab-panel.print-target { display: block !important; }
+  .input-view, .empty-state, .library-view, .empty-library { display: none !important; }
+  .page { margin: 0px; box-shadow: none; width: 210mm; min-height: 297mm; break-after: page; }
+  .page:last-child { break-after: auto; }
+  .structure-view { break-before: page; }
+  .detail-wrap { display: block !important; }
+  @page { size: a4; margin: 0px; }
+}</style>
+</head>
+<body>
+
+<nav class="toolbar">
+  <div class="toolbar-brand"><div class="brand-mark">공우정</div><span>분석교안</span></div>
+  <div style="margin-left: auto;"></div>
+  <button class="action-btn primary" onclick="window.print()">🖨 A4 인쇄</button>
+</nav>
+<div class="tab-panel active" id="tab-analysis">
+    <div class="page">
+      
+    <header class="page-header">
+      <div class="logo-area">
+        <img class="print-logo" src="data:image/png;base64,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" alt="공우정바른학원" />
+        <div class="logo-text"><strong>공우정바른학원</strong>GWJ EDU</div>
+      </div>
+      <div class="header-right">
+        <div class="title-line">고1 올림포스 전국연합학력평가 기출문제집 | 2강 | <span class="analysis-tag">1번</span></div>
+        <div class="topic-line">Topic: Topic: Excitement after receiving news of passing a musical audition</div>
+      </div>
+    </header>
+      <div class="section">
+        <div class="section-title"><span class="num">1</span> 제목 및 주제</div>
+        <table class="info-table">
+          <tr><th>주제</th><td>뮤지컬 오디션 결과를 기다리며 긴장하던 주인공이 합격 소식을 듣고 흥분과 기쁨을 느끼는 과정을 묘사한 글이다.</td></tr>
+          <tr><th>예상 제목</th><td>A Rush of Excitement: My First Musical Role</td></tr>
+          <tr><th>글의 유형</th><td>서사문 (narrative) — 시간 순서 / 인물의 심리 변화 중심</td></tr>
+          <tr><th>심경 변화</th><td>긴장·초조 (felt shaky, chewing my thumbnail) → 흥분·기쁨 (a little rush of excitement)</td></tr>
+        </table>
+      </div>
+      <div class="section">
+        <div class="passage-label">▶ 원문 지문</div>
+        <div class="passage-box">I glanced at the clock on the wall. 10:00. That meant the casting director would call very soon with the results of my first audition for a musical part in <strong>The Wizard of Oz</strong>. I <strong>felt shaky all over</strong>, chewing my thumbnail and jiggling my feet. Finally, the telephone rang. While I was coming round, Dad answered. I heard him say, 'Ahh, thank you. I'll let her know...' As I got to the bottom of the stairs, he was just putting the phone down. 'That was The Wizard of Oz. <strong>You're second senior munchkin</strong>,' he announced. I got <strong>a little rush of excitement</strong>, knowing I was in ─ that whatever happened I could be involved in one of the productions.</div>
+      </div>
+      <div class="section">
+        <div class="section-title"><span class="num">3</span> 중심문장 &amp; 핵심 키워드</div>
+        <div style="border: 1px solid var(--border); border-top: none; padding: 12px; border-radius: 0 0 4px 4px;">
+          <div class="topic-sentence-label">▶ TOPIC SENTENCE (중심문장)</div>
+          <div class="topic-sentence-box">
+            <div class="en">"I got a little rush of excitement, knowing I was in ─ that whatever happened I could be involved in one of the productions."</div>
+            <div class="ko">→ 내가 참여한다는 것을 알게 되어 흥분감이 밀려왔다 — 이 문장은 오디션 합격으로 인한 주인공의 감정 변화를 직접적으로 드러내며 글의 주제인 '기쁨과 흥분'을 요약한다.</div>
+          </div>
+          <div class="keyword-row"><span class="keyword-chip">audition</span><span class="keyword-chip">casting director</span><span class="keyword-chip">nervous</span><span class="keyword-chip">telephone</span><span class="keyword-chip">announcement</span><span class="keyword-chip">excitement</span><span class="keyword-chip highlight">긴장 → 흥분 (심경 변화)</span></div>
+        </div>
+      </div>
+      
+    <footer class="page-footer">
+      <span>공우정바른학원 &nbsp;·&nbsp; GWJ EDU</span>
+      <span>1 / 4</span>
+    </footer>
+    </div>
+
+    <div class="page">
+      
+    <header class="page-header">
+      <div class="logo-area">
+        <img class="print-logo" src="data:image/png;base64,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" alt="공우정바른학원" />
+        <div class="logo-text"><strong>공우정바른학원</strong>GWJ EDU</div>
+      </div>
+      <div class="header-right">
+        <div class="title-line">고1 올림포스 전국연합학력평가 기출문제집 | 2강 | <span class="analysis-tag">1번</span></div>
+        <div class="topic-line">문장별 구·절 단위 분석 (1/2)</div>
+      </div>
+    </header>
+      
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ①② 배경 묘사 + 명사절 (That meant ~)</div>
+      <div class="sentence-body">
+        <div class="sentence-en">I glanced at the clock on the wall. 10:00. <span class='hl-blue'>That meant</span> the casting director would call very soon <span class='hl-teal'>with the results of my first audition</span> for a musical part in The Wizard of Oz.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주절</td><td>That meant</td><td>'That'은 앞 문장 전체를 받는 대명사</td></tr>
+            
+              <tr><td>명사절</td><td>the casting director would call</td><td>meant의 목적어 역할을 하는 절</td></tr>
+            
+              <tr><td>전치사구</td><td>with the results of ~</td><td>결과를 가지고 전화할 것임을 설명</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>벽 시계를 흘끗 보니 10시였다. / 그것은 캐스팅 감독이 오디션 결과로 곧 전화할 것임을 의미했다.</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ③ 지각동사 + 분사구문 (동시동작)</div>
+      <div class="sentence-body">
+        <div class="sentence-en">I <span class='hl-red'>felt shaky all over</span>, <span class='hl-amber'>chewing my thumbnail and jiggling my feet</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주절</td><td>felt shaky all over</td><td>'feel + 형용사'로 상태를 나타냄</td></tr>
+            
+              <tr><td>분사구문</td><td>chewing ~ and jiggling ~</td><td>동시 동작을 나타내는 현재분사구</td></tr>
+            
+              <tr><td>병렬구조</td><td>chewing and jiggling</td><td>두 개의 현재분사가 and로 연결</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>나는 온몸이 떨렸고, / 엄지손톱을 물어뜯고 발을 흔들어댔다.</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ④⑤⑥ 시간 부사절 + 지각동사 5형식</div>
+      <div class="sentence-body">
+        <div class="sentence-en">Finally, the telephone rang. <span class='hl-teal'>While I was coming round</span>, Dad answered. I <span class='hl-blue'>heard him say</span>, 'Ahh, thank you. I'll let her know...'</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>시간 부사절</td><td>While I was coming round</td><td>'정신을 차리는 동안'이라는 시간적 배경</td></tr>
+            
+              <tr><td>지각동사 5형식</td><td>heard him say</td><td>hear + 목적어 + 동사원형 구조</td></tr>
+            
+              <tr><td>직접화법</td><td>Ahh, thank you. I'll let her know</td><td>아빠가 한 말을 그대로 인용</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>마침내 전화가 울렸다. / 정신을 차리는 동안 아빠가 받았고, / 나는 그가 '감사합니다. 알려주겠습니다'라고 말하는 것을 들었다.</div>
+      </div>
+    </div>
+      
+    <footer class="page-footer">
+      <span>공우정바른학원 &nbsp;·&nbsp; GWJ EDU</span>
+      <span>2 / 4</span>
+    </footer>
+    </div>
+
+    <div class="page">
+      
+    <header class="page-header">
+      <div class="logo-area">
+        <img class="print-logo" src="data:image/png;base64,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" alt="공우정바른학원" />
+        <div class="logo-text"><strong>공우정바른학원</strong>GWJ EDU</div>
+      </div>
+      <div class="header-right">
+        <div class="title-line">고1 올림포스 전국연합학력평가 기출문제집 | 2강 | <span class="analysis-tag">1번</span></div>
+        <div class="topic-line">문장별 구·절 단위 분석 (2/2)</div>
+      </div>
+    </header>
+      
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑦⑧ 시간 부사절 (As) + 과거진행형 (전환점)</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-teal'>As I got to the bottom of the stairs</span>, he <span class='hl-blue'>was just putting the phone down</span>. 'That was The Wizard of Oz. <span class='hl-purple'>You're second senior munchkin</span>,' he announced.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>시간 부사절</td><td>As I got to ~</td><td>'~했을 때'라는 의미의 시간 접속사</td></tr>
+            
+              <tr><td>과거진행형</td><td>was just putting</td><td>막 ~하고 있던 중임을 강조</td></tr>
+            
+              <tr><td>직접화법</td><td>You're second senior munchkin</td><td>합격 소식을 알리는 핵심 문장</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>계단을 다 내려갔을 때 / 그는 막 전화기를 내려놓고 있었다. / '너는 둘째 상급 먼치킨이야'라고 그가 알렸다.</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑨ 분사구문 + 명사절 (knowing that ~) (결론)</div>
+      <div class="sentence-body">
+        <div class="sentence-en">I got <span class='hl-purple'>a little rush of excitement</span>, <span class='hl-blue'>knowing I was in</span> ─ that <span class='hl-blue'>whatever happened I could be involved in</span> one of the productions.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주절</td><td>got a little rush of excitement</td><td>'흥분감이 밀려오다'는 감정 표현</td></tr>
+            
+              <tr><td>분사구문</td><td>knowing I was in</td><td>이유를 나타내는 현재분사구문</td></tr>
+            
+              <tr><td>동격절</td><td>that whatever happened ~</td><td>앞 명사절을 부연 설명하는 동격 that절</td></tr>
+            
+              <tr><td>양보절</td><td>whatever happened</td><td>'무슨 일이 있더라도'라는 복합관계대명사</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>나는 약간의 흥분감을 느꼈다, / 내가 합격했다는 것을 알게 되어 / 즉 어떤 일이 있더라도 작품에 참여할 수 있다는 것을.</div>
+      </div>
+    </div>
+      
+    <footer class="page-footer">
+      <span>공우정바른학원 &nbsp;·&nbsp; GWJ EDU</span>
+      <span>3 / 4</span>
+    </footer>
+    </div>
+
+    <div class="page">
+      
+    <header class="page-header">
+      <div class="logo-area">
+        <img class="print-logo" src="data:image/png;base64,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" alt="공우정바른학원" />
+        <div class="logo-text"><strong>공우정바른학원</strong>GWJ EDU</div>
+      </div>
+      <div class="header-right">
+        <div class="title-line">고1 올림포스 전국연합학력평가 기출문제집 | 2강 | <span class="analysis-tag">1번</span></div>
+        <div class="topic-line">어휘 · 변형예상 · 배경지식 · 구조도</div>
+      </div>
+    </header>
+      <div class="section">
+        <div class="section-title"><span class="num">4</span> 핵심 단어 및 어구</div>
+        <table class="vocab-table">
+          <thead><tr><th>단어·어구</th><th>품사</th><th>의미</th><th>유의어 / 반의어 / 비고</th></tr></thead>
+          <tbody>
+    <tr>
+      <td>glance</td><td>v.</td>
+      <td>흘끗 보다</td><td>glare(노려보다)와 구분</td>
+    </tr>
+    <tr>
+      <td>casting director</td><td>n.</td>
+      <td>캐스팅 감독</td><td>배역을 결정하는 사람</td>
+    </tr>
+    <tr>
+      <td>audition</td><td>n.</td>
+      <td>오디션, 심사</td><td>try out과 유사</td>
+    </tr>
+    <tr>
+      <td>shaky</td><td>adj.</td>
+      <td>떨리는, 불안한</td><td>shake(떨다)의 형용사형</td>
+    </tr>
+    <tr>
+      <td>chew</td><td>v.</td>
+      <td>씹다, 물어뜯다</td><td>긴장 습관 묘사</td>
+    </tr>
+    <tr>
+      <td>jiggle</td><td>v.</td>
+      <td>흔들다, 움직이다</td><td>shake보다 작은 움직임</td>
+    </tr>
+    <tr>
+      <td>come round</td><td>phr.</td>
+      <td>정신을 차리다</td><td>come to와 유사</td>
+    </tr>
+    <tr>
+      <td>munchkin</td><td>n.</td>
+      <td>먼치킨 (오즈의 마법사 캐릭터)</td><td>작은 사람들을 의미</td>
+    </tr>
+    <tr>
+      <td>rush</td><td>n.</td>
+      <td>급류, 밀려옴</td><td>a rush of excitement = 흥분감의 밀려옴</td>
+    </tr>
+    <tr>
+      <td>be involved in</td><td>phr.</td>
+      <td>~에 참여하다</td><td>participate in과 유사</td>
+    </tr></tbody>
+        </table>
+      </div>
+      <div class="section">
+        <div class="section-title"><span class="num">5</span> 변형 예상 포인트</div>
+        <div class="two-col" style="padding: 8px 0;">
+          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>빈칸: 'I got a little rush of _____' → excitement (문맥상 합격 소식 후 감정)</li><li>빈칸: 'I felt _____ all over' → shaky/nervous (긴장감을 나타내는 형용사)</li><li>빈칸: 'While I was _____ round' → coming (정신을 차리다는 의미)</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">초반 긴장·초조 (felt shaky, chewing thumbnail) → 전화벨이 울리고 아빠가 받음 (긴장 고조) → 합격 소식 확인 (전환점) → 흥분·기쁨 (a little rush of excitement)<br>핵심 전환: ⑧번 합격 발표 직후 ⑨번에서 감정이 폭발</div></div>
+          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>'That meant (that) ~' 명사절: 'That'은 앞 문장 전체를 받는 지시대명사</li><li>분사구문 (chewing ~, jiggling ~): 동시 동작을 나타내는 현재분사</li><li>지각동사 5형식 'heard him say': hear + 목적어 + 동사원형</li><li>시간 부사절 'As ~' + 과거진행형: '~했을 때 막 ~하고 있었다'</li><li>분사구문 knowing + 명사절: 이유를 나타냄</li><li>복합관계대명사 'whatever happened': '무슨 일이 있더라도'</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: '오디션의 기쁨' 또는 '합격 통보의 순간'<br>주제: 긴장 속에 기다리던 오디션 결과를 듣고 느낀 흥분과 기쁨<br>심경: 긴장·초조 → 흥분·기쁨</div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><span class="num">6</span> 배경지식 요약</div>
+        <div class="background-box" style="border-radius: 0 0 4px 4px;"><strong>뮤지컬 오디션</strong>은 배역을 따기 위한 경쟁적 심사로, 결과 발표까지 극도의 긴장감을 유발한다. <strong>The Wizard of Oz</strong>는 유명한 뮤지컬 작품으로, munchkin은 작중 등장하는 작은 사람들을 지칭한다.</div>
+      </div>
+      <div class="section">
+        <div class="section-title"><span class="num">7</span> 문장 간 맥락 (구조도)</div>
+        <table class="structure-table">
+          <thead><tr><th>단계</th><th>내용</th><th>핵심 어구</th><th>논리 관계</th></tr></thead>
+          <tbody><tr>
+      <td>①②</td><td>배경 설정</td>
+      <td>glanced at the clock / casting director would call</td><td><span class="relation-tag">오디션 결과 대기</span></td>
+    </tr><tr>
+      <td>③</td><td>긴장감 고조</td>
+      <td>felt shaky all over, chewing my thumbnail</td><td><span class="relation-tag">심리 → 초조·긴장</span></td>
+    </tr><tr>
+      <td>④⑤⑥</td><td>전화 수신</td>
+      <td>telephone rang / Dad answered / heard him say</td><td><span class="relation-tag">사건 발생</span></td>
+    </tr><tr>
+      <td>⑦⑧</td><td><strong>합격 발표 (전환점)</strong></td>
+      <td><strong>You're second senior munchkin</strong></td><td><span class="relation-tag pivot">★ 전환점</span></td>
+    </tr><tr>
+      <td>⑨-1</td><td>흥분감 표출</td>
+      <td>got a little rush of excitement</td><td><span class="relation-tag">감정 반응</span></td>
+    </tr><tr>
+      <td>⑨-2</td><td><strong>참여 확신 (결론)</strong></td>
+      <td><strong>knowing I was in / could be involved</strong></td><td><span class="relation-tag conclusion">★ 주제문·결론</span></td>
+    </tr></tbody>
+        </table>
+      </div>
+      
+    <footer class="page-footer">
+      <span>공우정바른학원 &nbsp;·&nbsp; GWJ EDU</span>
+      <span>4 / 4</span>
+    </footer>
+    </div></div>
+
+<script>
+
+
+</script>
+</body>
+</html>
