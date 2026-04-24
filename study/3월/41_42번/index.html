@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인내의 역설적 힘 - 학습 자료</title>
+<style>
+  :root {
+    --brand: #6B5B95;
+    --brand-dark: #4A3D6B;
+    --brand-light: #E8E4F3;
+    --bg: #F7F5F0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', 'Malgun Gothic', -apple-system, sans-serif;
+    background: var(--bg);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  .header {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff;
+    padding: 32px 24px;
+    border-radius: 16px 16px 0 0;
+    text-align: center;
+  }
+  .brand { font-size: 13px; opacity: 0.9; letter-spacing: 0.1em; margin-bottom: 8px; }
+  h1 { font-size: 24px; margin-bottom: 12px; word-break: keep-all; }
+  .meta { font-size: 13px; opacity: 0.85; }
+  .content {
+    background: #fff;
+    padding: 24px;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .info-box {
+    background: var(--brand-light);
+    border-left: 4px solid var(--brand);
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .cards { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    display: block;
+    padding: 20px;
+    border: 2px solid #e8e4f3;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    background: #fff;
+  }
+  .card:hover {
+    border-color: var(--brand);
+    background: var(--brand-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 91, 149, 0.15);
+  }
+  .card-icon { font-size: 32px; margin-bottom: 8px; }
+  .card-title { font-size: 17px; font-weight: 700; color: var(--brand-dark); margin-bottom: 4px; }
+  .card-desc { font-size: 13px; color: #666; }
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    padding: 16px;
+    font-size: 12px;
+    color: #999;
+  }
+  @media (max-width: 480px) {
+    h1 { font-size: 20px; }
+    .header { padding: 24px 16px; }
+    .content { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">공우정바른학원 · GWJ EDU</div>
+    <h1>인내의 역설적 힘</h1>
+    <div class="meta">인내는 전통적으로 수동적이고 무력한 태도로 여겨졌으나, 속도가 중시되는 현대 사회에서는 서두름에 저항하고 진정으로 중요한 일을 하는 힘의 형태로 변화하고 있다.</div>
+  </div>
+  <div class="content">
+    <div class="info-box">
+      📚 <strong>2026년 고1 모의고사</strong>
+       · 3월
+       · <code>41~42번</code>
+    </div>
+
+    <div class="cards">
+      <a href="./analysis.html" class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">분석교안 (4페이지)</div>
+        <div class="card-desc">문장별 상세 분석, 어휘, 변형 예상 포인트</div>
+      </a>
+      <a href="./structure.html" class="card">
+        <div class="card-icon">🗂</div>
+        <div class="card-title">구조도 (인터랙티브)</div>
+        <div class="card-desc">6단계 논리 구조, 문장 간 흐름 시각화</div>
+      </a>
+    </div>
+  </div>
+  <div class="footer">
+    Last updated: 2026. 4. 24.
+  </div>
+</div>
+</body>
+</html>
