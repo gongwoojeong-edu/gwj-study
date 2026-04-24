@@ -871,8 +871,8 @@ body.edit-mode .page::before {
       </select>
       <button class="action-btn" onclick="exportBackup()">📦 백업 내보내기</button>
       <button class="action-btn" onclick="document.getElementById('import-file').click()">📥 복원</button>
-      <button class="action-btn" onclick="regenerateCatalog()" style="background: linear-gradient(135deg, #e3f2fd, #fff); border-color: #1976d2; color: #0d47a1;" title="공개된 모든 자료의 전체 목차 페이지 업데이트">📚 전체 목차 URL</button>
-      <button class="action-btn" onclick="selectAllAndCreateCollection()" style="background: linear-gradient(135deg, #fff3e0, #fff); border-color: #f57c00; color: #e65100;" title="모든 자료 선택 후 바로 공유용 목차 생성">🚀 전체 공유 목차</button>
+      <button class="action-btn" onclick="regenerateCatalog()" style="background: linear-gradient(135deg, #e3f2fd, #fff); border-color: #1976d2; color: #0d47a1;" title="GitHub Pages 메인 URL(index.html) - 공개된 모든 자료를 교재별로 자동 정리 (상시 업데이트)">📚 전체 목차 (메인)</button>
+      <button class="action-btn" onclick="selectAllAndCreateCollection()" style="background: linear-gradient(135deg, #fff3e0, #fff); border-color: #f57c00; color: #e65100;" title="책장의 모든 자료(미공개 포함)를 선택 - 이후 목차 제목 지정해서 전체 묶음 생성">🚀 전체 선택 → 묶음 만들기</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(event)">
       <span class="count-display">총 <strong id="total-count">0</strong>개</span>
     </div>
@@ -1892,28 +1892,44 @@ async function uploadFileToGithub(cfg, filePath, htmlContent, commitMsgPrefix) {
   const apiUrl = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + filePath;
   const base64Content = btoa(unescape(encodeURIComponent(htmlContent)));
 
-  // 내부 헬퍼: 현재 sha 조회
+  // 내부 헬퍼: 현재 sha 조회 (2회까지 재시도)
   const fetchCurrentSha = async () => {
-    try {
-      // 캐시 방지 위해 타임스탬프 추가
-      const ts = Date.now();
-      const checkRes = await fetch(apiUrl + '?ref=' + cfg.branch + '&t=' + ts, {
-        headers: {
-          'Authorization': 'Bearer ' + cfg.token,
-          'Accept': 'application/vnd.github+json',
-          'Cache-Control': 'no-cache'
+    for (let i = 0; i < 2; i++) {
+      try {
+        const ts = Date.now();
+        const checkRes = await fetch(apiUrl + '?ref=' + cfg.branch + '&t=' + ts, {
+          headers: {
+            'Authorization': 'Bearer ' + cfg.token,
+            'Accept': 'application/vnd.github+json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+        if (checkRes.ok) {
+          const existing = await checkRes.json();
+          return existing.sha || null;
         }
-      });
-      if (checkRes.ok) {
-        const existing = await checkRes.json();
-        return existing.sha || null;
+        if (checkRes.status === 404) {
+          // 진짜 신규 파일
+          return null;
+        }
+        // 403, 429 등 일시 오류면 한 번 더 시도
+        if (i === 0) {
+          await new Promise(r => setTimeout(r, 300));
+          continue;
+        }
+      } catch (e) {
+        // 네트워크 에러 - 재시도
+        if (i === 0) {
+          await new Promise(r => setTimeout(r, 300));
+          continue;
+        }
       }
-    } catch (e) { /* 신규면 무시 */ }
+    }
     return null;
   };
 
-  // 🆕 최대 3회 재시도 (409 충돌 대비)
-  const MAX_RETRIES = 3;
+  // 🆕 최대 4회 재시도 (409 Conflict + 422 sha 누락 대비)
+  const MAX_RETRIES = 4;
   let lastError = null;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -1948,23 +1964,27 @@ async function uploadFileToGithub(cfg, filePath, htmlContent, commitMsgPrefix) {
         return sha ? 'update' : 'create';
       }
 
-      // 409 Conflict: sha 불일치 → 재시도
-      if (putRes.status === 409 && attempt < MAX_RETRIES) {
-        console.warn(`⚠️ GitHub 409 충돌 감지. sha 재조회 후 재시도 (${attempt}/${MAX_RETRIES})`);
-        // 짧은 대기 후 재시도 (백오프)
+      const errBody = await putRes.text().catch(() => '');
+
+      // 409 Conflict 또는 422 (sha 관련) 재시도
+      const isRetryable = putRes.status === 409 ||
+                         (putRes.status === 422 && errBody.includes('sha'));
+
+      if (isRetryable && attempt < MAX_RETRIES) {
+        console.warn(`⚠️ GitHub ${putRes.status} 감지. sha 재조회 후 재시도 (${attempt}/${MAX_RETRIES})`);
+        // 점점 긴 대기 (지수 백오프)
         await new Promise(r => setTimeout(r, 500 * attempt));
         continue;
       }
 
       // 그 외 에러: 즉시 throw
-      const errBody = await putRes.text().catch(() => '');
       lastError = new Error('HTTP ' + putRes.status + ': ' + errBody.slice(0, 200));
       throw lastError;
 
     } catch (e) {
       lastError = e;
       // fetch 자체 실패 (네트워크 등) 는 재시도 안 함
-      if (!e.message || !e.message.includes('HTTP 409')) {
+      if (!e.message || (!e.message.includes('HTTP 409') && !e.message.includes('HTTP 422'))) {
         throw e;
       }
     }
@@ -2484,8 +2504,88 @@ function updateSelectionBar() {
     '<span style="font-size:14px;font-weight:700;color:var(--brand-dark,#4A3D6B);">🛒 <strong>' + count + '개</strong> 선택됨</span>' +
     '<button class="action-btn" onclick="selectAllVisible()" style="font-size:12px;">✓ 전체선택</button>' +
     '<button class="action-btn" onclick="clearAllSelection()" style="font-size:12px;background:#fee;">해제</button>' +
+    '<button class="action-btn" onclick="bulkPublishSelected()" style="font-size:12px;background:linear-gradient(135deg,#e3f2fd,#fff);border-color:#1976d2;color:#0d47a1;font-weight:600;" title="선택한 자료들을 한꺼번에 웹공개">🌐 일괄 웹공개</button>' +
     '<button class="action-btn" onclick="openCreateCollectionModal()" style="font-size:12px;">⚙️ 제목 지정</button>' +
     '<button class="action-btn" onclick="quickCreateCollection()" style="margin-left:auto;background:var(--brand,#6B5B95);color:#fff;font-weight:600;font-size:13px;padding:10px 18px;">🚀 바로 공유용 목차 만들기</button>';
+}
+
+// 🌐 선택한 자료들 일괄 웹공개 (목차 생성 없이 배포만)
+async function bulkPublishSelected() {
+  if (selectedRecIds.size === 0) {
+    showToast('⚠️ 먼저 자료를 선택해주세요', 'error');
+    return;
+  }
+
+  const cfg = getGithubConfig();
+  if (!cfg.token || !cfg.owner || !cfg.repo) {
+    showToast('⚠️ GitHub 설정이 필요합니다', 'error');
+    setTimeout(() => openApiKeyModal(), 500);
+    return;
+  }
+
+  const selected = library.filter(r => selectedRecIds.has(r.id));
+  const notPublished = selected.filter(r => !r.githubUrl);
+  const alreadyPublished = selected.filter(r => r.githubUrl);
+
+  // 확인 메시지
+  let msg = '선택한 ' + selected.length + '개 자료를 웹공개하시겠습니까?\n\n';
+  if (notPublished.length > 0) {
+    msg += '🆕 새로 배포: ' + notPublished.length + '개\n';
+  }
+  if (alreadyPublished.length > 0) {
+    msg += '🔄 재배포(업데이트): ' + alreadyPublished.length + '개\n';
+  }
+  msg += '\n예상 소요 시간: 약 ' + Math.ceil(selected.length * 2) + '초';
+
+  if (!confirm(msg)) return;
+
+  // 진행 바 표시
+  showProgressBar(selected.length, selected.length);
+
+  try {
+    updateProgressBar(0, selected.length, '웹공개 시작...');
+
+    // 2개씩 동시 배포 (안정성 우선)
+    let failed = await publishInBatches(selected, 2, (done, total, title) => {
+      updateProgressBar(done, total, '배포 중: ' + title);
+    });
+
+    // 실패한 것 한 번 더 (순차)
+    if (failed.length > 0) {
+      console.warn('⚠️ ' + failed.length + '개 실패. 재시도 중...');
+      updateProgressBar(0, failed.length, '실패한 자료 재시도 중...');
+      const retryList = failed.map(f => f.rec);
+      failed = await publishInBatches(retryList, 1, (done, total, title) => {
+        updateProgressBar(done, total, '재시도: ' + title);
+      });
+    }
+
+    // 전체 카탈로그 업데이트
+    updateProgressBar(selected.length, selected.length, '전체 목차 업데이트...');
+    await updateGithubCatalog(cfg);
+
+    hideProgressBar();
+
+    const successCount = selected.length - failed.length;
+    if (failed.length === 0) {
+      showToast('✅ ' + successCount + '개 자료 모두 웹공개 완료!', 'success');
+    } else {
+      showToast('⚠️ ' + successCount + '개 성공, ' + failed.length + '개 실패', 'error');
+      const failedTitles = failed.map(f => '• ' + f.title).join('\n');
+      setTimeout(() => {
+        alert('⚠️ ' + failed.length + '개 자료 배포 실패:\n\n' + failedTitles + '\n\n개별로 다시 시도해주세요.');
+      }, 600);
+    }
+
+    // 선택 해제 후 다시 렌더
+    clearAllSelection();
+    renderLibrary();
+
+  } catch (e) {
+    hideProgressBar();
+    console.error('일괄 웹공개 실패:', e);
+    showToast('❌ 실패: ' + e.message, 'error');
+  }
 }
 
 // 🚀 책장 상단 "전체 공유 목차" 버튼 - 모든 자료 선택 + 바로 생성
@@ -2543,12 +2643,24 @@ async function quickCreateCollection() {
   showProgressBar(selected.length, notPublished.length);
 
   try {
-    // 1) 미공개 자료 병렬 배포 (동시에 최대 3개)
+    let failedList = [];
+
+    // 1) 미공개 자료 병렬 배포 (동시성 2개로 충돌 최소화)
     if (notPublished.length > 0) {
       updateProgressBar(0, notPublished.length, '미공개 자료 배포 중...');
-      await publishInBatches(notPublished, 3, (done, total, title) => {
+      failedList = await publishInBatches(notPublished, 2, (done, total, title) => {
         updateProgressBar(done, total, '배포 중: ' + title);
       });
+
+      // 실패한 것 한 번 더 재시도 (순차로 느리게)
+      if (failedList.length > 0) {
+        console.warn('⚠️ ' + failedList.length + '개 실패. 재시도 중...');
+        updateProgressBar(0, failedList.length, '실패한 자료 재시도 중...');
+        const retryList = failedList.map(f => f.rec);
+        failedList = await publishInBatches(retryList, 1, (done, total, title) => {
+          updateProgressBar(done, total, '재시도: ' + title);
+        });
+      }
     }
 
     // 2) 현재 선택된 자료 중 배포된 것만
@@ -2584,6 +2696,14 @@ async function quickCreateCollection() {
 
     showCollectionCreatedModal(autoTitle, publicUrl, publishedSelected.length, shareText);
 
+    // 실패한 것이 있으면 별도 경고
+    if (failedList.length > 0) {
+      const failedTitles = failedList.map(f => '• ' + f.title).join('\n');
+      setTimeout(() => {
+        alert('⚠️ ' + failedList.length + '개 자료가 배포되지 않아 목차에 포함되지 않았습니다:\n\n' + failedTitles + '\n\n나중에 개별적으로 🌐 웹공개 버튼을 눌러서 배포해주세요.');
+      }, 600);
+    }
+
     // 선택 해제
     clearAllSelection();
     renderLibrary();
@@ -2595,11 +2715,12 @@ async function quickCreateCollection() {
   }
 }
 
-// 병렬 배포 (동시성 제한)
+// 병렬 배포 (동시성 제한) - 실패 목록 반환
 async function publishInBatches(recs, concurrency, onProgress) {
   let done = 0;
   const total = recs.length;
   const queue = [...recs];
+  const failed = [];
 
   async function worker() {
     while (queue.length > 0) {
@@ -2607,9 +2728,13 @@ async function publishInBatches(recs, concurrency, onProgress) {
       if (!rec) break;
       const title = rec.data.title_ko || rec.data.item_code || '자료';
       try {
-        await publishToGithubSilent(rec);
+        const result = await publishToGithubSilent(rec);
+        if (!result) {
+          failed.push({ rec, title, error: 'publishToGithubSilent returned null' });
+        }
       } catch (e) {
-        console.warn('자료 배포 실패:', title, e);
+        console.warn('❌ 자료 배포 실패:', title, e);
+        failed.push({ rec, title, error: e.message || String(e) });
       }
       done++;
       if (onProgress) onProgress(done, total, title);
@@ -2621,32 +2746,60 @@ async function publishInBatches(recs, concurrency, onProgress) {
     workers.push(worker());
   }
   await Promise.all(workers);
+  return failed;
 }
 
 // 선택 목차 HTML 생성 및 GitHub 업로드
 async function createAndUploadCollection(title, slug, publishedSelected, cfg) {
-  let itemsHtml = '<div class="book"><div class="items">';
-  publishedSelected.forEach((r, i) => {
-    const d = r.data;
-    const itemTitle = d.title_ko || d.expected_title || d.item_code || '무제';
-    const code = d.item_code || '';
-    const indexUrl = r.githubUrl || '';
-    const analysisUrl = r.githubUrlAnalysis || indexUrl;
-    const structureUrl = r.githubUrlStructure || indexUrl;
-    itemsHtml += `<div class="item">
-      <div class="item-meta">
-        <span style="background:var(--brand);color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;">${i + 1}</span>
-        ${code ? `<code class="item-code">${escapeHtml(code)}</code>` : ''}
-        <strong class="item-title">${escapeHtml(itemTitle)}</strong>
-      </div>
-      <div class="item-links">
-        <a href="${indexUrl}" target="_blank">🏠 전체</a>
-        <a href="${analysisUrl}" target="_blank">📄 분석교안</a>
-        <a href="${structureUrl}" target="_blank">🗂 구조도</a>
-      </div>
-    </div>`;
+  // 계층별 그룹핑: textbook > lesson > items
+  const groups = {};
+  publishedSelected.forEach(r => {
+    const tb = r.data.textbook || '(기타)';
+    const ls = r.data.lesson || '(기본)';
+    if (!groups[tb]) groups[tb] = {};
+    if (!groups[tb][ls]) groups[tb][ls] = [];
+    groups[tb][ls].push(r);
   });
-  itemsHtml += '</div></div>';
+  // 각 그룹 내 정렬
+  Object.keys(groups).forEach(tb => {
+    Object.keys(groups[tb]).forEach(ls => {
+      groups[tb][ls].sort((a, b) =>
+        (a.data.item_code || '').localeCompare(b.data.item_code || '', 'ko', { numeric: true })
+      );
+    });
+  });
+
+  let itemsHtml = '';
+  let globalIdx = 0;
+  Object.keys(groups).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true })).forEach(tb => {
+    itemsHtml += `<div class="book"><h2 class="book-title">📚 ${escapeHtml(tb)}</h2>`;
+    Object.keys(groups[tb]).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true })).forEach(ls => {
+      itemsHtml += `<div class="chapter"><h3 class="chapter-title">📖 ${escapeHtml(ls)}</h3><div class="items">`;
+      groups[tb][ls].forEach(r => {
+        globalIdx++;
+        const d = r.data;
+        const itemTitle = d.title_ko || d.expected_title || d.item_code || '무제';
+        const code = d.item_code || '';
+        const indexUrl = r.githubUrl || '';
+        const analysisUrl = r.githubUrlAnalysis || indexUrl;
+        const structureUrl = r.githubUrlStructure || indexUrl;
+        itemsHtml += `<div class="item">
+          <div class="item-meta">
+            <span style="background:var(--brand);color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;">${globalIdx}</span>
+            ${code ? `<code class="item-code">${escapeHtml(code)}</code>` : ''}
+            <strong class="item-title">${escapeHtml(itemTitle)}</strong>
+          </div>
+          <div class="item-links">
+            <a href="${indexUrl}" target="_blank">🏠 전체</a>
+            <a href="${analysisUrl}" target="_blank">📄 분석교안</a>
+            <a href="${structureUrl}" target="_blank">🗂 구조도</a>
+          </div>
+        </div>`;
+      });
+      itemsHtml += '</div></div>';
+    });
+    itemsHtml += '</div>';
+  });
 
   const now = new Date().toLocaleString('ko-KR');
   const collectionHtml = buildCatalogPageHtml({
