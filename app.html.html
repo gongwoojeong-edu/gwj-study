@@ -960,8 +960,8 @@ body.edit-mode .page::before {
   <div class="library-view">
     <div class="library-toolbar">
       <input type="text" class="search-input" id="search-input" placeholder="🔍 제목·주제·지문 검색..." oninput="renderLibrary()">
-      <select id="filter-textbook" onchange="renderLibrary()"><option value="">전체 교재</option></select>
-      <select id="filter-lesson" onchange="renderLibrary()"><option value="">전체 강</option></select>
+      <select id="filter-textbook" onchange="renderLibrary()"><option value="">전체 시리즈</option></select>
+      <select id="filter-lesson" onchange="renderLibrary()"><option value="">전체 권/강</option></select>
       <select id="filter-author" onchange="renderLibrary()"><option value="">전체 강사</option></select>
       <select id="filter-fav" onchange="renderLibrary()">
         <option value="">즐겨찾기 전체</option>
@@ -5716,18 +5716,20 @@ function updateCount() {
 }
 
 function updateFilters() {
-  const textbooks = [...new Set(library.map(r => r.data.textbook).filter(Boolean))].sort();
-  const lessons = [...new Set(library.map(r => r.data.lesson).filter(Boolean))].sort();
+  // 🆕 새 5계층 우선, 없으면 기존 필드
+  const series = [...new Set(library.map(r => r.data.series_title || r.data.textbook).filter(Boolean))].sort();
+  const volumes = [...new Set(library.map(r => r.data.volume_title || r.data.lesson).filter(Boolean))].sort();
   const authors = [...new Set(library.map(r => r.author).filter(Boolean))].sort();
 
   const fillSelect = (id, items, label) => {
     const sel = document.getElementById(id);
+    if (!sel) return;
     const current = sel.value;
     sel.innerHTML = `<option value="">${label}</option>` + items.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
     sel.value = current;
   };
-  fillSelect('filter-textbook', textbooks, '전체 교재');
-  fillSelect('filter-lesson', lessons, '전체 강');
+  fillSelect('filter-textbook', series, '전체 시리즈');
+  fillSelect('filter-lesson', volumes, '전체 권/강');
   fillSelect('filter-author', authors, '전체 강사');
 }
 
@@ -5813,8 +5815,16 @@ function renderLibrary() {
       const recLevel = r.data.level || r.learnerMeta?.level || 'L08';
       if (recLevel !== activeLevelTab) return false;
     }
-    if (fTextbook && r.data.textbook !== fTextbook) return false;
-    if (fLesson && r.data.lesson !== fLesson) return false;
+    if (fTextbook) {
+      // 🆕 series_title 우선, 없으면 textbook
+      const recSeries = r.data.series_title || r.data.textbook || '';
+      if (recSeries !== fTextbook) return false;
+    }
+    if (fLesson) {
+      // 🆕 volume_title 우선, 없으면 lesson
+      const recVolume = r.data.volume_title || r.data.lesson || '';
+      if (recVolume !== fLesson) return false;
+    }
     if (fAuthor && r.author !== fAuthor) return false;
     if (fFav === 'fav' && !r.favorite) return false;
     if (search) {
