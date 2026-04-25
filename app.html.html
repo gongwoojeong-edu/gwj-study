@@ -5783,6 +5783,15 @@ function renderLevelTabs() {
 // 🆕 레벨 탭 클릭 핸들러
 function setActiveLevelTab(level) {
   activeLevelTab = level;
+
+  // 🆕 다른 필터들 초기화 (충돌 방지)
+  const fTextbook = document.getElementById('filter-textbook');
+  const fLesson = document.getElementById('filter-lesson');
+  const search = document.getElementById('search-input');
+  if (fTextbook) fTextbook.value = '';
+  if (fLesson) fLesson.value = '';
+  if (search) search.value = '';
+
   renderLibrary();
 }
 
