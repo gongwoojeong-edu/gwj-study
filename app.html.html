@@ -5770,6 +5770,13 @@ function renderLevelTabs() {
             '🌊 ' + lv + ' <small style="opacity:0.85;font-weight:500;">(' + label + ')</small> <span class="tab-count">' + count + '</span></button>';
   });
 
+  // 🆕 검색 중일 때 안내 표시
+  const searchInput = document.getElementById('search-input');
+  const isSearching = searchInput && searchInput.value.trim();
+  if (isSearching) {
+    html += '<span style="margin-left:auto;font-size:11px;color:#1976d2;background:#e3f2fd;padding:6px 12px;border-radius:6px;font-weight:600;">🔍 검색 중: 모든 레벨에서 찾는 중</span>';
+  }
+
   tabsContainer.innerHTML = html;
 }
 
@@ -5792,8 +5799,8 @@ function renderLibrary() {
   renderLevelTabs();
 
   let filtered = library.filter(r => {
-    // 🆕 활성 레벨 탭 필터
-    if (activeLevelTab !== 'all') {
+    // 🆕 검색어가 있으면 레벨 탭 무시 (모든 레벨에서 검색)
+    if (!search && activeLevelTab !== 'all') {
       const recLevel = r.data.level || r.learnerMeta?.level || 'L08';
       if (recLevel !== activeLevelTab) return false;
     }
@@ -5802,7 +5809,23 @@ function renderLibrary() {
     if (fAuthor && r.author !== fAuthor) return false;
     if (fFav === 'fav' && !r.favorite) return false;
     if (search) {
-      const hay = (r.data.topic_ko + ' ' + r.data.topic_en + ' ' + (r.data.title_ko || '') + ' ' + r.data.expected_title + ' ' + (r.data.item_code || '') + ' ' + r.data.passage).toLowerCase();
+      // 🆕 검색 대상에 새 5계층 필드도 포함
+      const hay = (
+        (r.data.topic_ko || '') + ' ' +
+        (r.data.topic_en || '') + ' ' +
+        (r.data.title_ko || '') + ' ' +
+        (r.data.expected_title || '') + ' ' +
+        (r.data.item_code || '') + ' ' +
+        (r.data.passage || '') + ' ' +
+        // 새 5계층 필드
+        (r.data.series_title || '') + ' ' +
+        (r.data.volume_title || '') + ' ' +
+        (r.data.unit_title || '') + ' ' +
+        (r.data.level || '') + ' ' +
+        // 기존 호환 필드
+        (r.data.textbook || '') + ' ' +
+        (r.data.lesson || '')
+      ).toLowerCase();
       if (!hay.includes(search)) return false;
     }
     return true;
