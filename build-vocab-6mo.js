@@ -142,7 +142,7 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
   .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
   .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px;letter-spacing:-.3px}
   .brand-sub{font-size:11px;color:var(--muted)}
-  .watermark{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url(${LOGO});background-repeat:no-repeat;background-position:center center;background-size:min(460px,55vw) auto;opacity:.06}
+  .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,55vw);height:auto;z-index:0;pointer-events:none;opacity:.06}
   .toolbar .links{display:flex;gap:6px;flex-wrap:wrap}
   .switch-link{padding:7px 12px;border:1px solid var(--brand-light);border-radius:8px;background:#faf9fc;color:var(--brand-dark);font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap}
   .switch-link:hover{background:var(--brand-light)}
@@ -196,14 +196,14 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
     .chip,.vtable thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .watermark{opacity:.05;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .watermark{opacity:.08;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     @page{size:A4;margin:13mm}
   }
   @media(max-width:560px){.hero h1{font-size:21px}.w-word,.w-mean{width:auto}}
 </style>
 </head>
 <body>
-<div class="watermark" aria-hidden="true"></div>
+<img class="watermark" src="${LOGO}" alt="" aria-hidden="true">
 <nav class="toolbar">
   <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
   <div class="links">${otherLinks}</div>
