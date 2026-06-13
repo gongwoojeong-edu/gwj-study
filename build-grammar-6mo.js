@@ -170,7 +170,7 @@ const html = `<!doctype html>
   .toolbar .switch-link{font-size:12px;font-weight:700;color:var(--brand-dark);text-decoration:none;padding:6px 12px;border:1px solid var(--brand-light);border-radius:8px;background:var(--brand-bg)}
   .toolbar .switch-link:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
   .hero .badge-exp{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;margin-bottom:10px;letter-spacing:.04em}
-  .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,55vw);height:auto;z-index:5;pointer-events:none;opacity:.08}
+  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:200px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
@@ -212,14 +212,14 @@ const html = `<!doctype html>
     body{background:#fff;padding:0}
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
-    .watermark{opacity:.14;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     @page{size:A4;margin:14mm}
   }
   @media(max-width:560px){.hero h1{font-size:22px}.toolbar .search{min-width:140px}}
 </style>
 </head>
 <body>
-<img class="watermark" src="${LOGO}" alt="" aria-hidden="true">
+<div class="watermark" aria-hidden="true"></div>
 <nav class="toolbar">
   <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
   <a class="switch-link" href="6월모의고사-어법포인트-확장판.html">📖 확장판 보기</a>
