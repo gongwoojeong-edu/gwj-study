@@ -1,0 +1,4259 @@
+[
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "18",
+    "koTitle": "도서 기부 행사 안내",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/18번/analysis.html",
+    "vocab": [
+      {
+        "word": "resident",
+        "pos": "명사",
+        "meaning": "주민, 거주자",
+        "note": "공식 문서에서 수신자 호칭",
+        "syn": "",
+        "ant": "",
+        "etc": "공식 문서에서 수신자 호칭"
+      },
+      {
+        "word": "director",
+        "pos": "명사",
+        "meaning": "소장, 이사, 감독",
+        "note": "기관장 직책",
+        "syn": "",
+        "ant": "",
+        "etc": "기관장 직책"
+      },
+      {
+        "word": "donation drive",
+        "pos": "명사구",
+        "meaning": "기부 캠페인, 모금 운동",
+        "note": "drive: 조직적 활동",
+        "syn": "",
+        "ant": "",
+        "etc": "drive: 조직적 활동"
+      },
+      {
+        "word": "be pleased to",
+        "pos": "형용사구",
+        "meaning": "기꺼이 ~하다, 기쁘게 ~하다",
+        "note": "공손한 초대 표현",
+        "syn": "",
+        "ant": "",
+        "etc": "공손한 초대 표현"
+      },
+      {
+        "word": "support",
+        "pos": "동사",
+        "meaning": "지원하다, 후원하다",
+        "note": "목적을 위해 도움 제공",
+        "syn": "",
+        "ant": "",
+        "etc": "목적을 위해 도움 제공"
+      },
+      {
+        "word": "discover",
+        "pos": "동사",
+        "meaning": "발견하다, 알게 되다",
+        "note": "새로운 것을 찾아내다",
+        "syn": "",
+        "ant": "",
+        "etc": "새로운 것을 찾아내다"
+      },
+      {
+        "word": "in good condition",
+        "pos": "전치사구",
+        "meaning": "양호한 상태로",
+        "note": "상태 묘사",
+        "syn": "",
+        "ant": "",
+        "etc": "상태 묘사"
+      },
+      {
+        "word": "gladly",
+        "pos": "부사",
+        "meaning": "기꺼이, 흔쾌히",
+        "note": "환영의 태도",
+        "syn": "",
+        "ant": "",
+        "etc": "환영의 태도"
+      },
+      {
+        "word": "non-fiction",
+        "pos": "명사",
+        "meaning": "논픽션, 실화",
+        "note": "fiction(허구)의 반대",
+        "syn": "",
+        "ant": "",
+        "etc": "fiction(허구)의 반대"
+      },
+      {
+        "word": "grateful",
+        "pos": "형용사",
+        "meaning": "감사하는",
+        "note": "thankful과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "thankful과 유사"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "19",
+    "koTitle": "기차 연착의 다행",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/19번/analysis.html",
+    "vocab": [
+      {
+        "word": "on one's way to",
+        "pos": "idiom",
+        "meaning": "~로 가는 중에",
+        "note": "be on the way",
+        "syn": "",
+        "ant": "",
+        "etc": "be on the way"
+      },
+      {
+        "word": "mechanical",
+        "pos": "adj.",
+        "meaning": "기계적인",
+        "note": "machine의 형용사형",
+        "syn": "",
+        "ant": "",
+        "etc": "machine의 형용사형"
+      },
+      {
+        "word": "hesitation",
+        "pos": "n.",
+        "meaning": "망설임, 주저",
+        "note": "hesitate(v.) 망설이다",
+        "syn": "",
+        "ant": "",
+        "etc": "hesitate(v.) 망설이다"
+      },
+      {
+        "word": "nervous",
+        "pos": "adj.",
+        "meaning": "불안한, 초조한",
+        "note": "anxious, worried",
+        "syn": "",
+        "ant": "",
+        "etc": "anxious, worried"
+      },
+      {
+        "word": "keep -ing",
+        "pos": "phrase",
+        "meaning": "계속 ~하다",
+        "note": "지속 동작",
+        "syn": "",
+        "ant": "",
+        "etc": "지속 동작"
+      },
+      {
+        "word": "make it",
+        "pos": "idiom",
+        "meaning": "제시간에 도착하다, 성공하다",
+        "note": "arrive in time",
+        "syn": "",
+        "ant": "",
+        "etc": "arrive in time"
+      },
+      {
+        "word": "delayed",
+        "pos": "adj.",
+        "meaning": "지연된, 연착된",
+        "note": "delay(v./n.) 지연",
+        "syn": "",
+        "ant": "",
+        "etc": "delay(v./n.) 지연"
+      },
+      {
+        "word": "settle into",
+        "pos": "phrasal v.",
+        "meaning": "자리 잡다, 편히 앉다",
+        "note": "get comfortable",
+        "syn": "",
+        "ant": "",
+        "etc": "get comfortable"
+      },
+      {
+        "word": "let out",
+        "pos": "phrasal v.",
+        "meaning": "(숨 등을) 내쉬다",
+        "note": "release, breathe out",
+        "syn": "",
+        "ant": "",
+        "etc": "release, breathe out"
+      },
+      {
+        "word": "relief",
+        "pos": "n.",
+        "meaning": "안도, 안심",
+        "note": "relieve(v.) 안심시키다",
+        "syn": "",
+        "ant": "",
+        "etc": "relieve(v.) 안심시키다"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "20",
+    "koTitle": "자녀 가치관 코칭의 중요성",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/20번/analysis.html",
+    "vocab": [
+      {
+        "word": "coach",
+        "pos": "v./n.",
+        "meaning": "코칭하다, 지도하다 / 코치",
+        "note": "guide, mentor 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "guide, mentor 유사"
+      },
+      {
+        "word": "remind",
+        "pos": "v.",
+        "meaning": "상기시키다",
+        "note": "remind A what to do 구문",
+        "syn": "",
+        "ant": "",
+        "etc": "remind A what to do 구문"
+      },
+      {
+        "word": "eventually",
+        "pos": "adv.",
+        "meaning": "결국, 마침내",
+        "note": "finally 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "finally 유사"
+      },
+      {
+        "word": "automatically",
+        "pos": "adv.",
+        "meaning": "자동으로, 무의식적으로",
+        "note": "without thinking",
+        "syn": "",
+        "ant": "",
+        "etc": "without thinking"
+      },
+      {
+        "word": "fine-tune",
+        "pos": "v.",
+        "meaning": "미세 조정하다, 다듬다",
+        "note": "refine, adjust",
+        "syn": "",
+        "ant": "",
+        "etc": "refine, adjust"
+      },
+      {
+        "word": "elsewhere",
+        "pos": "adv.",
+        "meaning": "다른 곳에서",
+        "note": "in another place",
+        "syn": "",
+        "ant": "",
+        "etc": "in another place"
+      },
+      {
+        "word": "peers",
+        "pos": "n.",
+        "meaning": "또래, 동료",
+        "note": "같은 나이·지위의 사람들",
+        "syn": "",
+        "ant": "",
+        "etc": "같은 나이·지위의 사람들"
+      },
+      {
+        "word": "capture",
+        "pos": "v.",
+        "meaning": "(관심을) 사로잡다",
+        "note": "attract, catch",
+        "syn": "",
+        "ant": "",
+        "etc": "attract, catch"
+      },
+      {
+        "word": "step up to the plate",
+        "pos": "idiom",
+        "meaning": "책임을 맡다, 나서다",
+        "note": "야구 은유, take responsibility",
+        "syn": "",
+        "ant": "",
+        "etc": "야구 은유, take responsibility"
+      },
+      {
+        "word": "step by step",
+        "pos": "adv.",
+        "meaning": "단계별로, 차근차근",
+        "note": "gradually",
+        "syn": "",
+        "ant": "",
+        "etc": "gradually"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "21",
+    "koTitle": "정당화 시장의 언어",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/21번/analysis.html",
+    "vocab": [
+      {
+        "word": "classical ideal",
+        "pos": "명사구",
+        "meaning": "고전적 이상",
+        "note": "전통적으로 추구해온 완벽한 모습",
+        "syn": "",
+        "ant": "",
+        "etc": "전통적으로 추구해온 완벽한 모습"
+      },
+      {
+        "word": "market for ideas",
+        "pos": "명사구",
+        "meaning": "생각의 시장",
+        "note": "다양한 생각을 평가·선택하는 공간",
+        "syn": "",
+        "ant": "",
+        "etc": "다양한 생각을 평가·선택하는 공간"
+      },
+      {
+        "word": "best fit",
+        "pos": "명사",
+        "meaning": "가장 잘 맞음",
+        "note": "현실과의 부합도",
+        "syn": "",
+        "ant": "",
+        "etc": "현실과의 부합도"
+      },
+      {
+        "word": "justification",
+        "pos": "명사",
+        "meaning": "정당화",
+        "note": "justify(정당화하다)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "justify(정당화하다)의 명사형"
+      },
+      {
+        "word": "shop for",
+        "pos": "동사구",
+        "meaning": "~을 고르다, 찾아다니다",
+        "note": "look for와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "look for와 유사"
+      },
+      {
+        "word": "figure out",
+        "pos": "동사구",
+        "meaning": "알아내다, 이해하다",
+        "note": "understand, work out",
+        "syn": "",
+        "ant": "",
+        "etc": "understand, work out"
+      },
+      {
+        "word": "the lawyer's way",
+        "pos": "명사구",
+        "meaning": "변호사의 방식",
+        "note": "정당화에 초점 (vs. 과학자의 진리 탐구)",
+        "syn": "",
+        "ant": "",
+        "etc": "정당화에 초점 (vs. 과학자의 진리 탐구)"
+      },
+      {
+        "word": "function",
+        "pos": "명사",
+        "meaning": "기능, 역할",
+        "note": "역할이나 용도",
+        "syn": "",
+        "ant": "",
+        "etc": "역할이나 용도"
+      },
+      {
+        "word": "treat A with respect",
+        "pos": "동사구",
+        "meaning": "A를 존중하여 대하다",
+        "note": "신중하고 주의 깊게 다루다",
+        "syn": "",
+        "ant": "",
+        "etc": "신중하고 주의 깊게 다루다"
+      },
+      {
+        "word": "self-defense",
+        "pos": "명사",
+        "meaning": "자기방어",
+        "note": "자신의 믿음을 지키는 것",
+        "syn": "",
+        "ant": "",
+        "etc": "자신의 믿음을 지키는 것"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "22",
+    "koTitle": "창의성의 열쇠, 경험의 폭",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/22번/analysis.html",
+    "vocab": [
+      {
+        "word": "challenging",
+        "pos": "형용사",
+        "meaning": "도전적인, 어려운",
+        "note": "challenge (도전) + -ing",
+        "syn": "",
+        "ant": "",
+        "etc": "challenge (도전) + -ing"
+      },
+      {
+        "word": "pay attention to",
+        "pos": "구동사",
+        "meaning": "~에 주의를 기울이다",
+        "note": "focus on, concentrate on",
+        "syn": "",
+        "ant": "",
+        "etc": "focus on, concentrate on"
+      },
+      {
+        "word": "encounter",
+        "pos": "동사",
+        "meaning": "마주치다, 접하다",
+        "note": "meet, come across",
+        "syn": "",
+        "ant": "",
+        "etc": "meet, come across"
+      },
+      {
+        "word": "pop up",
+        "pos": "구동사",
+        "meaning": "갑자기 나타나다, 떠오르다",
+        "note": "suddenly appear",
+        "syn": "",
+        "ant": "",
+        "etc": "suddenly appear"
+      },
+      {
+        "word": "eureka moment",
+        "pos": "명사구",
+        "meaning": "유레카 순간 (갑작스런 깨달음)",
+        "note": "그리스어 eureka (찾았다!)에서 유래",
+        "syn": "",
+        "ant": "",
+        "etc": "그리스어 eureka (찾았다!)에서 유래"
+      },
+      {
+        "word": "insight",
+        "pos": "명사",
+        "meaning": "통찰, 통찰력",
+        "note": "deep understanding",
+        "syn": "",
+        "ant": "",
+        "etc": "deep understanding"
+      },
+      {
+        "word": "spontaneous",
+        "pos": "형용사",
+        "meaning": "자발적인, 즉흥적인",
+        "note": "automatic, unplanned",
+        "syn": "",
+        "ant": "",
+        "etc": "automatic, unplanned"
+      },
+      {
+        "word": "narrow down",
+        "pos": "구동사",
+        "meaning": "좁히다, 한정하다",
+        "note": "limit, restrict",
+        "syn": "",
+        "ant": "",
+        "etc": "limit, restrict"
+      },
+      {
+        "word": "breadth",
+        "pos": "명사",
+        "meaning": "폭, 넓이",
+        "note": "반의어: narrowness / width, range",
+        "syn": "",
+        "ant": "narrowness",
+        "etc": ""
+      },
+      {
+        "word": "scope",
+        "pos": "명사",
+        "meaning": "범위, 영역",
+        "note": "range, extent",
+        "syn": "",
+        "ant": "",
+        "etc": "range, extent"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "23",
+    "koTitle": "수치심과 죄책감의 차이",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/23번/analysis.html",
+    "vocab": [
+      {
+        "word": "shame",
+        "pos": "명사",
+        "meaning": "수치심, 창피함",
+        "note": "정체성과 관련된 부정적 감정",
+        "syn": "",
+        "ant": "",
+        "etc": "정체성과 관련된 부정적 감정"
+      },
+      {
+        "word": "guilt",
+        "pos": "명사",
+        "meaning": "죄책감",
+        "note": "행동과 관련된 감정",
+        "syn": "",
+        "ant": "",
+        "etc": "행동과 관련된 감정"
+      },
+      {
+        "word": "hold up A against B",
+        "pos": "구동사",
+        "meaning": "A를 B에 비춰보다",
+        "note": "비교하여 평가하다",
+        "syn": "",
+        "ant": "",
+        "etc": "비교하여 평가하다"
+      },
+      {
+        "word": "make amends",
+        "pos": "숙어",
+        "meaning": "보상하다, 사과하다",
+        "note": "잘못을 바로잡다",
+        "syn": "",
+        "ant": "",
+        "etc": "잘못을 바로잡다"
+      },
+      {
+        "word": "motivator",
+        "pos": "명사",
+        "meaning": "동기 부여 요인",
+        "note": "motivate(동기 부여하다)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "motivate(동기 부여하다)의 명사형"
+      },
+      {
+        "word": "destructive",
+        "pos": "형용사",
+        "meaning": "파괴적인",
+        "note": "반의어: constructive(건설적인)",
+        "syn": "",
+        "ant": "constructive(건설적인)",
+        "etc": ""
+      },
+      {
+        "word": "replace A with B",
+        "pos": "구동사",
+        "meaning": "A를 B로 대체하다",
+        "note": "바꾸다",
+        "syn": "",
+        "ant": "",
+        "etc": "바꾸다"
+      },
+      {
+        "word": "corrode",
+        "pos": "동사",
+        "meaning": "부식시키다, 서서히 파괴하다",
+        "note": "점진적 파괴를 의미",
+        "syn": "",
+        "ant": "",
+        "etc": "점진적 파괴를 의미"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "24",
+    "koTitle": "소셜미디어의 도파민 함정",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/24번/analysis.html",
+    "vocab": [
+      {
+        "word": "scroll",
+        "pos": "v.",
+        "meaning": "스크롤하다, (화면을) 위아래로 움직이다",
+        "note": "SNS 사용의 대표적 행위",
+        "syn": "",
+        "ant": "",
+        "etc": "SNS 사용의 대표적 행위"
+      },
+      {
+        "word": "dopamine",
+        "pos": "n.",
+        "meaning": "도파민 (쾌감 관련 신경전달물질)",
+        "note": "보상 체계와 연결",
+        "syn": "",
+        "ant": "",
+        "etc": "보상 체계와 연결"
+      },
+      {
+        "word": "incredibly",
+        "pos": "adv.",
+        "meaning": "믿을 수 없을 정도로, 엄청나게",
+        "note": "incredibly fast 빠른 변화 강조",
+        "syn": "",
+        "ant": "",
+        "etc": "incredibly fast 빠른 변화 강조"
+      },
+      {
+        "word": "homeostasis",
+        "pos": "n.",
+        "meaning": "항상성, 균형 상태",
+        "note": "생물학 용어, balance와 동의",
+        "syn": "",
+        "ant": "",
+        "etc": "생물학 용어, balance와 동의"
+      },
+      {
+        "word": "baseline",
+        "pos": "n.",
+        "meaning": "기준선, 기초 수준",
+        "note": "baseline level 정상 상태",
+        "syn": "",
+        "ant": "",
+        "etc": "baseline level 정상 상태"
+      },
+      {
+        "word": "achieve",
+        "pos": "v.",
+        "meaning": "달성하다, 이루다",
+        "note": "achieve homeostasis 균형 달성",
+        "syn": "",
+        "ant": "",
+        "etc": "achieve homeostasis 균형 달성"
+      },
+      {
+        "word": "rebalance",
+        "pos": "v.",
+        "meaning": "재균형을 맞추다",
+        "note": "re-(다시) + balance",
+        "syn": "",
+        "ant": "",
+        "etc": "re-(다시) + balance"
+      },
+      {
+        "word": "challenge",
+        "pos": "n.",
+        "meaning": "문제, 도전 과제",
+        "note": "여기서는 부정적 의미로 사용",
+        "syn": "",
+        "ant": "",
+        "etc": "여기서는 부정적 의미로 사용"
+      },
+      {
+        "word": "pleasure",
+        "pos": "n.",
+        "meaning": "쾌감, 즐거움",
+        "note": "dopamine과 연결된 감정",
+        "syn": "",
+        "ant": "",
+        "etc": "dopamine과 연결된 감정"
+      },
+      {
+        "word": "equal amount",
+        "pos": "n.",
+        "meaning": "동등한 양",
+        "note": "상승한 만큼 하락함을 의미",
+        "syn": "",
+        "ant": "",
+        "etc": "상승한 만큼 하락함을 의미"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "26",
+    "koTitle": "미국 자연보호의 선구자",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/26번/analysis.html",
+    "vocab": [
+      {
+        "word": "conservation",
+        "pos": "n.",
+        "meaning": "보존, 보호",
+        "note": "자연·환경 보호 맥락",
+        "syn": "",
+        "ant": "",
+        "etc": "자연·환경 보호 맥락"
+      },
+      {
+        "word": "expedition",
+        "pos": "n.",
+        "meaning": "탐험, 원정",
+        "note": "scientific expedition: 과학 탐험",
+        "syn": "",
+        "ant": "",
+        "etc": "scientific expedition: 과학 탐험"
+      },
+      {
+        "word": "call for",
+        "pos": "phr.v.",
+        "meaning": "요구하다, 촉구하다",
+        "note": "demand, urge",
+        "syn": "",
+        "ant": "",
+        "etc": "demand, urge"
+      },
+      {
+        "word": "contribute to",
+        "pos": "phr.v.",
+        "meaning": "~에 기여하다",
+        "note": "뒤에 동명사(-ing) 가능",
+        "syn": "",
+        "ant": "",
+        "etc": "뒤에 동명사(-ing) 가능"
+      },
+      {
+        "word": "establishment",
+        "pos": "n.",
+        "meaning": "설립, 확립",
+        "note": "동사 establish의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 establish의 명사형"
+      },
+      {
+        "word": "have an influence on",
+        "pos": "phr.",
+        "meaning": "~에 영향을 미치다",
+        "note": "have an impact on",
+        "syn": "",
+        "ant": "",
+        "etc": "have an impact on"
+      },
+      {
+        "word": "inspire",
+        "pos": "v.",
+        "meaning": "영감을 주다, 고무하다",
+        "note": "명사형: inspiration",
+        "syn": "",
+        "ant": "",
+        "etc": "명사형: inspiration"
+      },
+      {
+        "word": "conservationist",
+        "pos": "n.",
+        "meaning": "자연보호론자, 환경운동가",
+        "note": "conservation + -ist",
+        "syn": "",
+        "ant": "",
+        "etc": "conservation + -ist"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "29",
+    "koTitle": "문학의 지속되는 힘",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/29번/analysis.html",
+    "vocab": [
+      {
+        "word": "testament",
+        "pos": "n.",
+        "meaning": "증거, 증명",
+        "note": "testimony(증언)와 어원 동일",
+        "syn": "",
+        "ant": "",
+        "etc": "testimony(증언)와 어원 동일"
+      },
+      {
+        "word": "enduring",
+        "pos": "adj.",
+        "meaning": "지속적인, 영속하는",
+        "note": "= lasting, permanent",
+        "syn": "",
+        "ant": "",
+        "etc": "= lasting, permanent"
+      },
+      {
+        "word": "transcend",
+        "pos": "v.",
+        "meaning": "초월하다, 넘어서다",
+        "note": "trans(넘어) + scend(오르다)",
+        "syn": "",
+        "ant": "",
+        "etc": "trans(넘어) + scend(오르다)"
+      },
+      {
+        "word": "from all walks of life",
+        "pos": "관용구",
+        "meaning": "각계각층의, 모든 계층의",
+        "note": "walk = way of life",
+        "syn": "",
+        "ant": "",
+        "etc": "walk = way of life"
+      },
+      {
+        "word": "retain",
+        "pos": "v.",
+        "meaning": "유지하다, 보유하다",
+        "note": "= keep, maintain",
+        "syn": "",
+        "ant": "",
+        "etc": "= keep, maintain"
+      },
+      {
+        "word": "complexity",
+        "pos": "n.",
+        "meaning": "복잡성",
+        "note": "complex(복잡한)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "complex(복잡한)의 명사형"
+      },
+      {
+        "word": "nuance",
+        "pos": "n.",
+        "meaning": "미묘한 차이, 뉘앙스",
+        "note": "프랑스어 유래",
+        "syn": "",
+        "ant": "",
+        "etc": "프랑스어 유래"
+      },
+      {
+        "word": "triumph",
+        "pos": "n.",
+        "meaning": "승리, 성공",
+        "note": "= victory, success",
+        "syn": "",
+        "ant": "",
+        "etc": "= victory, success"
+      },
+      {
+        "word": "empathize with",
+        "pos": "v.",
+        "meaning": "~에 공감하다",
+        "note": "sympathy(동정)보다 깊은 감정 이입",
+        "syn": "",
+        "ant": "",
+        "etc": "sympathy(동정)보다 깊은 감정 이입"
+      },
+      {
+        "word": "human condition",
+        "pos": "n.",
+        "meaning": "인간 조건, 인간의 상황",
+        "note": "철학적 용어, 인간 존재의 본질",
+        "syn": "",
+        "ant": "",
+        "etc": "철학적 용어, 인간 존재의 본질"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "30",
+    "koTitle": "뷰파인더의 교육적 활용",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/30번/analysis.html",
+    "vocab": [
+      {
+        "word": "viewfinder",
+        "pos": "명사",
+        "meaning": "뷰파인더, 관찰 틀",
+        "note": "가운데 구멍이 뚫린 카드 도구",
+        "syn": "",
+        "ant": "",
+        "etc": "가운데 구멍이 뚫린 카드 도구"
+      },
+      {
+        "word": "isolate",
+        "pos": "동사",
+        "meaning": "분리하다, 고립시키다",
+        "note": "iso(홀로) + late",
+        "syn": "",
+        "ant": "",
+        "etc": "iso(홀로) + late"
+      },
+      {
+        "word": "concentrate on",
+        "pos": "동사구",
+        "meaning": "~에 집중하다",
+        "note": "= focus on",
+        "syn": "",
+        "ant": "",
+        "etc": "= focus on"
+      },
+      {
+        "word": "distract",
+        "pos": "동사",
+        "meaning": "산만하게 하다, 주의를 흩트리다",
+        "note": "dis(떨어뜨림) + tract(끌다)",
+        "syn": "",
+        "ant": "",
+        "etc": "dis(떨어뜨림) + tract(끌다)"
+      },
+      {
+        "word": "hesitant",
+        "pos": "형용사",
+        "meaning": "주저하는, 망설이는",
+        "note": "hesitate(망설이다) + ant",
+        "syn": "",
+        "ant": "",
+        "etc": "hesitate(망설이다) + ant"
+      },
+      {
+        "word": "keep track of",
+        "pos": "동사구",
+        "meaning": "~을 추적하다, 파악하다",
+        "note": "lose track of(놓치다) 반의",
+        "syn": "",
+        "ant": "",
+        "etc": "lose track of(놓치다) 반의"
+      },
+      {
+        "word": "take into consideration",
+        "pos": "동사구",
+        "meaning": "고려하다",
+        "note": "= consider, take into account",
+        "syn": "",
+        "ant": "",
+        "etc": "= consider, take into account"
+      },
+      {
+        "word": "block out",
+        "pos": "동사구",
+        "meaning": "차단하다, 가리다",
+        "note": "block(막다) + out(완전히)",
+        "syn": "",
+        "ant": "",
+        "etc": "block(막다) + out(완전히)"
+      },
+      {
+        "word": "field of vision",
+        "pos": "명사구",
+        "meaning": "시야",
+        "note": "= visual field",
+        "syn": "",
+        "ant": "",
+        "etc": "= visual field"
+      },
+      {
+        "word": "unwieldy",
+        "pos": "형용사",
+        "meaning": "다루기 힘든, 거추장스러운",
+        "note": "un(부정) + wieldy(다루기 쉬운)",
+        "syn": "",
+        "ant": "",
+        "etc": "un(부정) + wieldy(다루기 쉬운)"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "31",
+    "koTitle": "끊임없는 변화의 세계",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/31번/analysis.html",
+    "vocab": [
+      {
+        "word": "interconnected",
+        "pos": "형용사",
+        "meaning": "상호 연결된",
+        "note": "inter(사이) + connected",
+        "syn": "",
+        "ant": "",
+        "etc": "inter(사이) + connected"
+      },
+      {
+        "word": "imperceptibly",
+        "pos": "부사",
+        "meaning": "감지할 수 없게, 미세하게",
+        "note": "imperceptible(감지할 수 없는) + ly",
+        "syn": "",
+        "ant": "",
+        "etc": "imperceptible(감지할 수 없는) + ly"
+      },
+      {
+        "word": "neural network",
+        "pos": "명사구",
+        "meaning": "신경망",
+        "note": "뇌의 신경세포 연결망",
+        "syn": "",
+        "ant": "",
+        "etc": "뇌의 신경세포 연결망"
+      },
+      {
+        "word": "perceive",
+        "pos": "동사",
+        "meaning": "인식하다, 지각하다",
+        "note": "perception(지각, 인식)",
+        "syn": "",
+        "ant": "",
+        "etc": "perception(지각, 인식)"
+      },
+      {
+        "word": "seemingly",
+        "pos": "부사",
+        "meaning": "겉보기에는, ~처럼 보이는",
+        "note": "seem + ingly",
+        "syn": "",
+        "ant": "",
+        "etc": "seem + ingly"
+      },
+      {
+        "word": "of note",
+        "pos": "관용구",
+        "meaning": "주목할 만한, 중요한",
+        "note": "noteworthy와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "noteworthy와 유사"
+      },
+      {
+        "word": "passive observer",
+        "pos": "명사구",
+        "meaning": "수동적 관찰자",
+        "note": "active observer의 반대",
+        "syn": "",
+        "ant": "",
+        "etc": "active observer의 반대"
+      },
+      {
+        "word": "static",
+        "pos": "형용사",
+        "meaning": "정적인, 고정된",
+        "note": "반의어: dynamic(역동적인)",
+        "syn": "",
+        "ant": "dynamic(역동적인)",
+        "etc": ""
+      },
+      {
+        "word": "microscopic",
+        "pos": "형용사",
+        "meaning": "미세한, 현미경으로 볼 정도의",
+        "note": "macro-(거시적) 반대",
+        "syn": "",
+        "ant": "",
+        "etc": "macro-(거시적) 반대"
+      },
+      {
+        "word": "add up",
+        "pos": "동사구",
+        "meaning": "축적되다, 쌓이다",
+        "note": "accumulate와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "accumulate와 유사"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "32",
+    "koTitle": "장소 변화와 학습 효과",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/32번/analysis.html",
+    "vocab": [
+      {
+        "word": "spot",
+        "pos": "n.",
+        "meaning": "장소, 지점",
+        "note": "place와 유의어",
+        "syn": "",
+        "ant": "",
+        "etc": "place와 유의어"
+      },
+      {
+        "word": "variety",
+        "pos": "n.",
+        "meaning": "다양성, 변화",
+        "note": "uniformity(획일성) 반의어",
+        "syn": "",
+        "ant": "",
+        "etc": "uniformity(획일성) 반의어"
+      },
+      {
+        "word": "reinforce",
+        "pos": "v.",
+        "meaning": "강화하다, 보강하다",
+        "note": "strengthen과 유의어",
+        "syn": "",
+        "ant": "",
+        "etc": "strengthen과 유의어"
+      },
+      {
+        "word": "nook",
+        "pos": "n.",
+        "meaning": "구석진 곳, 아늑한 장소",
+        "note": "cozy corner",
+        "syn": "",
+        "ant": "",
+        "etc": "cozy corner"
+      },
+      {
+        "word": "numerous",
+        "pos": "adj.",
+        "meaning": "수많은, 다수의",
+        "note": "many와 유의어, 격식체",
+        "syn": ", 격식체",
+        "ant": "",
+        "etc": ""
+      },
+      {
+        "word": "recall",
+        "pos": "v.",
+        "meaning": "회상하다, 기억해내다",
+        "note": "remember와 유의어",
+        "syn": "",
+        "ant": "",
+        "etc": "remember와 유의어"
+      },
+      {
+        "word": "trial",
+        "pos": "n.",
+        "meaning": "실험, 시도",
+        "note": "experiment와 유의어",
+        "syn": "",
+        "ant": "",
+        "etc": "experiment와 유의어"
+      },
+      {
+        "word": "counterpart",
+        "pos": "n.",
+        "meaning": "상대방, 대응물",
+        "note": "corresponding person",
+        "syn": "",
+        "ant": "",
+        "etc": "corresponding person"
+      },
+      {
+        "word": "association",
+        "pos": "n.",
+        "meaning": "연상, 연결",
+        "note": "mental connection",
+        "syn": "",
+        "ant": "",
+        "etc": "mental connection"
+      },
+      {
+        "word": "consciously",
+        "pos": "adv.",
+        "meaning": "의식적으로",
+        "note": "unconsciously(무의식적으로) 반의어",
+        "syn": "",
+        "ant": "",
+        "etc": "unconsciously(무의식적으로) 반의어"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "33",
+    "koTitle": "냄새, 느끼되 말하기 어렵다",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/33번/analysis.html",
+    "vocab": [
+      {
+        "word": "olfactory",
+        "pos": "형용사",
+        "meaning": "후각의",
+        "note": "olfaction (후각), smell 관련",
+        "syn": "",
+        "ant": "",
+        "etc": "olfaction (후각), smell 관련"
+      },
+      {
+        "word": "challenging",
+        "pos": "형용사",
+        "meaning": "어려운, 힘든",
+        "note": "difficult, demanding 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "difficult, demanding 유사"
+      },
+      {
+        "word": "odor",
+        "pos": "명사",
+        "meaning": "냄새",
+        "note": "smell, scent (중립적 냄새)",
+        "syn": "",
+        "ant": "",
+        "etc": "smell, scent (중립적 냄새)"
+      },
+      {
+        "word": "flowery",
+        "pos": "형용사",
+        "meaning": "꽃 같은, 꽃향기의",
+        "note": "flower의 형용사형",
+        "syn": "",
+        "ant": "",
+        "etc": "flower의 형용사형"
+      },
+      {
+        "word": "fruity",
+        "pos": "형용사",
+        "meaning": "과일 향의",
+        "note": "fruit의 형용사형",
+        "syn": "",
+        "ant": "",
+        "etc": "fruit의 형용사형"
+      },
+      {
+        "word": "fishy",
+        "pos": "형용사",
+        "meaning": "생선 냄새 나는",
+        "note": "fish의 형용사형",
+        "syn": "",
+        "ant": "",
+        "etc": "fish의 형용사형"
+      },
+      {
+        "word": "identify",
+        "pos": "동사",
+        "meaning": "식별하다, 확인하다",
+        "note": "recognize, distinguish",
+        "syn": "",
+        "ant": "",
+        "etc": "recognize, distinguish"
+      },
+      {
+        "word": "participant",
+        "pos": "명사",
+        "meaning": "참가자",
+        "note": "participate (참여하다) 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "participate (참여하다) 명사형"
+      },
+      {
+        "word": "evolution",
+        "pos": "명사",
+        "meaning": "진화",
+        "note": "evolve (진화하다) 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "evolve (진화하다) 명사형"
+      },
+      {
+        "word": "well-equipped",
+        "pos": "형용사",
+        "meaning": "잘 갖추어진",
+        "note": "be equipped to V: ~하도록 장비되다",
+        "syn": "",
+        "ant": "",
+        "etc": "be equipped to V: ~하도록 장비되다"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "34",
+    "koTitle": "결과에 따른 행동 조정",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/34번/analysis.html",
+    "vocab": [
+      {
+        "word": "adapt",
+        "pos": "v.",
+        "meaning": "적응하다, 조정하다",
+        "note": "adjust와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "adjust와 유사"
+      },
+      {
+        "word": "in light of",
+        "pos": "전치사구",
+        "meaning": "~에 비추어, ~을 고려하여",
+        "note": "considering",
+        "syn": "",
+        "ant": "",
+        "etc": "considering"
+      },
+      {
+        "word": "yield",
+        "pos": "v.",
+        "meaning": "산출하다, 가져오다",
+        "note": "produce, bring",
+        "syn": "",
+        "ant": "",
+        "etc": "produce, bring"
+      },
+      {
+        "word": "be likely to",
+        "pos": "숙어",
+        "meaning": "~할 가능성이 있다",
+        "note": "be probable to",
+        "syn": "",
+        "ant": "",
+        "etc": "be probable to"
+      },
+      {
+        "word": "conditioning exercise",
+        "pos": "n.",
+        "meaning": "컨디셔닝 운동, 체력 단련 운동",
+        "note": "체력 강화 목적",
+        "syn": "",
+        "ant": "",
+        "etc": "체력 강화 목적"
+      },
+      {
+        "word": "give up A in favor of B",
+        "pos": "숙어",
+        "meaning": "A를 포기하고 B를 선호하다",
+        "note": "prefer B to A",
+        "syn": "",
+        "ant": "",
+        "etc": "prefer B to A"
+      },
+      {
+        "word": "promising",
+        "pos": "adj.",
+        "meaning": "유망한, 가능성 있는",
+        "note": "hopeful",
+        "syn": "",
+        "ant": "",
+        "etc": "hopeful"
+      },
+      {
+        "word": "tend to",
+        "pos": "숙어",
+        "meaning": "~하는 경향이 있다",
+        "note": "be inclined to",
+        "syn": "",
+        "ant": "",
+        "etc": "be inclined to"
+      },
+      {
+        "word": "discomfort",
+        "pos": "n.",
+        "meaning": "불편함, 불쾌감",
+        "note": "반의어 comfort",
+        "syn": "",
+        "ant": "comfort",
+        "etc": ""
+      },
+      {
+        "word": "disadvantage",
+        "pos": "n.",
+        "meaning": "불이익, 불리한 점",
+        "note": "반의어 advantage",
+        "syn": "",
+        "ant": "advantage",
+        "etc": ""
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "35",
+    "koTitle": "디지털 절제의 치유 효과",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/35번/analysis.html",
+    "vocab": [
+      {
+        "word": "evident",
+        "pos": "형용사",
+        "meaning": "명백한, 분명한",
+        "note": "obvious, clear의 유의어",
+        "syn": "",
+        "ant": "",
+        "etc": "obvious, clear의 유의어"
+      },
+      {
+        "word": "adopt",
+        "pos": "동사",
+        "meaning": "채택하다, 받아들이다",
+        "note": "embrace, implement",
+        "syn": "",
+        "ant": "",
+        "etc": "embrace, implement"
+      },
+      {
+        "word": "outcome",
+        "pos": "명사",
+        "meaning": "결과, 성과",
+        "note": "result, consequence",
+        "syn": "",
+        "ant": "",
+        "etc": "result, consequence"
+      },
+      {
+        "word": "limit",
+        "pos": "동사",
+        "meaning": "제한하다",
+        "note": "restrict, constrain",
+        "syn": "",
+        "ant": "",
+        "etc": "restrict, constrain"
+      },
+      {
+        "word": "constant",
+        "pos": "형용사",
+        "meaning": "끊임없는, 지속적인",
+        "note": "continuous, perpetual",
+        "syn": "",
+        "ant": "",
+        "etc": "continuous, perpetual"
+      },
+      {
+        "word": "meaningful",
+        "pos": "형용사",
+        "meaning": "의미 있는",
+        "note": "significant, purposeful",
+        "syn": "",
+        "ant": "",
+        "etc": "significant, purposeful"
+      },
+      {
+        "word": "burnout",
+        "pos": "명사",
+        "meaning": "번아웃, 탈진",
+        "note": "극도의 육체적·정신적 피로",
+        "syn": "",
+        "ant": "",
+        "etc": "극도의 육체적·정신적 피로"
+      },
+      {
+        "word": "implement",
+        "pos": "동사",
+        "meaning": "실행하다, 시행하다",
+        "note": "execute, carry out",
+        "syn": "",
+        "ant": "",
+        "etc": "execute, carry out"
+      },
+      {
+        "word": "mindfulness",
+        "pos": "명사",
+        "meaning": "마음챙김, 알아차림",
+        "note": "현재 순간에 집중하는 명상 기법",
+        "syn": "",
+        "ant": "",
+        "etc": "현재 순간에 집중하는 명상 기법"
+      },
+      {
+        "word": "clarity",
+        "pos": "명사",
+        "meaning": "명료함, 선명함",
+        "note": "clearness, lucidity",
+        "syn": "",
+        "ant": "",
+        "etc": "clearness, lucidity"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "36",
+    "koTitle": "빙하기 이후 농경의 시작",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/36번/analysis.html",
+    "vocab": [
+      {
+        "word": "ice sheet",
+        "pos": "명사",
+        "meaning": "빙상, 대륙빙하",
+        "note": "넓은 지역을 덮는 두꺼운 얼음층",
+        "syn": "",
+        "ant": "",
+        "etc": "넓은 지역을 덮는 두꺼운 얼음층"
+      },
+      {
+        "word": "crucially",
+        "pos": "부사",
+        "meaning": "결정적으로, 중요하게",
+        "note": "유의어: critically, vitally",
+        "syn": "critically, vitally",
+        "ant": "",
+        "etc": ""
+      },
+      {
+        "word": "evaporation",
+        "pos": "명사",
+        "meaning": "증발",
+        "note": "동사형: evaporate",
+        "syn": "",
+        "ant": "",
+        "etc": "동사형: evaporate"
+      },
+      {
+        "word": "associate A with B",
+        "pos": "동사구",
+        "meaning": "A를 B와 연관시키다",
+        "note": "association (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "association (명사)"
+      },
+      {
+        "word": "option",
+        "pos": "명사",
+        "meaning": "선택지, 선택 가능한 것",
+        "note": "optional (형용사): 선택적인",
+        "syn": "",
+        "ant": "",
+        "etc": "optional (형용사): 선택적인"
+      },
+      {
+        "word": "depend on",
+        "pos": "동사구",
+        "meaning": "~에 의존하다",
+        "note": "유의어: rely on",
+        "syn": "rely on",
+        "ant": "",
+        "etc": ""
+      },
+      {
+        "word": "explosion",
+        "pos": "명사",
+        "meaning": "폭발, 급증",
+        "note": "동사: explode",
+        "syn": "",
+        "ant": "",
+        "etc": "동사: explode"
+      },
+      {
+        "word": "intensively",
+        "pos": "부사",
+        "meaning": "집약적으로, 집중적으로",
+        "note": "형용사: intensive",
+        "syn": "",
+        "ant": "",
+        "etc": "형용사: intensive"
+      },
+      {
+        "word": "foraging",
+        "pos": "동명사",
+        "meaning": "먹이를 찾아다님, 채집",
+        "note": "동사: forage",
+        "syn": "",
+        "ant": "",
+        "etc": "동사: forage"
+      },
+      {
+        "word": "side hustle",
+        "pos": "명사구",
+        "meaning": "부업, 부수입 활동",
+        "note": "구어적 표현, 본업 외 활동",
+        "syn": "",
+        "ant": "",
+        "etc": "구어적 표현, 본업 외 활동"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "37",
+    "koTitle": "기억의 두 가지 체계",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/37번/analysis.html",
+    "vocab": [
+      {
+        "word": "explicitly",
+        "pos": "부사",
+        "meaning": "명시적으로, 분명하게",
+        "note": "implicit(암시적인)의 반의어",
+        "syn": "",
+        "ant": "",
+        "etc": "implicit(암시적인)의 반의어"
+      },
+      {
+        "word": "access",
+        "pos": "동사",
+        "meaning": "접근하다, ~에 이르다",
+        "note": "명사로는 '접근(권)'",
+        "syn": "",
+        "ant": "",
+        "etc": "명사로는 '접근(권)'"
+      },
+      {
+        "word": "retrieve",
+        "pos": "동사",
+        "meaning": "인출하다, 되찾다",
+        "note": "retrieval(인출, 회수)",
+        "syn": "",
+        "ant": "",
+        "etc": "retrieval(인출, 회수)"
+      },
+      {
+        "word": "reel off",
+        "pos": "동사구",
+        "meaning": "줄줄이 말하다, 술술 말하다",
+        "note": "구어적 표현",
+        "syn": "",
+        "ant": "",
+        "etc": "구어적 표현"
+      },
+      {
+        "word": "consciousness",
+        "pos": "명사",
+        "meaning": "의식",
+        "note": "conscious(의식하는) 형용사형",
+        "syn": "",
+        "ant": "",
+        "etc": "conscious(의식하는) 형용사형"
+      },
+      {
+        "word": "awareness",
+        "pos": "명사",
+        "meaning": "의식, 자각",
+        "note": "aware(의식하는)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "aware(의식하는)의 명사형"
+      },
+      {
+        "word": "chunk",
+        "pos": "명사",
+        "meaning": "덩어리, 큰 조각",
+        "note": "",
+        "syn": "",
+        "ant": "",
+        "etc": ""
+      },
+      {
+        "word": "visualize",
+        "pos": "동사",
+        "meaning": "시각화하다, 마음속에 그리다",
+        "note": "visual(시각적인)의 동사형",
+        "syn": "",
+        "ant": "",
+        "etc": "visual(시각적인)의 동사형"
+      },
+      {
+        "word": "limit",
+        "pos": "명사",
+        "meaning": "한계, 제한",
+        "note": "동사로는 '제한하다'",
+        "syn": "",
+        "ant": "",
+        "etc": "동사로는 '제한하다'"
+      },
+      {
+        "word": "store",
+        "pos": "동사",
+        "meaning": "저장하다, 보관하다",
+        "note": "storage(저장)",
+        "syn": "",
+        "ant": "",
+        "etc": "storage(저장)"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "38",
+    "koTitle": "제스처와 기억력",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/38번/analysis.html",
+    "vocab": [
+      {
+        "word": "gesture",
+        "pos": "v./n.",
+        "meaning": "몸짓하다, 제스처",
+        "note": "body language, motion",
+        "syn": "",
+        "ant": "",
+        "etc": "body language, motion"
+      },
+      {
+        "word": "recall",
+        "pos": "v.",
+        "meaning": "회상하다, 기억해내다",
+        "note": "remember, recollect",
+        "syn": "",
+        "ant": "",
+        "etc": "remember, recollect"
+      },
+      {
+        "word": "perform",
+        "pos": "v.",
+        "meaning": "수행하다, 행하다",
+        "note": "carry out, execute",
+        "syn": "",
+        "ant": "",
+        "etc": "carry out, execute"
+      },
+      {
+        "word": "odd",
+        "pos": "adj.",
+        "meaning": "이상한, 특이한",
+        "note": "strange, unusual",
+        "syn": "",
+        "ant": "",
+        "etc": "strange, unusual"
+      },
+      {
+        "word": "particularly",
+        "pos": "adv.",
+        "meaning": "특히, 특별히",
+        "note": "especially, specifically",
+        "syn": "",
+        "ant": "",
+        "etc": "especially, specifically"
+      },
+      {
+        "word": "spontaneously",
+        "pos": "adv.",
+        "meaning": "자발적으로, 즉흥적으로",
+        "note": "voluntarily, naturally",
+        "syn": "",
+        "ant": "",
+        "etc": "voluntarily, naturally"
+      },
+      {
+        "word": "encode",
+        "pos": "v.",
+        "meaning": "부호화하다, 기억에 저장하다",
+        "note": "convert into code, store",
+        "syn": "",
+        "ant": "",
+        "etc": "convert into code, store"
+      },
+      {
+        "word": "memorable",
+        "pos": "adj.",
+        "meaning": "기억할 만한, 잊지 못할",
+        "note": "unforgettable, remarkable",
+        "syn": "",
+        "ant": "",
+        "etc": "unforgettable, remarkable"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "39",
+    "koTitle": "산림 파괴와 지구 온난화",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/39번/analysis.html",
+    "vocab": [
+      {
+        "word": "deforestation",
+        "pos": "명사",
+        "meaning": "산림 파괴, 벌목",
+        "note": "de(제거) + forest(숲) + ation(명사형)",
+        "syn": "",
+        "ant": "",
+        "etc": "de(제거) + forest(숲) + ation(명사형)"
+      },
+      {
+        "word": "degradation",
+        "pos": "명사",
+        "meaning": "황폐화, 퇴화",
+        "note": "환경 악화를 의미",
+        "syn": "",
+        "ant": "",
+        "etc": "환경 악화를 의미"
+      },
+      {
+        "word": "convert A to B",
+        "pos": "동사구",
+        "meaning": "A를 B로 전환하다",
+        "note": "change, transform",
+        "syn": "",
+        "ant": "",
+        "etc": "change, transform"
+      },
+      {
+        "word": "consequently",
+        "pos": "부사",
+        "meaning": "결과적으로",
+        "note": "therefore, as a result",
+        "syn": "",
+        "ant": "",
+        "etc": "therefore, as a result"
+      },
+      {
+        "word": "regulator",
+        "pos": "명사",
+        "meaning": "조절자, 규제자",
+        "note": "regulate(조절하다)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "regulate(조절하다)의 명사형"
+      },
+      {
+        "word": "no doubt",
+        "pos": "부사구",
+        "meaning": "의심할 여지없이",
+        "note": "certainly, undoubtedly",
+        "syn": "",
+        "ant": "",
+        "etc": "certainly, undoubtedly"
+      },
+      {
+        "word": "prevent A from B",
+        "pos": "동사구",
+        "meaning": "A가 B하는 것을 막다",
+        "note": "stop, hinder",
+        "syn": "",
+        "ant": "",
+        "etc": "stop, hinder"
+      },
+      {
+        "word": "progressively",
+        "pos": "부사",
+        "meaning": "점진적으로",
+        "note": "gradually, increasingly",
+        "syn": "",
+        "ant": "",
+        "etc": "gradually, increasingly"
+      },
+      {
+        "word": "radiation",
+        "pos": "명사",
+        "meaning": "복사, 방사선",
+        "note": "빛이나 열의 방출",
+        "syn": "",
+        "ant": "",
+        "etc": "빛이나 열의 방출"
+      },
+      {
+        "word": "accordingly",
+        "pos": "부사",
+        "meaning": "따라서",
+        "note": "therefore, consequently",
+        "syn": "",
+        "ant": "",
+        "etc": "therefore, consequently"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "40",
+    "koTitle": "감정이 먼저, 이성은 나중",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/40번/analysis.html",
+    "vocab": [
+      {
+        "word": "appropriate",
+        "pos": "형용사",
+        "meaning": "적절한, 알맞은",
+        "note": "↔ inappropriate",
+        "syn": "",
+        "ant": "",
+        "etc": "↔ inappropriate"
+      },
+      {
+        "word": "unconscious",
+        "pos": "형용사",
+        "meaning": "무의식적인",
+        "note": "↔ conscious",
+        "syn": "",
+        "ant": "",
+        "etc": "↔ conscious"
+      },
+      {
+        "word": "determine",
+        "pos": "동사",
+        "meaning": "결정하다, 판단하다",
+        "note": "determination (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "determination (명사)"
+      },
+      {
+        "word": "assess",
+        "pos": "동사",
+        "meaning": "평가하다, 판단하다",
+        "note": "assessment (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "assessment (명사)"
+      },
+      {
+        "word": "fight or flight",
+        "pos": "명사구",
+        "meaning": "투쟁 또는 도피 (반응)",
+        "note": "공포 반응의 두 가지 형태",
+        "syn": "",
+        "ant": "",
+        "etc": "공포 반응의 두 가지 형태"
+      },
+      {
+        "word": "generate",
+        "pos": "동사",
+        "meaning": "만들어내다, 생성하다",
+        "note": "generation (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "generation (명사)"
+      },
+      {
+        "word": "rational",
+        "pos": "형용사",
+        "meaning": "합리적인, 이성적인",
+        "note": "rationally (부사)",
+        "syn": "",
+        "ant": "",
+        "etc": "rationally (부사)"
+      },
+      {
+        "word": "emotionally",
+        "pos": "부사",
+        "meaning": "감정적으로",
+        "note": "emotional (형용사)",
+        "syn": "",
+        "ant": "",
+        "etc": "emotional (형용사)"
+      },
+      {
+        "word": "justify",
+        "pos": "동사",
+        "meaning": "정당화하다",
+        "note": "justification (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "justification (명사)"
+      },
+      {
+        "word": "launch into",
+        "pos": "동사구",
+        "meaning": "~에 착수하다, 시작하다",
+        "note": "launch: 발사하다, 시작하다",
+        "syn": "",
+        "ant": "",
+        "etc": "launch: 발사하다, 시작하다"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "42",
+    "koTitle": "스포츠의 불확실성 역설",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/41~42번/analysis.html",
+    "vocab": [
+      {
+        "word": "predictability",
+        "pos": "n.",
+        "meaning": "예측 가능성",
+        "note": "predict(예측하다) + -ability",
+        "syn": "",
+        "ant": "",
+        "etc": "predict(예측하다) + -ability"
+      },
+      {
+        "word": "certainty",
+        "pos": "n.",
+        "meaning": "확실성",
+        "note": "반의어: uncertainty",
+        "syn": "",
+        "ant": "uncertainty",
+        "etc": ""
+      },
+      {
+        "word": "unpredictable",
+        "pos": "adj.",
+        "meaning": "예측할 수 없는",
+        "note": "un-(부정) + predictable",
+        "syn": "",
+        "ant": "",
+        "etc": "un-(부정) + predictable"
+      },
+      {
+        "word": "attendance",
+        "pos": "n.",
+        "meaning": "관중 수, 참석",
+        "note": "attend(참석하다)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "attend(참석하다)의 명사형"
+      },
+      {
+        "word": "variability",
+        "pos": "n.",
+        "meaning": "변동성, 가변성",
+        "note": "variable(변하는) + -ity",
+        "syn": "",
+        "ant": "",
+        "etc": "variable(변하는) + -ity"
+      },
+      {
+        "word": "exhilarating",
+        "pos": "adj.",
+        "meaning": "신나게 하는, 흥미진진한",
+        "note": "exhilarate(기쁘게 하다)의 현재분사",
+        "syn": "",
+        "ant": "",
+        "etc": "exhilarate(기쁘게 하다)의 현재분사"
+      },
+      {
+        "word": "frustrating",
+        "pos": "adj.",
+        "meaning": "좌절감을 주는",
+        "note": "frustrate(좌절시키다)의 현재분사",
+        "syn": "",
+        "ant": "",
+        "etc": "frustrate(좌절시키다)의 현재분사"
+      },
+      {
+        "word": "systematic",
+        "pos": "adj.",
+        "meaning": "체계적인",
+        "note": "system(체계) + -atic",
+        "syn": "",
+        "ant": "",
+        "etc": "system(체계) + -atic"
+      },
+      {
+        "word": "premium",
+        "pos": "adj.",
+        "meaning": "고급의, 프리미엄의",
+        "note": "premium seating: 특등석",
+        "syn": "",
+        "ant": "",
+        "etc": "premium seating: 특등석"
+      },
+      {
+        "word": "uncertain",
+        "pos": "adj.",
+        "meaning": "불확실한",
+        "note": "un-(부정) + certain, 명사형: uncertainty",
+        "syn": "",
+        "ant": "",
+        "etc": "un-(부정) + certain, 명사형: uncertainty"
+      }
+    ]
+  },
+  {
+    "level": "고1",
+    "label": "(고1) 2026 6월 모의고사",
+    "code": "45",
+    "koTitle": "질투를 넘어선 우정",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_모의고사/6월/43~45번/analysis.html",
+    "vocab": [
+      {
+        "word": "vocalist",
+        "pos": "명사",
+        "meaning": "성악가, 가수",
+        "note": "singer와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "singer와 유사"
+      },
+      {
+        "word": "recognition",
+        "pos": "명사",
+        "meaning": "인정, 인지",
+        "note": "recognize(동사)",
+        "syn": "",
+        "ant": "",
+        "etc": "recognize(동사)"
+      },
+      {
+        "word": "jealous",
+        "pos": "형용사",
+        "meaning": "질투하는",
+        "note": "envious와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "envious와 유사"
+      },
+      {
+        "word": "masterpiece",
+        "pos": "명사",
+        "meaning": "걸작, 대작",
+        "note": "최고의 작품",
+        "syn": "",
+        "ant": "",
+        "etc": "최고의 작품"
+      },
+      {
+        "word": "evaluate",
+        "pos": "동사",
+        "meaning": "평가하다",
+        "note": "assess와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "assess와 유사"
+      },
+      {
+        "word": "dedication",
+        "pos": "명사",
+        "meaning": "헌신, 전념",
+        "note": "dedicate(동사)",
+        "syn": "",
+        "ant": "",
+        "etc": "dedicate(동사)"
+      },
+      {
+        "word": "paid off",
+        "pos": "동사구",
+        "meaning": "보상받다, 결실을 맺다",
+        "note": "pay off 과거형",
+        "syn": "",
+        "ant": "",
+        "etc": "pay off 과거형"
+      },
+      {
+        "word": "grateful",
+        "pos": "형용사",
+        "meaning": "감사하는",
+        "note": "thankful과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "thankful과 유사"
+      },
+      {
+        "word": "inspired",
+        "pos": "형용사",
+        "meaning": "영감을 받은",
+        "note": "inspire(동사)",
+        "syn": "",
+        "ant": "",
+        "etc": "inspire(동사)"
+      },
+      {
+        "word": "bond",
+        "pos": "명사",
+        "meaning": "유대, 결속",
+        "note": "connection과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "connection과 유사"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "18",
+    "koTitle": "과학 박람회 참가 독려",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/18번/analysis.html",
+    "vocab": [
+      {
+        "word": "annual",
+        "pos": "형용사",
+        "meaning": "연례의, 매년의",
+        "note": "yearly",
+        "syn": "",
+        "ant": "",
+        "etc": "yearly"
+      },
+      {
+        "word": "sustainable",
+        "pos": "형용사",
+        "meaning": "지속 가능한",
+        "note": "environmental term",
+        "syn": "",
+        "ant": "",
+        "etc": "environmental term"
+      },
+      {
+        "word": "registration",
+        "pos": "명사",
+        "meaning": "등록, 신청",
+        "note": "register (동사)",
+        "syn": "",
+        "ant": "",
+        "etc": "register (동사)"
+      },
+      {
+        "word": "encourage",
+        "pos": "동사",
+        "meaning": "독려하다, 격려하다",
+        "note": "encourage A to do",
+        "syn": "",
+        "ant": "",
+        "etc": "encourage A to do"
+      },
+      {
+        "word": "take part",
+        "pos": "동사구",
+        "meaning": "참가하다",
+        "note": "participate",
+        "syn": "",
+        "ant": "",
+        "etc": "participate"
+      },
+      {
+        "word": "conservation",
+        "pos": "명사",
+        "meaning": "보존, 보호",
+        "note": "conserve (동사)",
+        "syn": "",
+        "ant": "",
+        "etc": "conserve (동사)"
+      },
+      {
+        "word": "renewable energy",
+        "pos": "명사구",
+        "meaning": "재생 에너지",
+        "note": "solar, wind power 등",
+        "syn": "",
+        "ant": "",
+        "etc": "solar, wind power 등"
+      },
+      {
+        "word": "showcase",
+        "pos": "동사",
+        "meaning": "전시하다, 선보이다",
+        "note": "display, present",
+        "syn": "",
+        "ant": "",
+        "etc": "display, present"
+      },
+      {
+        "word": "peers",
+        "pos": "명사",
+        "meaning": "또래, 동료",
+        "note": "동급생",
+        "syn": "",
+        "ant": "",
+        "etc": "동급생"
+      },
+      {
+        "word": "submit",
+        "pos": "동사",
+        "meaning": "제출하다",
+        "note": "hand in",
+        "syn": "",
+        "ant": "",
+        "etc": "hand in"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "19",
+    "koTitle": "케이크 주문 착오",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/19번/analysis.html",
+    "vocab": [
+      {
+        "word": "pick up",
+        "pos": "동사구",
+        "meaning": "(주문한 것을) 찾다, 가지러 가다",
+        "note": "collect와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "collect와 유사"
+      },
+      {
+        "word": "notice",
+        "pos": "동사",
+        "meaning": "알아차리다, 인지하다",
+        "note": "realize, perceive",
+        "syn": "",
+        "ant": "",
+        "etc": "realize, perceive"
+      },
+      {
+        "word": "get it",
+        "pos": "구어 표현",
+        "meaning": "이해하다",
+        "note": "understand의 구어체",
+        "syn": "",
+        "ant": "",
+        "etc": "understand의 구어체"
+      },
+      {
+        "word": "flavor",
+        "pos": "명사",
+        "meaning": "맛, 풍미",
+        "note": "taste와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "taste와 유사"
+      },
+      {
+        "word": "wonder",
+        "pos": "동사",
+        "meaning": "궁금해하다, 의아해하다",
+        "note": "think about",
+        "syn": "",
+        "ant": "",
+        "etc": "think about"
+      },
+      {
+        "word": "moment",
+        "pos": "명사",
+        "meaning": "순간, 잠깐",
+        "note": "a short time",
+        "syn": "",
+        "ant": "",
+        "etc": "a short time"
+      },
+      {
+        "word": "similar",
+        "pos": "형용사",
+        "meaning": "비슷한, 유사한",
+        "note": "alike, comparable",
+        "syn": "",
+        "ant": "",
+        "etc": "alike, comparable"
+      },
+      {
+        "word": "quality",
+        "pos": "명사/형용사",
+        "meaning": "품질, 질 좋은",
+        "note": "high standard",
+        "syn": "",
+        "ant": "",
+        "etc": "high standard"
+      },
+      {
+        "word": "perfect",
+        "pos": "형용사",
+        "meaning": "완벽한, 완전한",
+        "note": "flawless, ideal",
+        "syn": "",
+        "ant": "",
+        "etc": "flawless, ideal"
+      },
+      {
+        "word": "imagine",
+        "pos": "동사",
+        "meaning": "상상하다, 생각하다",
+        "note": "picture, envision",
+        "syn": "",
+        "ant": "",
+        "etc": "picture, envision"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "20",
+    "koTitle": "구성의 오류와 팀 관리",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/20번/analysis.html",
+    "vocab": [
+      {
+        "word": "assume",
+        "pos": "동사",
+        "meaning": "가정하다, 추정하다",
+        "note": "assumption (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "assumption (명사)"
+      },
+      {
+        "word": "bring on board",
+        "pos": "동사구",
+        "meaning": "합류시키다, 채용하다",
+        "note": "조직에 새로운 사람을 들이다",
+        "syn": "",
+        "ant": "",
+        "etc": "조직에 새로운 사람을 들이다"
+      },
+      {
+        "word": "productive",
+        "pos": "형용사",
+        "meaning": "생산적인",
+        "note": "produce (생산하다) + -ive",
+        "syn": "",
+        "ant": "",
+        "etc": "produce (생산하다) + -ive"
+      },
+      {
+        "word": "efficient",
+        "pos": "형용사",
+        "meaning": "효율적인",
+        "note": "efficiency (효율성)",
+        "syn": "",
+        "ant": "",
+        "etc": "efficiency (효율성)"
+      },
+      {
+        "word": "fallacy",
+        "pos": "명사",
+        "meaning": "오류, 잘못된 생각",
+        "note": "논리적 오류를 가리킴",
+        "syn": "",
+        "ant": "",
+        "etc": "논리적 오류를 가리킴"
+      },
+      {
+        "word": "composition",
+        "pos": "명사",
+        "meaning": "구성, 조합",
+        "note": "compose (구성하다)에서 유래",
+        "syn": "",
+        "ant": "",
+        "etc": "compose (구성하다)에서 유래"
+      },
+      {
+        "word": "allow for",
+        "pos": "동사구",
+        "meaning": "~를 고려하다, 참작하다",
+        "note": "take into account와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "take into account와 유사"
+      },
+      {
+        "word": "collate",
+        "pos": "동사",
+        "meaning": "수집·정리하다",
+        "note": "데이터나 정보를 모아 정돈함",
+        "syn": "",
+        "ant": "",
+        "etc": "데이터나 정보를 모아 정돈함"
+      },
+      {
+        "word": "doomed",
+        "pos": "형용사",
+        "meaning": "실패할 운명인, 파멸할",
+        "note": "doom (파멸) + -ed",
+        "syn": "",
+        "ant": "",
+        "etc": "doom (파멸) + -ed"
+      },
+      {
+        "word": "assemble",
+        "pos": "동사",
+        "meaning": "모으다, 조립하다",
+        "note": "assembly (집회, 조립)",
+        "syn": "",
+        "ant": "",
+        "etc": "assembly (집회, 조립)"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "21",
+    "koTitle": "불완전한 상상의 지혜",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/21번/analysis.html",
+    "vocab": [
+      {
+        "word": "excel at",
+        "pos": "동사구",
+        "meaning": "~에 뛰어나다",
+        "note": "be excellent at과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "be excellent at과 유사"
+      },
+      {
+        "word": "rehearse",
+        "pos": "동사",
+        "meaning": "미리 연습하다, 리허설하다",
+        "note": "practice와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "practice와 유사"
+      },
+      {
+        "word": "forthcoming",
+        "pos": "형용사",
+        "meaning": "다가오는, 곧 있을",
+        "note": "upcoming과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "upcoming과 유사"
+      },
+      {
+        "word": "authentic",
+        "pos": "형용사",
+        "meaning": "진짜의, 진실한",
+        "note": "genuine, real과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "genuine, real과 유사"
+      },
+      {
+        "word": "self-restraint",
+        "pos": "명사",
+        "meaning": "자제, 절제",
+        "note": "self-control과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "self-control과 유사"
+      },
+      {
+        "word": "substitute",
+        "pos": "명사",
+        "meaning": "대체물",
+        "note": "replacement와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "replacement와 유사"
+      },
+      {
+        "word": "incentive",
+        "pos": "명사",
+        "meaning": "동기, 자극",
+        "note": "motivation과 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "motivation과 유사"
+      },
+      {
+        "word": "starve",
+        "pos": "동사",
+        "meaning": "굶어 죽다",
+        "note": "die from hunger",
+        "syn": "",
+        "ant": "",
+        "etc": "die from hunger"
+      },
+      {
+        "word": "cloy",
+        "pos": "동사",
+        "meaning": "물리게 하다, 채우다",
+        "note": "satisfy excessively",
+        "syn": "",
+        "ant": "",
+        "etc": "satisfy excessively"
+      },
+      {
+        "word": "appetite",
+        "pos": "명사",
+        "meaning": "식욕, 욕구",
+        "note": "hunger, desire",
+        "syn": "",
+        "ant": "",
+        "etc": "hunger, desire"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "22",
+    "koTitle": "낮은 확률의 과대평가",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/22번/analysis.html",
+    "vocab": [
+      {
+        "word": "objective",
+        "pos": "형용사",
+        "meaning": "객관적인",
+        "note": "↔ subjective (주관적인)",
+        "syn": "",
+        "ant": "",
+        "etc": "↔ subjective (주관적인)"
+      },
+      {
+        "word": "subjective",
+        "pos": "형용사",
+        "meaning": "주관적인",
+        "note": "개인의 인식에 기반한",
+        "syn": "",
+        "ant": "",
+        "etc": "개인의 인식에 기반한"
+      },
+      {
+        "word": "probability",
+        "pos": "명사",
+        "meaning": "확률, 가능성",
+        "note": "= likelihood",
+        "syn": "",
+        "ant": "",
+        "etc": "= likelihood"
+      },
+      {
+        "word": "factor into",
+        "pos": "동사구",
+        "meaning": "~에 영향을 미치다",
+        "note": "영향 요소로 작용하다",
+        "syn": "",
+        "ant": "",
+        "etc": "영향 요소로 작용하다"
+      },
+      {
+        "word": "overestimate",
+        "pos": "동사",
+        "meaning": "과대평가하다",
+        "note": "↔ underestimate (과소평가하다)",
+        "syn": "",
+        "ant": "",
+        "etc": "↔ underestimate (과소평가하다)"
+      },
+      {
+        "word": "likelihood",
+        "pos": "명사",
+        "meaning": "가능성",
+        "note": "= probability",
+        "syn": "",
+        "ant": "",
+        "etc": "= probability"
+      },
+      {
+        "word": "optimistic",
+        "pos": "형용사",
+        "meaning": "낙관적인",
+        "note": "↔ pessimistic (비관적인)",
+        "syn": "",
+        "ant": "",
+        "etc": "↔ pessimistic (비관적인)"
+      },
+      {
+        "word": "odds",
+        "pos": "명사",
+        "meaning": "확률, 가능성",
+        "note": "특히 도박·경쟁에서의 승산",
+        "syn": "",
+        "ant": "",
+        "etc": "특히 도박·경쟁에서의 승산"
+      },
+      {
+        "word": "lottery",
+        "pos": "명사",
+        "meaning": "복권, 추첨",
+        "note": "무작위 당첨 방식",
+        "syn": "",
+        "ant": "",
+        "etc": "무작위 당첨 방식"
+      },
+      {
+        "word": "on the order of",
+        "pos": "관용구",
+        "meaning": "대략 ~정도의",
+        "note": "= approximately",
+        "syn": "",
+        "ant": "",
+        "etc": "= approximately"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "23",
+    "koTitle": "공통 통화의 경제적 이점",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/23번/analysis.html",
+    "vocab": [
+      {
+        "word": "barrier",
+        "pos": "n.",
+        "meaning": "장벽, 장애물",
+        "note": "obstacle, impediment",
+        "syn": "",
+        "ant": "",
+        "etc": "obstacle, impediment"
+      },
+      {
+        "word": "competitive",
+        "pos": "adj.",
+        "meaning": "경쟁력 있는",
+        "note": "경쟁 가능한",
+        "syn": "",
+        "ant": "",
+        "etc": "경쟁 가능한"
+      },
+      {
+        "word": "transaction",
+        "pos": "n.",
+        "meaning": "거래, 매매",
+        "note": "deal, exchange",
+        "syn": "",
+        "ant": "",
+        "etc": "deal, exchange"
+      },
+      {
+        "word": "convert",
+        "pos": "v.",
+        "meaning": "환전하다, 전환하다",
+        "note": "exchange, transform",
+        "syn": "",
+        "ant": "",
+        "etc": "exchange, transform"
+      },
+      {
+        "word": "hedge",
+        "pos": "v.",
+        "meaning": "헤지하다, 위험을 분산하다",
+        "note": "금융 용어",
+        "syn": "",
+        "ant": "",
+        "etc": "금융 용어"
+      },
+      {
+        "word": "reinvest",
+        "pos": "v.",
+        "meaning": "재투자하다",
+        "note": "re- (다시) + invest",
+        "syn": "",
+        "ant": "",
+        "etc": "re- (다시) + invest"
+      },
+      {
+        "word": "productivity",
+        "pos": "n.",
+        "meaning": "생산성",
+        "note": "효율성",
+        "syn": "",
+        "ant": "",
+        "etc": "효율성"
+      },
+      {
+        "word": "unify",
+        "pos": "v.",
+        "meaning": "통합하다, 통일하다",
+        "note": "unite, integrate",
+        "syn": "",
+        "ant": "",
+        "etc": "unite, integrate"
+      },
+      {
+        "word": "independent",
+        "pos": "n.",
+        "meaning": "독립체, 독립국",
+        "note": "형용사로도 쓰임",
+        "syn": "",
+        "ant": "",
+        "etc": "형용사로도 쓰임"
+      },
+      {
+        "word": "foundation",
+        "pos": "n.",
+        "meaning": "기반, 토대",
+        "note": "basis, groundwork",
+        "syn": "",
+        "ant": "",
+        "etc": "basis, groundwork"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "24",
+    "koTitle": "별빛이 전하는 우주의 역사",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/24번/analysis.html",
+    "vocab": [
+      {
+        "word": "stellar",
+        "pos": "adj.",
+        "meaning": "항성의, 별의",
+        "note": "star (별) 관련 형용사",
+        "syn": "",
+        "ant": "",
+        "etc": "star (별) 관련 형용사"
+      },
+      {
+        "word": "neighbour",
+        "pos": "n.",
+        "meaning": "이웃",
+        "note": "미국식 철자는 neighbor",
+        "syn": "",
+        "ant": "",
+        "etc": "미국식 철자는 neighbor"
+      },
+      {
+        "word": "incredible",
+        "pos": "adj.",
+        "meaning": "놀라운, 믿을 수 없는",
+        "note": "= amazing, astonishing",
+        "syn": "",
+        "ant": "",
+        "etc": "= amazing, astonishing"
+      },
+      {
+        "word": "collect",
+        "pos": "v.",
+        "meaning": "모으다, 수집하다",
+        "note": "빛을 모으다 (관측하다)",
+        "syn": "",
+        "ant": "",
+        "etc": "빛을 모으다 (관측하다)"
+      },
+      {
+        "word": "Betelgeuse",
+        "pos": "n.",
+        "meaning": "베텔게우스 (별 이름)",
+        "note": "오리온 자리의 적색거성",
+        "syn": "",
+        "ant": "",
+        "etc": "오리온 자리의 적색거성"
+      },
+      {
+        "word": "glow",
+        "pos": "v.",
+        "meaning": "빛나다, 발광하다",
+        "note": "은은하게 빛을 내다",
+        "syn": "",
+        "ant": "",
+        "etc": "은은하게 빛을 내다"
+      },
+      {
+        "word": "constellation",
+        "pos": "n.",
+        "meaning": "별자리",
+        "note": "Orion constellation = 오리온자리",
+        "syn": "",
+        "ant": "",
+        "etc": "Orion constellation = 오리온자리"
+      },
+      {
+        "word": "wind back",
+        "pos": "phr.",
+        "meaning": "되돌리다",
+        "note": "wind-wound-wound (감다, 되감다)",
+        "syn": "",
+        "ant": "",
+        "etc": "wind-wound-wound (감다, 되감다)"
+      },
+      {
+        "word": "reddish",
+        "pos": "adj.",
+        "meaning": "붉은빛을 띤",
+        "note": "-ish = 약간 ~한",
+        "syn": "",
+        "ant": "",
+        "etc": "-ish = 약간 ~한"
+      },
+      {
+        "word": "distant",
+        "pos": "adj.",
+        "meaning": "먼, 멀리 떨어진",
+        "note": "= far, remote",
+        "syn": "",
+        "ant": "",
+        "etc": "= far, remote"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "26",
+    "koTitle": "제이콥 로렌스의 예술 여정",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/26번/analysis.html",
+    "vocab": [
+      {
+        "word": "vivid",
+        "pos": "형용사",
+        "meaning": "생생한, 선명한",
+        "note": "vivid colors 선명한 색채",
+        "syn": "",
+        "ant": "",
+        "etc": "vivid colors 선명한 색채"
+      },
+      {
+        "word": "simplified",
+        "pos": "형용사",
+        "meaning": "단순화된",
+        "note": "동사 simplify의 과거분사",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 simplify의 과거분사"
+      },
+      {
+        "word": "widely",
+        "pos": "부사",
+        "meaning": "널리, 광범위하게",
+        "note": "wide의 부사형",
+        "syn": "",
+        "ant": "",
+        "etc": "wide의 부사형"
+      },
+      {
+        "word": "regard A as B",
+        "pos": "동사구",
+        "meaning": "A를 B로 여기다",
+        "note": "수동태: be regarded as",
+        "syn": "",
+        "ant": "",
+        "etc": "수동태: be regarded as"
+      },
+      {
+        "word": "masterpiece",
+        "pos": "명사",
+        "meaning": "걸작, 대표작",
+        "note": "master + piece",
+        "syn": "",
+        "ant": "",
+        "etc": "master + piece"
+      },
+      {
+        "word": "recognition",
+        "pos": "명사",
+        "meaning": "인정, 명성",
+        "note": "동사 recognize에서 파생",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 recognize에서 파생"
+      },
+      {
+        "word": "serve",
+        "pos": "동사",
+        "meaning": "복무하다, 봉사하다",
+        "note": "serve in the military 군 복무",
+        "syn": "",
+        "ant": "",
+        "etc": "serve in the military 군 복무"
+      },
+      {
+        "word": "honorary degree",
+        "pos": "명사구",
+        "meaning": "명예 학위",
+        "note": "실제 학업 없이 수여되는 학위",
+        "syn": "",
+        "ant": "",
+        "etc": "실제 학업 없이 수여되는 학위"
+      },
+      {
+        "word": "explore",
+        "pos": "동사",
+        "meaning": "탐구하다, 탐험하다",
+        "note": "명사형 exploration",
+        "syn": "",
+        "ant": "",
+        "etc": "명사형 exploration"
+      },
+      {
+        "word": "throughout",
+        "pos": "전치사",
+        "meaning": "~내내, ~동안 내내",
+        "note": "throughout one's lifetime 평생 동안",
+        "syn": "",
+        "ant": "",
+        "etc": "throughout one's lifetime 평생 동안"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "29",
+    "koTitle": "할인 쿠폰의 이중 기능",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/29번/analysis.html",
+    "vocab": [
+      {
+        "word": "renowned",
+        "pos": "형용사",
+        "meaning": "저명한, 유명한",
+        "note": "famous, celebrated",
+        "syn": "",
+        "ant": "",
+        "etc": "famous, celebrated"
+      },
+      {
+        "word": "assert",
+        "pos": "동사",
+        "meaning": "단언하다, 주장하다",
+        "note": "claim, declare",
+        "syn": "",
+        "ant": "",
+        "etc": "claim, declare"
+      },
+      {
+        "word": "civilization",
+        "pos": "명사",
+        "meaning": "문명",
+        "note": "culture, society",
+        "syn": "",
+        "ant": "",
+        "etc": "culture, society"
+      },
+      {
+        "word": "mechanically",
+        "pos": "부사",
+        "meaning": "기계적으로, 자동적으로",
+        "note": "automatically",
+        "syn": "",
+        "ant": "",
+        "etc": "automatically"
+      },
+      {
+        "word": "assumption",
+        "pos": "명사",
+        "meaning": "가정, 추정",
+        "note": "presupposition",
+        "syn": "",
+        "ant": "",
+        "etc": "presupposition"
+      },
+      {
+        "word": "substantial",
+        "pos": "형용사",
+        "meaning": "상당한, 실질적인",
+        "note": "considerable, significant",
+        "syn": "",
+        "ant": "",
+        "etc": "considerable, significant"
+      },
+      {
+        "word": "instructive",
+        "pos": "형용사",
+        "meaning": "교훈적인, 유익한",
+        "note": "informative, educational",
+        "syn": "",
+        "ant": "",
+        "etc": "informative, educational"
+      },
+      {
+        "word": "double duty",
+        "pos": "명사구",
+        "meaning": "이중 임무, 두 가지 역할",
+        "note": "두 가지 기능을 동시에 수행함",
+        "syn": "",
+        "ant": "",
+        "etc": "두 가지 기능을 동시에 수행함"
+      },
+      {
+        "word": "pocketbook strain",
+        "pos": "명사구",
+        "meaning": "재정적 부담",
+        "note": "경제적 압박",
+        "syn": "",
+        "ant": "",
+        "etc": "경제적 압박"
+      },
+      {
+        "word": "brain strain",
+        "pos": "명사구",
+        "meaning": "정신적 부담",
+        "note": "mental stress",
+        "syn": "",
+        "ant": "",
+        "etc": "mental stress"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "30",
+    "koTitle": "첨단 제품의 가격 탄력성",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/30번/analysis.html",
+    "vocab": [
+      {
+        "word": "price elasticity",
+        "pos": "명사구",
+        "meaning": "가격 탄력성",
+        "note": "가격 변동에 대한 수요의 민감도",
+        "syn": "",
+        "ant": "",
+        "etc": "가격 변동에 대한 수요의 민감도"
+      },
+      {
+        "word": "innovative",
+        "pos": "형용사",
+        "meaning": "혁신적인",
+        "note": "innovation(혁신)의 형용사형",
+        "syn": "",
+        "ant": "",
+        "etc": "innovation(혁신)의 형용사형"
+      },
+      {
+        "word": "variation",
+        "pos": "명사",
+        "meaning": "변동, 변화",
+        "note": "vary(변하다)의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "vary(변하다)의 명사형"
+      },
+      {
+        "word": "substitute",
+        "pos": "명사",
+        "meaning": "대체재, 대용품",
+        "note": "경제학 용어",
+        "syn": "",
+        "ant": "",
+        "etc": "경제학 용어"
+      },
+      {
+        "word": "forerunner",
+        "pos": "명사",
+        "meaning": "선구자, 선도자",
+        "note": "innovator와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "innovator와 유사"
+      },
+      {
+        "word": "deep pockets",
+        "pos": "관용구",
+        "meaning": "재력, 충분한 자금",
+        "note": "have deep pockets = 돈이 많다",
+        "syn": "",
+        "ant": "",
+        "etc": "have deep pockets = 돈이 많다"
+      },
+      {
+        "word": "outstanding",
+        "pos": "형용사",
+        "meaning": "뛰어난, 탁월한",
+        "note": "excellent, exceptional",
+        "syn": "",
+        "ant": "",
+        "etc": "excellent, exceptional"
+      },
+      {
+        "word": "whatsoever",
+        "pos": "부사",
+        "meaning": "조금도 (~않다)",
+        "note": "부정문 강조 (at all)",
+        "syn": "",
+        "ant": "",
+        "etc": "부정문 강조 (at all)"
+      },
+      {
+        "word": "perceive",
+        "pos": "동사",
+        "meaning": "인식하다, 지각하다",
+        "note": "perceive A as B: A를 B로 인식하다",
+        "syn": "",
+        "ant": "",
+        "etc": "perceive A as B: A를 B로 인식하다"
+      },
+      {
+        "word": "reinforce",
+        "pos": "동사",
+        "meaning": "강화하다, 보강하다",
+        "note": "strengthen, support",
+        "syn": "",
+        "ant": "",
+        "etc": "strengthen, support"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "31",
+    "koTitle": "도시 인프라의 적응력",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/31번/analysis.html",
+    "vocab": [
+      {
+        "word": "underappreciated",
+        "pos": "형용사",
+        "meaning": "과소평가된",
+        "note": "under- (덜) + appreciated",
+        "syn": "",
+        "ant": "",
+        "etc": "under- (덜) + appreciated"
+      },
+      {
+        "word": "future-proof",
+        "pos": "형용사",
+        "meaning": "미래에도 유효한, 미래 적응형",
+        "note": "시간이 지나도 쓸모 있는",
+        "syn": "",
+        "ant": "",
+        "etc": "시간이 지나도 쓸모 있는"
+      },
+      {
+        "word": "medieval",
+        "pos": "형용사",
+        "meaning": "중세의",
+        "note": "medieval times = 중세 시대",
+        "syn": "",
+        "ant": "",
+        "etc": "medieval times = 중세 시대"
+      },
+      {
+        "word": "infrastructure",
+        "pos": "명사",
+        "meaning": "인프라, 기반 시설",
+        "note": "infra- (아래) + structure",
+        "syn": "",
+        "ant": "",
+        "etc": "infra- (아래) + structure"
+      },
+      {
+        "word": "evolving",
+        "pos": "형용사/현재분사",
+        "meaning": "진화하는, 변화하는",
+        "note": "evolve (진화하다)의 현재분사",
+        "syn": "",
+        "ant": "",
+        "etc": "evolve (진화하다)의 현재분사"
+      },
+      {
+        "word": "prophet",
+        "pos": "명사",
+        "meaning": "예언자, 선구자",
+        "note": "여기서는 비유적 의미",
+        "syn": "",
+        "ant": "",
+        "etc": "여기서는 비유적 의미"
+      },
+      {
+        "word": "persistence",
+        "pos": "명사",
+        "meaning": "지속, 존속",
+        "note": "persist (지속하다) 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "persist (지속하다) 명사형"
+      },
+      {
+        "word": "buggy whip",
+        "pos": "명사구",
+        "meaning": "마차 채찍",
+        "note": "과거 상품의 예시",
+        "syn": "",
+        "ant": "",
+        "etc": "과거 상품의 예시"
+      },
+      {
+        "word": "bubble tea",
+        "pos": "명사구",
+        "meaning": "버블티",
+        "note": "현대 상품의 예시",
+        "syn": "",
+        "ant": "",
+        "etc": "현대 상품의 예시"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "32",
+    "koTitle": "접촉이 식물 성장을 억제하다",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/32번/analysis.html",
+    "vocab": [
+      {
+        "word": "genomics",
+        "pos": "명사",
+        "meaning": "유전체학",
+        "note": "genome(유전체) + -ics(학문)",
+        "syn": "",
+        "ant": "",
+        "etc": "genome(유전체) + -ics(학문)"
+      },
+      {
+        "word": "impactful",
+        "pos": "형용사",
+        "meaning": "영향력 있는, 큰 영향을 미치는",
+        "note": "impact + -ful",
+        "syn": "",
+        "ant": "",
+        "etc": "impact + -ful"
+      },
+      {
+        "word": "peer at",
+        "pos": "동사구",
+        "meaning": "~을 자세히 들여다보다",
+        "note": "유의어: examine closely",
+        "syn": "examine closely",
+        "ant": "",
+        "etc": ""
+      },
+      {
+        "word": "trigger",
+        "pos": "동사",
+        "meaning": "촉발하다, 유발하다",
+        "note": "cause, set off",
+        "syn": "",
+        "ant": "",
+        "etc": "cause, set off"
+      },
+      {
+        "word": "substantially",
+        "pos": "부사",
+        "meaning": "실질적으로, 상당히",
+        "note": "유의어: significantly, considerably",
+        "syn": "significantly, considerably",
+        "ant": "",
+        "etc": ""
+      },
+      {
+        "word": "inhibit",
+        "pos": "동사",
+        "meaning": "억제하다, 저해하다",
+        "note": "반의어: promote, enhance",
+        "syn": "",
+        "ant": "promote, enhance",
+        "etc": ""
+      },
+      {
+        "word": "genome",
+        "pos": "명사",
+        "meaning": "유전체, 게놈",
+        "note": "유전자(gene) 전체 집합",
+        "syn": "",
+        "ant": "",
+        "etc": "유전자(gene) 전체 집합"
+      },
+      {
+        "word": "reorganize",
+        "pos": "동사",
+        "meaning": "재편성하다, 재조직하다",
+        "note": "re-(다시) + organize",
+        "syn": "",
+        "ant": "",
+        "etc": "re-(다시) + organize"
+      },
+      {
+        "word": "disturbance",
+        "pos": "명사",
+        "meaning": "교란, 방해",
+        "note": "disturb(방해하다) + -ance",
+        "syn": "",
+        "ant": "",
+        "etc": "disturb(방해하다) + -ance"
+      },
+      {
+        "word": "reroute",
+        "pos": "동사",
+        "meaning": "경로를 변경하다, 재배치하다",
+        "note": "re-(다시) + route(경로)",
+        "syn": "",
+        "ant": "",
+        "etc": "re-(다시) + route(경로)"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "33",
+    "koTitle": "환경 변화와 진화의 추적",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/33번/analysis.html",
+    "vocab": [
+      {
+        "word": "standstill",
+        "pos": "n.",
+        "meaning": "정지, 중단",
+        "note": "come to a standstill: 멈추다",
+        "syn": "",
+        "ant": "",
+        "etc": "come to a standstill: 멈추다"
+      },
+      {
+        "word": "onset",
+        "pos": "n.",
+        "meaning": "시작, 발생",
+        "note": "특히 좋지 않은 일의 시작",
+        "syn": "",
+        "ant": "",
+        "etc": "특히 좋지 않은 일의 시작"
+      },
+      {
+        "word": "prevailing",
+        "pos": "adj.",
+        "meaning": "우세한, 지배적인",
+        "note": "prevailing wind: 탁월풍",
+        "syn": "",
+        "ant": "",
+        "etc": "prevailing wind: 탁월풍"
+      },
+      {
+        "word": "timescale",
+        "pos": "n.",
+        "meaning": "시간 척도, 기간",
+        "note": "evolutionary timescale: 진화적 시간 척도",
+        "syn": "",
+        "ant": "",
+        "etc": "evolutionary timescale: 진화적 시간 척도"
+      },
+      {
+        "word": "halt",
+        "pos": "n.",
+        "meaning": "정지, 중단",
+        "note": "come to a halt = stop",
+        "syn": "",
+        "ant": "",
+        "etc": "come to a halt = stop"
+      },
+      {
+        "word": "drift",
+        "pos": "n.",
+        "meaning": "추세, 경향; 표류",
+        "note": "downward drift: 하락 추세",
+        "syn": "",
+        "ant": "",
+        "etc": "downward drift: 하락 추세"
+      },
+      {
+        "word": "persist",
+        "pos": "v.",
+        "meaning": "지속하다, 계속되다",
+        "note": "persist over centuries: 수세기 동안 지속하다",
+        "syn": "",
+        "ant": "",
+        "etc": "persist over centuries: 수세기 동안 지속하다"
+      },
+      {
+        "word": "propel",
+        "pos": "v.",
+        "meaning": "추진하다, 나아가게 하다",
+        "note": "be propelled by: ~에 의해 추진되다",
+        "syn": "",
+        "ant": "",
+        "etc": "be propelled by: ~에 의해 추진되다"
+      },
+      {
+        "word": "reverse",
+        "pos": "v.",
+        "meaning": "역전시키다, 뒤바꾸다",
+        "note": "the trend reverses: 추세가 역전되다",
+        "syn": "",
+        "ant": "",
+        "etc": "the trend reverses: 추세가 역전되다"
+      },
+      {
+        "word": "creep up",
+        "pos": "phr.v.",
+        "meaning": "서서히 올라가다",
+        "note": "점진적 상승",
+        "syn": "",
+        "ant": "",
+        "etc": "점진적 상승"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "34",
+    "koTitle": "도심 노점의 경제 논리",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/34번/analysis.html",
+    "vocab": [
+      {
+        "word": "metropolitan",
+        "pos": "형용사",
+        "meaning": "대도시의",
+        "note": "metro(도시) 어원",
+        "syn": "",
+        "ant": "",
+        "etc": "metro(도시) 어원"
+      },
+      {
+        "word": "implication",
+        "pos": "명사",
+        "meaning": "영향, 함의",
+        "note": "has implications for ~에 영향을 미치다",
+        "syn": "",
+        "ant": "",
+        "etc": "has implications for ~에 영향을 미치다"
+      },
+      {
+        "word": "vending cart",
+        "pos": "명사",
+        "meaning": "노점 카트",
+        "note": "vend 판매하다",
+        "syn": "",
+        "ant": "",
+        "etc": "vend 판매하다"
+      },
+      {
+        "word": "entrepreneurial",
+        "pos": "형용사",
+        "meaning": "기업가의",
+        "note": "entrepreneur 기업가",
+        "syn": "",
+        "ant": "",
+        "etc": "entrepreneur 기업가"
+      },
+      {
+        "word": "intermediate goods",
+        "pos": "명사",
+        "meaning": "중간재",
+        "note": "최종 생산물을 만드는 데 쓰이는 재화",
+        "syn": "",
+        "ant": "",
+        "etc": "최종 생산물을 만드는 데 쓰이는 재화"
+      },
+      {
+        "word": "retail space",
+        "pos": "명사",
+        "meaning": "소매 공간",
+        "note": "retail 소매의, wholesale 도매의",
+        "syn": "",
+        "ant": "",
+        "etc": "retail 소매의, wholesale 도매의"
+      },
+      {
+        "word": "square foot",
+        "pos": "명사",
+        "meaning": "평방피트",
+        "note": "면적 단위, 약 0.09㎡",
+        "syn": "",
+        "ant": "",
+        "etc": "면적 단위, 약 0.09㎡"
+      },
+      {
+        "word": "permit",
+        "pos": "명사",
+        "meaning": "허가증",
+        "note": "동사로는 '허가하다'",
+        "syn": "",
+        "ant": "",
+        "etc": "동사로는 '허가하다'"
+      },
+      {
+        "word": "profit-maximizing",
+        "pos": "형용사",
+        "meaning": "이윤 극대화의",
+        "note": "maximize 극대화하다",
+        "syn": "",
+        "ant": "",
+        "etc": "maximize 극대화하다"
+      },
+      {
+        "word": "substitute A for B",
+        "pos": "동사구",
+        "meaning": "B 대신 A를 사용하다",
+        "note": "replace A with B와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "replace A with B와 유사"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "35",
+    "koTitle": "미술 작품 이해의 맥락적 접근",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/35번/analysis.html",
+    "vocab": [
+      {
+        "word": "go through",
+        "pos": "동사구",
+        "meaning": "겪다, 거치다",
+        "note": "과정을 경험하다",
+        "syn": "",
+        "ant": "",
+        "etc": "과정을 경험하다"
+      },
+      {
+        "word": "make sense of",
+        "pos": "동사구",
+        "meaning": "~을 이해하다",
+        "note": "understand",
+        "syn": "",
+        "ant": "",
+        "etc": "understand"
+      },
+      {
+        "word": "identify",
+        "pos": "동사",
+        "meaning": "식별하다, 확인하다",
+        "note": "recognize",
+        "syn": "",
+        "ant": "",
+        "etc": "recognize"
+      },
+      {
+        "word": "categorize",
+        "pos": "동사",
+        "meaning": "분류하다",
+        "note": "classify",
+        "syn": "",
+        "ant": "",
+        "etc": "classify"
+      },
+      {
+        "word": "clue",
+        "pos": "명사",
+        "meaning": "단서",
+        "note": "hint",
+        "syn": "",
+        "ant": "",
+        "etc": "hint"
+      },
+      {
+        "word": "context",
+        "pos": "명사",
+        "meaning": "맥락, 배경",
+        "note": "상황적 정보",
+        "syn": "",
+        "ant": "",
+        "etc": "상황적 정보"
+      },
+      {
+        "word": "interpret",
+        "pos": "동사",
+        "meaning": "해석하다",
+        "note": "explain the meaning",
+        "syn": "",
+        "ant": "",
+        "etc": "explain the meaning"
+      },
+      {
+        "word": "symbolize",
+        "pos": "동사",
+        "meaning": "상징하다",
+        "note": "represent",
+        "syn": "",
+        "ant": "",
+        "etc": "represent"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "36",
+    "koTitle": "사냥 성공과 여가의 탄생",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/36번/analysis.html",
+    "vocab": [
+      {
+        "word": "struggle",
+        "pos": "n.",
+        "meaning": "투쟁, 고투",
+        "note": "struggle to survive: 생존 투쟁",
+        "syn": "",
+        "ant": "",
+        "etc": "struggle to survive: 생존 투쟁"
+      },
+      {
+        "word": "take up",
+        "pos": "phr.v.",
+        "meaning": "차지하다, 점유하다",
+        "note": "use up: 소진하다",
+        "syn": "",
+        "ant": "",
+        "etc": "use up: 소진하다"
+      },
+      {
+        "word": "spare",
+        "pos": "adj.",
+        "meaning": "여분의, 남는",
+        "note": "time to spare: 여유 시간",
+        "syn": "",
+        "ant": "",
+        "etc": "time to spare: 여유 시간"
+      },
+      {
+        "word": "surplus",
+        "pos": "adj.",
+        "meaning": "잉여의, 과잉의",
+        "note": "surplus energy: 여분 에너지",
+        "syn": "",
+        "ant": "",
+        "etc": "surplus energy: 여분 에너지"
+      },
+      {
+        "word": "engage in",
+        "pos": "phr.v.",
+        "meaning": "~에 참여하다, 종사하다",
+        "note": "engage in play: 놀이에 참여하다",
+        "syn": "",
+        "ant": "",
+        "etc": "engage in play: 놀이에 참여하다"
+      },
+      {
+        "word": "evolve into",
+        "pos": "phr.v.",
+        "meaning": "~로 진화하다",
+        "note": "evolve: 진화하다, 발전하다",
+        "syn": "",
+        "ant": "",
+        "etc": "evolve: 진화하다, 발전하다"
+      },
+      {
+        "word": "brawn",
+        "pos": "n.",
+        "meaning": "근력, 완력",
+        "note": "brain not brawn: 완력이 아닌 두뇌",
+        "syn": "",
+        "ant": "",
+        "etc": "brain not brawn: 완력이 아닌 두뇌"
+      },
+      {
+        "word": "affluence",
+        "pos": "n.",
+        "meaning": "풍요, 부유함",
+        "note": "affluent: 부유한 (adj.)",
+        "syn": "",
+        "ant": "",
+        "etc": "affluent: 부유한 (adj.)"
+      },
+      {
+        "word": "plentiful",
+        "pos": "adj.",
+        "meaning": "풍부한, 많은",
+        "note": "plenty: 많음 (n.)",
+        "syn": "",
+        "ant": "",
+        "etc": "plenty: 많음 (n.)"
+      },
+      {
+        "word": "prosperity",
+        "pos": "n.",
+        "meaning": "번영, 번창",
+        "note": "prosperous: 번영하는 (adj.)",
+        "syn": "",
+        "ant": "",
+        "etc": "prosperous: 번영하는 (adj.)"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "37",
+    "koTitle": "공포와 언어 억제",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/37번/analysis.html",
+    "vocab": [
+      {
+        "word": "startle",
+        "pos": "동사",
+        "meaning": "깜짝 놀라게 하다",
+        "note": "surprise보다 갑작스러운 자극",
+        "syn": "",
+        "ant": "",
+        "etc": "surprise보다 갑작스러운 자극"
+      },
+      {
+        "word": "freeze",
+        "pos": "동사",
+        "meaning": "얼다, 멈추다",
+        "note": "동결 반응의 핵심 단어",
+        "syn": "",
+        "ant": "",
+        "etc": "동결 반응의 핵심 단어"
+      },
+      {
+        "word": "maximize",
+        "pos": "동사",
+        "meaning": "최대화하다",
+        "note": "반의어 minimize",
+        "syn": "",
+        "ant": "minimize",
+        "etc": ""
+      },
+      {
+        "word": "detection",
+        "pos": "명사",
+        "meaning": "탐지, 발견",
+        "note": "detect(동사) + -ion",
+        "syn": "",
+        "ant": "",
+        "etc": "detect(동사) + -ion"
+      },
+      {
+        "word": "sophisticated",
+        "pos": "형용사",
+        "meaning": "정교한, 세련된",
+        "note": "complex, advanced",
+        "syn": "",
+        "ant": "",
+        "etc": "complex, advanced"
+      },
+      {
+        "word": "give away",
+        "pos": "동사구",
+        "meaning": "드러내다, 누설하다",
+        "note": "reveal, expose",
+        "syn": "",
+        "ant": "",
+        "etc": "reveal, expose"
+      },
+      {
+        "word": "inhibition",
+        "pos": "명사",
+        "meaning": "억제, 금지",
+        "note": "inhibit(동사) + -ion",
+        "syn": "",
+        "ant": "",
+        "etc": "inhibit(동사) + -ion"
+      },
+      {
+        "word": "conserve",
+        "pos": "동사",
+        "meaning": "보존하다",
+        "note": "preserve, maintain",
+        "syn": "",
+        "ant": "",
+        "etc": "preserve, maintain"
+      },
+      {
+        "word": "chronic",
+        "pos": "형용사",
+        "meaning": "만성적인",
+        "note": "반의어 acute(급성의)",
+        "syn": "",
+        "ant": "acute(급성의)",
+        "etc": ""
+      },
+      {
+        "word": "interference",
+        "pos": "명사",
+        "meaning": "간섭, 방해",
+        "note": "interfere(동사) + -ence",
+        "syn": "",
+        "ant": "",
+        "etc": "interfere(동사) + -ence"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "38",
+    "koTitle": "폭력 게임과 공감 능력 감소",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/38번/analysis.html",
+    "vocab": [
+      {
+        "word": "with regard to",
+        "pos": "전치사구",
+        "meaning": "~에 관하여",
+        "note": "= concerning, regarding",
+        "syn": "",
+        "ant": "",
+        "etc": "= concerning, regarding"
+      },
+      {
+        "word": "longstanding",
+        "pos": "형용사",
+        "meaning": "오래 지속된",
+        "note": "long-standing으로도 표기",
+        "syn": "",
+        "ant": "",
+        "etc": "long-standing으로도 표기"
+      },
+      {
+        "word": "formulate",
+        "pos": "동사",
+        "meaning": "공식화하다, 체계화하다",
+        "note": "명사형 formulation",
+        "syn": "",
+        "ant": "",
+        "etc": "명사형 formulation"
+      },
+      {
+        "word": "physiological",
+        "pos": "형용사",
+        "meaning": "생리적인",
+        "note": "명사 physiology (생리학)",
+        "syn": "",
+        "ant": "",
+        "etc": "명사 physiology (생리학)"
+      },
+      {
+        "word": "arousal",
+        "pos": "명사",
+        "meaning": "각성, 자극",
+        "note": "동사 arouse (일으키다)",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 arouse (일으키다)"
+      },
+      {
+        "word": "blunted",
+        "pos": "형용사",
+        "meaning": "무딘, 둔화된",
+        "note": "동사 blunt (무디게 하다)",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 blunt (무디게 하다)"
+      },
+      {
+        "word": "desensitization",
+        "pos": "명사",
+        "meaning": "둔감화, 감각 둔화",
+        "note": "동사 desensitize, 반의어 sensitization",
+        "syn": "",
+        "ant": "sensitization",
+        "etc": ""
+      },
+      {
+        "word": "diminished",
+        "pos": "형용사",
+        "meaning": "감소된, 줄어든",
+        "note": "동사 diminish (감소시키다)",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 diminish (감소시키다)"
+      },
+      {
+        "word": "interfere with",
+        "pos": "동사구",
+        "meaning": "~을 방해하다",
+        "note": "명사형 interference",
+        "syn": "",
+        "ant": "",
+        "etc": "명사형 interference"
+      },
+      {
+        "word": "association",
+        "pos": "명사",
+        "meaning": "연관성, 관련",
+        "note": "동사 associate (연관시키다)",
+        "syn": "",
+        "ant": "",
+        "etc": "동사 associate (연관시키다)"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "39",
+    "koTitle": "목적 세탁의 함정",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/39번/analysis.html",
+    "vocab": [
+      {
+        "word": "differentiation",
+        "pos": "명사",
+        "meaning": "차별화",
+        "note": "경쟁사와 구별되는 특징",
+        "syn": "",
+        "ant": "",
+        "etc": "경쟁사와 구별되는 특징"
+      },
+      {
+        "word": "broadcast",
+        "pos": "동사",
+        "meaning": "널리 알리다, 방송하다",
+        "note": "announce publicly",
+        "syn": "",
+        "ant": "",
+        "etc": "announce publicly"
+      },
+      {
+        "word": "embrace",
+        "pos": "동사",
+        "meaning": "받아들이다, 포용하다",
+        "note": "accept willingly",
+        "syn": "",
+        "ant": "",
+        "etc": "accept willingly"
+      },
+      {
+        "word": "window-dressing",
+        "pos": "명사",
+        "meaning": "겉치레, 허식",
+        "note": "superficial display",
+        "syn": "",
+        "ant": "",
+        "etc": "superficial display"
+      },
+      {
+        "word": "purpose-washing",
+        "pos": "명사",
+        "meaning": "목적 세탁",
+        "note": "green-washing과 유사한 신조어",
+        "syn": "",
+        "ant": "",
+        "etc": "green-washing과 유사한 신조어"
+      },
+      {
+        "word": "charade",
+        "pos": "명사",
+        "meaning": "겉치레, 가식적 행위",
+        "note": "pretense, farce",
+        "syn": "",
+        "ant": "",
+        "etc": "pretense, farce"
+      },
+      {
+        "word": "lose out on",
+        "pos": "구동사",
+        "meaning": "~을 놓치다",
+        "note": "miss an opportunity",
+        "syn": "",
+        "ant": "",
+        "etc": "miss an opportunity"
+      },
+      {
+        "word": "positioning",
+        "pos": "명사",
+        "meaning": "포지셔닝, 시장 위치 설정",
+        "note": "마케팅 용어",
+        "syn": "",
+        "ant": "",
+        "etc": "마케팅 용어"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "40",
+    "koTitle": "음악 감정과 기대의 위반",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/40번/analysis.html",
+    "vocab": [
+      {
+        "word": "schema",
+        "pos": "n.",
+        "meaning": "도식, 스키마 (정신적 틀)",
+        "note": "복수형 schemas 또는 schemata",
+        "syn": "",
+        "ant": "",
+        "etc": "복수형 schemas 또는 schemata"
+      },
+      {
+        "word": "conform to",
+        "pos": "phr.",
+        "meaning": "~에 따르다, 순응하다",
+        "note": "반의어: deviate from",
+        "syn": "",
+        "ant": "deviate from",
+        "etc": ""
+      },
+      {
+        "word": "take liberties with",
+        "pos": "phr.",
+        "meaning": "~을 자유롭게 변형하다, 마음대로 다루다",
+        "note": "관용 표현",
+        "syn": "",
+        "ant": "",
+        "etc": "관용 표현"
+      },
+      {
+        "word": "metrical extraction",
+        "pos": "n.",
+        "meaning": "박자 추출",
+        "note": "음악 인지 과학 용어",
+        "syn": "",
+        "ant": "",
+        "etc": "음악 인지 과학 용어"
+      },
+      {
+        "word": "violation",
+        "pos": "n.",
+        "meaning": "위반, 일탈",
+        "note": "동사형: violate",
+        "syn": "",
+        "ant": "",
+        "etc": "동사형: violate"
+      },
+      {
+        "word": "domain",
+        "pos": "n.",
+        "meaning": "영역, 범위",
+        "note": "학술적 맥락에서 '분야'",
+        "syn": "",
+        "ant": "",
+        "etc": "학술적 맥락에서 '분야'"
+      },
+      {
+        "word": "pitch",
+        "pos": "n.",
+        "meaning": "음높이, 음조",
+        "note": "음악 용어",
+        "syn": "",
+        "ant": "",
+        "etc": "음악 용어"
+      },
+      {
+        "word": "tempo",
+        "pos": "n.",
+        "meaning": "템포, 속도",
+        "note": "이탈리아어 유래",
+        "syn": "",
+        "ant": "",
+        "etc": "이탈리아어 유래"
+      },
+      {
+        "word": "flat",
+        "pos": "adj.",
+        "meaning": "평평한, 단조로운",
+        "note": "감정이 없는",
+        "syn": "",
+        "ant": "",
+        "etc": "감정이 없는"
+      },
+      {
+        "word": "robotic",
+        "pos": "adj.",
+        "meaning": "로봇 같은, 기계적인",
+        "note": "robot + -ic",
+        "syn": "",
+        "ant": "",
+        "etc": "robot + -ic"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "42",
+    "koTitle": "기술 혁신과 석유 산업 변화",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/41~42번/analysis.html",
+    "vocab": [
+      {
+        "word": "internal combustion engine",
+        "pos": "명사구",
+        "meaning": "내연기관",
+        "note": "석유 기반 엔진",
+        "syn": "",
+        "ant": "",
+        "etc": "석유 기반 엔진"
+      },
+      {
+        "word": "efficient",
+        "pos": "형용사",
+        "meaning": "효율적인",
+        "note": "반의어: inefficient",
+        "syn": "",
+        "ant": "inefficient",
+        "etc": ""
+      },
+      {
+        "word": "fuel cell technology",
+        "pos": "명사구",
+        "meaning": "연료전지 기술",
+        "note": "물에서 에너지 생산",
+        "syn": "",
+        "ant": "",
+        "etc": "물에서 에너지 생산"
+      },
+      {
+        "word": "momentum",
+        "pos": "명사",
+        "meaning": "추진력, 탄력",
+        "note": "gain/receive momentum",
+        "syn": "",
+        "ant": "",
+        "etc": "gain/receive momentum"
+      },
+      {
+        "word": "prototype",
+        "pos": "명사",
+        "meaning": "시제품, 원형",
+        "note": "초기 모델",
+        "syn": "",
+        "ant": "",
+        "etc": "초기 모델"
+      },
+      {
+        "word": "breakthrough",
+        "pos": "명사",
+        "meaning": "돌파구, 획기적 발전",
+        "note": "make a breakthrough",
+        "syn": "",
+        "ant": "",
+        "etc": "make a breakthrough"
+      },
+      {
+        "word": "dramatically",
+        "pos": "부사",
+        "meaning": "극적으로, 급격하게",
+        "note": "형용사: dramatic",
+        "syn": "",
+        "ant": "",
+        "etc": "형용사: dramatic"
+      },
+      {
+        "word": "stand to lose",
+        "pos": "동사구",
+        "meaning": "~을 잃을 처지에 있다",
+        "note": "be likely to lose",
+        "syn": "",
+        "ant": "",
+        "etc": "be likely to lose"
+      },
+      {
+        "word": "diversify",
+        "pos": "동사",
+        "meaning": "다각화하다",
+        "note": "명사: diversification",
+        "syn": "",
+        "ant": "",
+        "etc": "명사: diversification"
+      },
+      {
+        "word": "urgently",
+        "pos": "부사",
+        "meaning": "긴급하게",
+        "note": "형용사: urgent",
+        "syn": "",
+        "ant": "",
+        "etc": "형용사: urgent"
+      }
+    ]
+  },
+  {
+    "level": "고2",
+    "label": "(고2) 2026 6월 모의고사",
+    "code": "45",
+    "koTitle": "편지가 피운 허브 정원",
+    "url": "https://gongwoojeong-edu.github.io/gwj-study/study/L09/고2_2026_모의고사/6월/43~45번/analysis.html",
+    "vocab": [
+      {
+        "word": "kindness project",
+        "pos": "명사구",
+        "meaning": "친절 프로젝트",
+        "note": "학교 봉사 활동의 일환",
+        "syn": "",
+        "ant": "",
+        "etc": "학교 봉사 활동의 일환"
+      },
+      {
+        "word": "elder",
+        "pos": "명사",
+        "meaning": "노인, 연장자",
+        "note": "senior와 유사",
+        "syn": "",
+        "ant": "",
+        "etc": "senior와 유사"
+      },
+      {
+        "word": "despite",
+        "pos": "전치사",
+        "meaning": "~에도 불구하고",
+        "note": "= in spite of, 뒤에 명사/동명사",
+        "syn": "",
+        "ant": "",
+        "etc": "= in spite of, 뒤에 명사/동명사"
+      },
+      {
+        "word": "conclude",
+        "pos": "동사",
+        "meaning": "마무리하다, 결론짓다",
+        "note": "conclusion (명사)",
+        "syn": "",
+        "ant": "",
+        "etc": "conclusion (명사)"
+      },
+      {
+        "word": "homemade",
+        "pos": "형용사",
+        "meaning": "집에서 만든, 수제의",
+        "note": "home + made 합성어",
+        "syn": "",
+        "ant": "",
+        "etc": "home + made 합성어"
+      },
+      {
+        "word": "remind",
+        "pos": "동사",
+        "meaning": "상기시키다",
+        "note": "remind A of B 구문",
+        "syn": "",
+        "ant": "",
+        "etc": "remind A of B 구문"
+      },
+      {
+        "word": "thrilled",
+        "pos": "형용사",
+        "meaning": "매우 흥분한, 감격한",
+        "note": "thrill (동사) '흥분시키다'",
+        "syn": "",
+        "ant": "",
+        "etc": "thrill (동사) '흥분시키다'"
+      },
+      {
+        "word": "brighten",
+        "pos": "동사",
+        "meaning": "밝게 하다, 기운 나게 하다",
+        "note": "brighten one's spirit '기분을 밝게 하다'",
+        "syn": "",
+        "ant": "",
+        "etc": "brighten one's spirit '기분을 밝게 하다'"
+      },
+      {
+        "word": "rosemary",
+        "pos": "명사",
+        "meaning": "로즈마리 (허브)",
+        "note": "향긋한 요리용 허브",
+        "syn": "",
+        "ant": "",
+        "etc": "향긋한 요리용 허브"
+      },
+      {
+        "word": "reminder",
+        "pos": "명사",
+        "meaning": "상기시키는 것, 알림",
+        "note": "remind의 명사형",
+        "syn": "",
+        "ant": "",
+        "etc": "remind의 명사형"
+      }
+    ]
+  }
+]
