@@ -160,21 +160,23 @@ const totalPoints = items.reduce((n, it) => n + it.grammar.length, 0);
 const today = new Date();
 const dateStr = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
-// 시리즈 1개 -> HTML(볼륨별 카드) + 지문 수
-function buildSeries(series) {
-  const volMap = seriesMap.get(series);
-  let seriesPassages = 0;
-  let volHtml = '';
-  for (const [vol, arr] of volMap.entries()) {
-    seriesPassages += arr.length;
-    let cards = '';
-    for (const it of arr) {
-      const lis = it.grammar.map((g) => `<li>${safeInline(g)}</li>`).join('');
-      const codeLabel = it.itemCode ? `${esc(it.itemCode)}` : '';
-      const titleLink = it.url
-        ? `<a class="passage-link" href="${esc(it.url)}" target="_blank" rel="noopener">분석교안 ↗</a>`
-        : '';
-      cards += `
+// 볼륨 정렬용 숫자 추출 ("3월"->3, "1강"->1, "제1회"->1)
+const volNum = (v) => {
+  const m = String(v).match(/\d+/);
+  return m ? parseInt(m[0], 10) : 9999;
+};
+
+let sid = 0; // 시리즈 고유 id (탭 스코프용)
+
+function renderCards(arr) {
+  let cards = '';
+  for (const it of arr) {
+    const lis = it.grammar.map((g) => `<li>${safeInline(g)}</li>`).join('');
+    const codeLabel = it.itemCode ? `${esc(it.itemCode)}` : '';
+    const titleLink = it.url
+      ? `<a class="passage-link" href="${esc(it.url)}" target="_blank" rel="noopener">분석교안 ↗</a>`
+      : '';
+    cards += `
         <div class="passage" data-search="${esc((it.titleKo + ' ' + it.expectedTitle + ' ' + it.grammar.join(' ')).toLowerCase())}">
           <div class="passage-head">
             <span class="code-badge">${codeLabel}</span>
@@ -186,22 +188,56 @@ function buildSeries(series) {
           </div>
           <ul class="grammar-list">${lis}</ul>
         </div>`;
-    }
-    volHtml += `
-      <div class="volume">
-        ${vol ? `<h4 class="volume-title">${esc(vol)}</h4>` : ''}
-        ${cards}
-      </div>`;
   }
-  return {
-    passages: seriesPassages,
-    html: `
-      <section class="series">
+  return cards;
+}
+
+// 시리즈 1개 -> HTML(볼륨 탭) + 지문 수
+function buildSeries(series) {
+  const volMap = seriesMap.get(series);
+  const vols = [...volMap.entries()].sort((a, b) => volNum(a[0]) - volNum(b[0]) || String(a[0]).localeCompare(String(b[0])));
+  const seriesPassages = vols.reduce((n, [, arr]) => n + arr.length, 0);
+  const id = `s${sid++}`;
+
+  // 볼륨이 1개이고 이름이 없으면 탭 없이 카드만
+  const single = vols.length === 1 && !vols[0][0];
+  if (single) {
+    return {
+      passages: seriesPassages,
+      html: `
+      <section class="series" data-active-vol="0">
         <div class="series-head">
           <h3>${esc(series)}</h3>
           <span class="series-count">지문 ${seriesPassages}개</span>
         </div>
-        ${volHtml}
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">${renderCards(vols[0][1])}</div>
+        </div>
+      </section>`,
+    };
+  }
+
+  let tabs = '';
+  let panels = '';
+  vols.forEach(([vol, arr], i) => {
+    tabs += `<button class="vol-tab${i === 0 ? ' active' : ''}" data-vol="${i}">${esc(vol || '기타')}<span class="vol-tab-n">${arr.length}</span></button>`;
+    panels += `
+          <div class="vol-panel" data-vol="${i}"${i === 0 ? '' : ' hidden'}>
+            <h4 class="vol-print-label">${esc(vol || '기타')}</h4>
+            ${renderCards(arr)}
+          </div>`;
+  });
+
+  return {
+    passages: seriesPassages,
+    html: `
+      <section class="series" data-series-id="${id}" data-active-vol="0">
+        <div class="series-head">
+          <h3>${esc(series)}</h3>
+          <span class="series-count">지문 ${seriesPassages}개</span>
+        </div>
+        <div class="vol-tabs" role="tablist">${tabs}</div>
+        <div class="vol-panels">${panels}</div>
       </section>`,
   };
 }
@@ -283,6 +319,14 @@ const html = `<!doctype html>
   .series-count{font-size:12px;color:var(--muted);background:var(--brand-bg);padding:2px 10px;border-radius:12px}
   .volume{margin-bottom:18px}
   .volume-title{font-size:13.5px;color:var(--text);font-weight:700;margin:14px 0 10px;padding-left:9px;border-left:3px solid var(--brand)}
+  .vol-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px;border-bottom:1px solid var(--border);padding-bottom:0}
+  .vol-tab{position:relative;display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:1px solid var(--border);border-bottom:none;background:#f3f1ea;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;border-radius:9px 9px 0 0;font-family:inherit;margin-bottom:-1px}
+  .vol-tab:hover{color:var(--brand-dark);background:var(--brand-bg)}
+  .vol-tab.active{background:#fff;color:var(--brand-dark);border-color:var(--border);border-bottom:1px solid #fff}
+  .vol-tab-n{font-size:10.5px;font-weight:700;background:var(--brand-light);color:var(--brand-dark);padding:1px 7px;border-radius:9px}
+  .vol-tab.active .vol-tab-n{background:var(--brand);color:#fff}
+  .vol-print-label{display:none}
+  .vol-panel[hidden]{display:none}
   .passage{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 18px;margin-bottom:11px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
   .passage-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
   .code-badge{background:var(--brand);color:#fff;font-size:12px;font-weight:700;padding:3px 11px;border-radius:7px;white-space:nowrap}
@@ -304,6 +348,9 @@ const html = `<!doctype html>
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
     .series{break-inside:auto}
+    .vol-tabs{display:none!important}
+    .vol-panel[hidden]{display:block!important}
+    .vol-print-label{display:block;font-size:13.5px;color:var(--text);font-weight:700;margin:14px 0 10px;padding-left:9px;border-left:3px solid var(--brand)}
     .category-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:avoid}
     .watermark{opacity:.05;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     @page{size:A4;margin:14mm}
@@ -341,24 +388,47 @@ const html = `<!doctype html>
   const filterBtns = document.querySelectorAll('.filter-btn');
   let activeSeries = 'all';
 
+  function syncTabs(series, q){
+    const tabs=[...series.querySelectorAll('.vol-tab')];
+    const panels=[...series.querySelectorAll('.vol-panel')];
+    if(!tabs.length){ // 단일 패널(탭 없음)
+      panels.forEach(p=>{p.hidden=false;});
+      return;
+    }
+    if(q){
+      // 검색 중: 매칭 있는 모든 볼륨 패널/탭 표시
+      panels.forEach(p=>{ p.hidden = (+p.dataset.mc||0)===0; });
+      tabs.forEach(t=>{
+        const panel=panels.find(p=>p.dataset.vol===t.dataset.vol);
+        t.style.display=(panel && (+panel.dataset.mc||0)>0)?'':'none';
+      });
+    }else{
+      // 평상시: 활성 탭만
+      const active=series.dataset.activeVol||'0';
+      panels.forEach(p=>{ p.hidden = p.dataset.vol!==active; });
+      tabs.forEach(t=>{ t.style.display=''; t.classList.toggle('active', t.dataset.vol===active); });
+    }
+  }
+
   function apply(){
     const q = search.value.trim().toLowerCase();
     let visible = 0;
     document.querySelectorAll('.category').forEach(cat=>{
       const matchCat = activeSeries==='all' || cat.dataset.category===activeSeries;
       let catVisible = 0;
-      cat.querySelectorAll('.passage').forEach(p=>{
-        const hit = matchCat && (!q || p.dataset.search.includes(q));
-        p.style.display = hit ? '' : 'none';
-        if(hit){catVisible++;visible++;}
-      });
-      cat.querySelectorAll('.volume').forEach(v=>{
-        const any=[...v.querySelectorAll('.passage')].some(p=>p.style.display!=='none');
-        v.style.display=any?'':'none';
-      });
-      cat.querySelectorAll('.series').forEach(s=>{
-        const any=[...s.querySelectorAll('.passage')].some(p=>p.style.display!=='none');
-        s.style.display=any?'':'none';
+      cat.querySelectorAll('.series').forEach(series=>{
+        let seriesVisible=0;
+        series.querySelectorAll('.vol-panel').forEach(panel=>{
+          let mc=0;
+          panel.querySelectorAll('.passage').forEach(p=>{
+            const hit = matchCat && (!q || p.dataset.search.includes(q));
+            p.style.display = hit ? '' : 'none';
+            if(hit){mc++;seriesVisible++;catVisible++;visible++;}
+          });
+          panel.dataset.mc=mc;
+        });
+        syncTabs(series, q);
+        series.style.display = (matchCat && seriesVisible>0) ? '' : 'none';
       });
       cat.style.display = (matchCat && catVisible>0) ? '' : 'none';
     });
@@ -371,6 +441,14 @@ const html = `<!doctype html>
     activeSeries=b.dataset.target;
     apply();
   }));
+  // 볼륨 탭 전환
+  document.querySelectorAll('.vol-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const series=tab.closest('.series');
+      series.dataset.activeVol=tab.dataset.vol;
+      if(!search.value.trim()) syncTabs(series, '');
+    });
+  });
 </script>
 </body>
 </html>`;

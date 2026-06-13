@@ -47,6 +47,14 @@
   .series-count{font-size:12px;color:var(--muted);background:var(--brand-bg);padding:2px 10px;border-radius:12px}
   .volume{margin-bottom:18px}
   .volume-title{font-size:13.5px;color:var(--text);font-weight:700;margin:14px 0 10px;padding-left:9px;border-left:3px solid var(--brand)}
+  .vol-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px;border-bottom:1px solid var(--border);padding-bottom:0}
+  .vol-tab{position:relative;display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:1px solid var(--border);border-bottom:none;background:#f3f1ea;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;border-radius:9px 9px 0 0;font-family:inherit;margin-bottom:-1px}
+  .vol-tab:hover{color:var(--brand-dark);background:var(--brand-bg)}
+  .vol-tab.active{background:#fff;color:var(--brand-dark);border-color:var(--border);border-bottom:1px solid #fff}
+  .vol-tab-n{font-size:10.5px;font-weight:700;background:var(--brand-light);color:var(--brand-dark);padding:1px 7px;border-radius:9px}
+  .vol-tab.active .vol-tab-n{background:var(--brand);color:#fff}
+  .vol-print-label{display:none}
+  .vol-panel[hidden]{display:none}
   .passage{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 18px;margin-bottom:11px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
   .passage-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
   .code-badge{background:var(--brand);color:#fff;font-size:12px;font-weight:700;padding:3px 11px;border-radius:7px;white-space:nowrap}
@@ -68,6 +76,9 @@
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
     .series{break-inside:auto}
+    .vol-tabs{display:none!important}
+    .vol-panel[hidden]{display:block!important}
+    .vol-print-label{display:block;font-size:13.5px;color:var(--text);font-weight:700;margin:14px 0 10px;padding-left:9px;border-left:3px solid var(--brand)}
     .category-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:avoid}
     .watermark{opacity:.05;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     @page{size:A4;margin:14mm}
@@ -102,15 +113,16 @@
         <span class="category-count">4개 자료 · 지문 104개</span>
       </div>
       
-      <section class="series">
+      <section class="series" data-series-id="s0" data-active-vol="0">
         <div class="series-head">
           <h3>(고1) 2026 올림포스기출</h3>
           <span class="series-count">지문 70개</span>
         </div>
-        
-      <div class="volume">
-        <h4 class="volume-title">1강</h4>
-        
+        <div class="vol-tabs" role="tablist"><button class="vol-tab active" data-vol="0">1강<span class="vol-tab-n">13</span></button><button class="vol-tab" data-vol="1">2강<span class="vol-tab-n">12</span></button><button class="vol-tab" data-vol="2">3강<span class="vol-tab-n">13</span></button><button class="vol-tab" data-vol="3">4강<span class="vol-tab-n">12</span></button><button class="vol-tab" data-vol="4">5강<span class="vol-tab-n">12</span></button><button class="vol-tab" data-vol="5">17강<span class="vol-tab-n">4</span></button><button class="vol-tab" data-vol="6">18강<span class="vol-tab-n">4</span></button></div>
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">
+            <h4 class="vol-print-label">1강</h4>
+            
         <div class="passage" data-search="도서관 운영 시간 연장 요청 a formal request for extended library hours 관계대명사 계속적 용법: 'which many students feel limits'에서 which는 앞 절 전체를 받음 5형식(ask + 목적어 + to부정사): 'ask you to extend'는 '당신에게 연장할 것을 요청하다' 전치사 + 동명사: 'by providing', 'toward improving'처럼 전치사 뒤에는 동명사 현재분사구 후치수식: 'those preparing for / working on'에서 분사구가 those를 수식">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -254,10 +266,10 @@
           </div>
           <ul class="grammar-list"><li>make + 목적어 + 형용사: 'make the community dog-friendly'에서 목적격 보어로 형용사 사용</li><li>수동태 + to부정사: 'was designed to provide'는 목적을 나타내는 수동 구문</li><li>관계부사 where: 'areas where dogs can run'에서 장소 선행사 수식</li><li>to부정사의 부사적 용법: 'to ensure safety'는 목적을 나타냄</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">2강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="1" hidden>
+            <h4 class="vol-print-label">2강</h4>
+            
         <div class="passage" data-search="오디션 합격의 기쁨 a rush of excitement: my first musical role 'that meant (that) ~' 명사절: 'that'은 앞 문장 전체를 받는 지시대명사 분사구문 (chewing ~, jiggling ~): 동시 동작을 나타내는 현재분사 지각동사 5형식 'heard him say': hear + 목적어 + 동사원형 시간 부사절 'as ~' + 과거진행형: '~했을 때 막 ~하고 있었다' 분사구문 knowing + 명사절: 이유를 나타냄 복합관계대명사 'whatever happened': '무슨 일이 있더라도'">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -390,10 +402,10 @@
           </div>
           <ul class="grammar-list"><li>No matter how hard ~ : 양보절 '아무리 ~해도'</li><li>would not be able to : 과거 시점 미래 추측 부정</li><li>Thinking ~, S V : 분사구문 (동시 상황)</li><li>After 동명사 : '~한 후에' 시간 표현</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">3강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="2" hidden>
+            <h4 class="vol-print-label">3강</h4>
+            
         <div class="passage" data-search="수업 시작 10분의 힘 the power of the opening minutes: establishing an effective class routine 조건절 if + 주절 구조 (문장②⑤) can use a or can choose b (선택 제시, 문장③) to부정사의 목적 용법 (to get, to make, to develop) 관용 표현: overlook, set the tone, get off to a start">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -537,10 +549,10 @@
           </div>
           <ul class="grammar-list"><li>과거완료 진행: 'had been looking forward to' - 과거 시점 이전부터 계속된 기대</li><li>지각동사 + 명사절: 'could feel (that) those experiences were close' - that 생략 가능</li><li>분사구문 (이유): 'knowing she could not board' - because she knew의 축약</li><li>병렬 구조: 'visit museums and see the Eiffel Tower' - to부정사 병렬 연결</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">4강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="3" hidden>
+            <h4 class="vol-print-label">4강</h4>
+            
         <div class="passage" data-search="우주를 순환하는 원자 the recycling of atoms: we are temporary caretakers 원급 비교 (as old as): 'as + 원급 + as' 구문, nearly 등 정도 부사로 수식 가능 부분 부정 (only some of): 전체가 아닌 일부만을 나타내는 표현 관계대명사 that: 선행사 atoms를 수식하는 주격·목적격 관계대명사절 현재완료 (have existed since): 과거부터 현재까지 계속된 상태, since로 시작점 표시">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -673,10 +685,10 @@
           </div>
           <ul class="grammar-list"><li>분사구문 while teaching → 동시 동작 표현</li><li>의문사절 how long I hold it → 간접의문문 어순</li><li>the 비교급, the 비교급 → '~할수록 더 ~하다' 비례 구문</li><li>가주어 it's time to ~ → 진주어는 to부정사</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">5강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="4" hidden>
+            <h4 class="vol-print-label">5강</h4>
+            
         <div class="passage" data-search="원예의 이중 건강 효과 gardening: a path to physical and mental well-being 'help + 동사원형' 구조 (③번 help improve) 'find + 목적어 + 형용사(목적격보어)' 5형식 (⑤번 find traditional exercise challenging) 결과를 나타내는 분사구문 (⑥번 making it accessible, ⑨번 reducing stress) 현재완료 'have shown that절'로 연구 결과 제시 (⑪번)">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -809,10 +821,10 @@
           </div>
           <ul class="grammar-list"><li>과거분사 called을 이용한 동격 표현 (연구 제목 설명)</li><li>분사구문 Being overstimulated (원인 표현)</li><li>가주어 it - 진주어 to find 구문</li><li>in order to 부정사 (목적 표현)</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">17강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="5" hidden>
+            <h4 class="vol-print-label">17강</h4>
+            
         <div class="passage" data-search="비선형 편집의 자유 the freedom of nonlinear editing: random access and easy modification 관계대명사 that: 'systems that allow', 'process that makes' — 선행사를 수식하는 주격 관계대명사 5형식 make: 'make it easy for a to v' — it은 가목적어, to부정사가 진목적어, easy는 목적격보어 without ~ing: 'without having to v' — 전치사 without + 동명사, '~할 필요 없이'의 의미 조동사 + 수동태: 'can be added or removed', 'had to be retyped' — 가능성·의무와 수동의 결합">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -857,10 +869,10 @@
           </div>
           <ul class="grammar-list"><li>관계대명사 that: 'accounts that float', 'branch that is devoted', 'principles that generate' 등 선행사 수식</li><li>동격 콜론(:): 'understanding people: how and why...' 앞 내용을 구체적으로 설명</li><li>be devoted to -ing: 'devoted to understanding people' 전치사 to 뒤 동명사</li><li>부정 병렬: 'don't depend on A, or B, or even C' 세 가지 비과학적 근거 나열</li><li>목적 부정사: 'to make sure that~' 증거를 찾는 목적 표현</li><li>what 관계대명사: 'what modern psychology is all about' 선행사 포함, '~인 것'</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">18강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="6" hidden>
+            <h4 class="vol-print-label">18강</h4>
+            
         <div class="passage" data-search="기능적 선입견과 시각 왜곡 vision biased by functional relationships: beyond camera-like perception 수동태: 'is influenced by' - 행위자 강조 관계대명사 that: 선행사 수식 ('hierarchies that reflect', 'expectations that interfere') tend to 부정사: ~하는 경향이 있다 because 이유절: 인과 관계 명확화 as seen from: 과거분사구 (보이는 대로) so that 결과절: ~하도록">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -905,17 +917,18 @@
           </div>
           <ul class="grammar-list"><li>동격 dash 용법: 'Capuchins ─ New World Monkeys that...' (삽입 설명)</li><li>독립분사구문: 'grapes being universally preferred' (주절과 주어가 다름)</li><li>양보절 Even though + 주제문 구조 (절대적 상황은 불변이지만 상대적 비교로 인식 변화)</li><li>be willing to 동사원형: 기꺼이 ~하다 (자발적 의지)</li></ul>
         </div>
-      </div>
+          </div></div>
       </section>
-      <section class="series">
+      <section class="series" data-series-id="s1" data-active-vol="0">
         <div class="series-head">
           <h3>(고1) 올림포스영어독해기본1</h3>
           <span class="series-count">지문 12개</span>
         </div>
-        
-      <div class="volume">
-        <h4 class="volume-title">2강</h4>
-        
+        <div class="vol-tabs" role="tablist"><button class="vol-tab active" data-vol="0">2강<span class="vol-tab-n">4</span></button><button class="vol-tab" data-vol="1">3강<span class="vol-tab-n">4</span></button><button class="vol-tab" data-vol="2">4강<span class="vol-tab-n">4</span></button></div>
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">
+            <h4 class="vol-print-label">2강</h4>
+            
         <div class="passage" data-search="공포 끝의 안도 a terrifying wake-up call turned into relief 수동태: 'was awakened by something banging' — 감각의 수동적 경험 과거진행형: 'was getting louder' — 공포 심화 과정 관계대명사 that: 'the terror that was inching its way' — 공포의 구체화 비교급 강조: 'had ever been gladder' — 최상급 의미의 비교급 표현">
           <div class="passage-head">
             <span class="code-badge">2</span>
@@ -960,10 +973,10 @@
           </div>
           <ul class="grammar-list"><li>hardly는 부정 부사로 '거의 ~않다'를 의미하며, 준부정어로 분류됨</li><li>not ~ until 구문: '~하고 나서야 비로소'를 강조하는 시간 표현</li><li>지각동사 saw + 목적어 + ~ing: '~이 하고 있는 것을 보다'</li><li>과거완료 (had been signed): 과거 시점 이전에 완료된 행위 표현</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">3강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="1" hidden>
+            <h4 class="vol-print-label">3강</h4>
+            
         <div class="passage" data-search="전문성과 창의성의 역설 the expert myth: when expertise hinders creativity 'the more~, the more...' 비교급 상관구문 (①) 'that' 동격절 vs 목적어절 구분 (①②④) 'as' 시간 접속사 '~함에 따라' (⑤) '형용사의 명사화' the obvious (⑥)">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -1008,10 +1021,10 @@
           </div>
           <ul class="grammar-list"><li>가주어 it - 진주어 that 구문: 'it is essential that you listen well'</li><li>suggest that 주어 (should) 동사원형: 제안·당위 표현</li><li>to부정사의 명사적 용법: 'Your job is to facilitate'</li><li>no matter how 양보절: '아무리 ~해도'</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">4강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="2" hidden>
+            <h4 class="vol-print-label">4강</h4>
+            
         <div class="passage" data-search="사회적 행동의 본질 the social nature of our actions 가정법 과거: 'as though they were'는 사실과 다른 가정을 나타냄 관계대명사 that: 'something that prompts', 'actions that help' 등 선행사 수식 so~that 구문: 'in such an easy way that we indulge'는 결과를 나타냄 원급 비교: 'as familiar to others as (they are) to us'에서 반복 생략">
           <div class="passage-head">
             <span class="code-badge">1</span>
@@ -1056,17 +1069,18 @@
           </div>
           <ul class="grammar-list"><li>Nothing ~ But 구문: 전면 부정 후 강한 대조</li><li>동명사 주어 'retaining ~' + 'not only A but B' 상관접속사</li><li>최상급 'the strongest / the highest' 비교 강조</li><li>조건절 'If ~' + 명령문 'burn / save' 은유적 표현</li></ul>
         </div>
-      </div>
+          </div></div>
       </section>
-      <section class="series">
+      <section class="series" data-series-id="s2" data-active-vol="0">
         <div class="series-head">
           <h3>(고2) 2026 수특라이트</h3>
           <span class="series-count">지문 3개</span>
         </div>
-        
-      <div class="volume">
-        <h4 class="volume-title">2강</h4>
-        
+        <div class="vol-tabs" role="tablist"><button class="vol-tab active" data-vol="0">2강<span class="vol-tab-n">1</span></button><button class="vol-tab" data-vol="1">6강<span class="vol-tab-n">2</span></button></div>
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">
+            <h4 class="vol-print-label">2강</h4>
+            
         <div class="passage" data-search="문화유산과 에너지 효율 balancing heritage preservation and energy efficiency not only a but also b 구조에서 병렬 요소 확인 subject to 뒤에는 명사(구)가 온다 need not 뒤에는 동사원형 (be동사도 원형) 관계대명사 that 선행사와 수 일치 (buildings that are)">
           <div class="passage-head">
             <span class="code-badge">2</span>
@@ -1078,10 +1092,10 @@
           </div>
           <ul class="grammar-list"><li>not only A but also B 구조에서 병렬 요소 확인</li><li>subject to 뒤에는 명사(구)가 온다</li><li>need not 뒤에는 동사원형 (be동사도 원형)</li><li>관계대명사 that 선행사와 수 일치 (buildings that are)</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">6강</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="1" hidden>
+            <h4 class="vol-print-label">6강</h4>
+            
         <div class="passage" data-search="작가 계층의 변천사 the transformation of writers: from noble scholars to professional writers 콜론(:)을 이용한 동격 설명: 'nobles: gentlemen-scholars'처럼 앞 명사를 뒤에서 구체화 병렬 비교급: 'less likely to... and more likely to...'로 대조적 경향 제시 not only a but also b: 'not only belletrists but also hack journalists...'로 범위 확장 this means that 절: 앞 내용을 종합하여 결론을 도출하는 구문">
           <div class="passage-head">
             <span class="code-badge">2</span>
@@ -1104,17 +1118,18 @@
           </div>
           <ul class="grammar-list"><li>콜론(:) 동격 — 'nobles: gentlemen-scholars' 구체화 설명</li><li>not only A but also B 병렬 — 'belletrists but also journalists, writers, and bohemians' 3개 명사 병렬</li><li>비교급 병렬 — 'less likely to possess ~ and more likely to be restricted' 대조적 경향</li><li>양보절 although — 'although some were elite, an increasing number earned' 대조</li></ul>
         </div>
-      </div>
+          </div></div>
       </section>
-      <section class="series">
+      <section class="series" data-series-id="s3" data-active-vol="0">
         <div class="series-head">
           <h3>(고2) 2026 해커스수능독해불변의법칙</h3>
           <span class="series-count">지문 19개</span>
         </div>
-        
-      <div class="volume">
-        <h4 class="volume-title">제1회</h4>
-        
+        <div class="vol-tabs" role="tablist"><button class="vol-tab active" data-vol="0">제1회<span class="vol-tab-n">19</span></button></div>
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">
+            <h4 class="vol-print-label">제1회</h4>
+            
         <div class="passage" data-search="무료 의류 재활용 수업 안내 invitation to free weekly upcycling classes 'have prided ourselves on ~ing' 현재완료로 과거부터 현재까지의 지속적 자부심 표현 'not only a but also b' 병렬 구조, 동사 gain과 help가 대등하게 연결 'which is why ~' 관계대명사 계속적 용법으로 앞 문장 전체를 선행사로 받음 'how to + 동사원형' 의문사+to부정사로 명사절(간접의문문) 역할">
           <div class="passage-head">
             <span class="code-badge">18</span>
@@ -1324,7 +1339,7 @@
           </div>
           <ul class="grammar-list"><li>관계대명사 who: 'students who were identified'는 주격 관계대명사절로 선행사 students 수식</li><li>의문사절 what: 'what is desirable', 'what is considered'는 명사절로 동사의 목적어 역할</li><li>조동사 might: 'might play'는 가능성·추측을 나타내며 과거 시점의 예측 표현</li><li>분사구문 demonstrating: 결과를 나타내는 현재분사로, 주절의 결과를 부연 설명</li></ul>
         </div>
-      </div>
+          </div></div>
       </section>
     </div>
     <div class="category" data-category="모의고사 지문">
@@ -1333,15 +1348,16 @@
         <span class="category-count">2개 자료 · 지문 84개</span>
       </div>
       
-      <section class="series">
+      <section class="series" data-series-id="s4" data-active-vol="0">
         <div class="series-head">
           <h3>(고1) 2026 모의고사</h3>
           <span class="series-count">지문 44개</span>
         </div>
-        
-      <div class="volume">
-        <h4 class="volume-title">3월</h4>
-        
+        <div class="vol-tabs" role="tablist"><button class="vol-tab active" data-vol="0">3월<span class="vol-tab-n">22</span></button><button class="vol-tab" data-vol="1">6월<span class="vol-tab-n">22</span></button></div>
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">
+            <h4 class="vol-print-label">3월</h4>
+            
         <div class="passage" data-search="탁구 센터 재개장 연기 안내 notice of delayed reopening: table tennis center 'thank you for + 명사/동명사' 구조 (감사 표현) 'regret to inform you that절' (유감 통지 격식 표현) 'cause + 목적어 + to부정사' (5형식 사역동사) 'look forward to + 동명사' (to는 전치사)">
           <div class="passage-head">
             <span class="code-badge">18</span>
@@ -1584,10 +1600,10 @@
           </div>
           <ul class="grammar-list"><li>hope to 부정사 — 'he hoped to give it to someone'</li><li>관계대명사 what — 'what he had' (선행사 포함)</li><li>지각동사 + 목적어 + 현재분사 — 'see you preparing for war'</li><li>사역동사 make + 목적어 + 원형 — 'made him forget the value'</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">6월</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="1" hidden>
+            <h4 class="vol-print-label">6월</h4>
+            
         <div class="passage" data-search="도서 기부 행사 안내 invitation to book donation drive be pleased to v: '기꺼이 ~하다' (공손한 초대 표현) to부정사의 목적 용법: 'to support our reading programs' (목적) help o v(원형): 'help young readers discover' (사역동사) 가정법 공손 표현: 'would be grateful if you could' (정중한 요청)">
           <div class="passage-head">
             <span class="code-badge">18</span>
@@ -1830,17 +1846,18 @@
           </div>
           <ul class="grammar-list"><li>감정 동사 패턴: feel/get + 형용사 (felt jealous, got inspired)</li><li>사역동사 구문: make + 목적어 + 동사원형 (made Emma feel)</li><li>현재완료 진행: have been ~ing (계속된 행위 강조)</li><li>결과 표현: To one's surprise (놀랍게도)</li></ul>
         </div>
-      </div>
+          </div></div>
       </section>
-      <section class="series">
+      <section class="series" data-series-id="s5" data-active-vol="0">
         <div class="series-head">
           <h3>(고2) 2026 모의고사</h3>
           <span class="series-count">지문 40개</span>
         </div>
-        
-      <div class="volume">
-        <h4 class="volume-title">3월</h4>
-        
+        <div class="vol-tabs" role="tablist"><button class="vol-tab active" data-vol="0">3월<span class="vol-tab-n">18</span></button><button class="vol-tab" data-vol="1">6월<span class="vol-tab-n">22</span></button></div>
+        <div class="vol-panels">
+          <div class="vol-panel" data-vol="0">
+            <h4 class="vol-print-label">3월</h4>
+            
         <div class="passage" data-search="주차장 보수 공지 notice: underground parking maintenance 동명사 목적어: 'appreciate your continued use', 'committed to completing' (전치사 to 뒤 동명사) 수동태: 'will be unavailable', 'will be conducting' (미래 상태·진행 표현) 요청 구문: 'we kindly ask you to use' (ask + 목적어 + to부정사) 분사 수식: 'located across from' (과거분사가 명사 수식)">
           <div class="passage-head">
             <span class="code-badge">18</span>
@@ -2039,10 +2056,10 @@
           </div>
           <ul class="grammar-list"><li>resemble: '~와 닮다' (타동사, resemble like (X))</li><li>both A and B 병렬 구조: 'discover something and convince others'</li><li>관계대명사 that절 내 삽입절: 'that, if all goes well, find'</li><li>Only then 도치: 'Only then would the researcher begin' (강조)</li></ul>
         </div>
-      </div>
-      <div class="volume">
-        <h4 class="volume-title">6월</h4>
-        
+          </div>
+          <div class="vol-panel" data-vol="1" hidden>
+            <h4 class="vol-print-label">6월</h4>
+            
         <div class="passage" data-search="과학 박람회 참가 독려 encouragement to join the science fair 미래 수동태 'will be held' (행사 개최) 양보절 'although ~, 주어 + 동사' (지난달 공지했지만) 독려 표현 'encourage a to do' (참가 독려) 조건절 'if you are interested, please submit' (관심 시 제출 요청)">
           <div class="passage-head">
             <span class="code-badge">18</span>
@@ -2285,7 +2302,7 @@
           </div>
           <ul class="grammar-list"><li>despite + 동명사: 'despite having limited space' — 양보 표현, in spite of와 호환</li><li>used to + 동사원형: 'I used to have a garden' — 과거 습관·상태, 지금은 아님을 암시</li><li>관계대명사 계속적 용법: 'which reminded her of' — 앞 문장 전체를 선행사로 받아 추가 설명</li><li>동격 that절: 'a reminder that people...need sunlight' — that절이 reminder의 내용을 구체화</li></ul>
         </div>
-      </div>
+          </div></div>
       </section>
     </div></div>
   <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
@@ -2297,24 +2314,47 @@
   const filterBtns = document.querySelectorAll('.filter-btn');
   let activeSeries = 'all';
 
+  function syncTabs(series, q){
+    const tabs=[...series.querySelectorAll('.vol-tab')];
+    const panels=[...series.querySelectorAll('.vol-panel')];
+    if(!tabs.length){ // 단일 패널(탭 없음)
+      panels.forEach(p=>{p.hidden=false;});
+      return;
+    }
+    if(q){
+      // 검색 중: 매칭 있는 모든 볼륨 패널/탭 표시
+      panels.forEach(p=>{ p.hidden = (+p.dataset.mc||0)===0; });
+      tabs.forEach(t=>{
+        const panel=panels.find(p=>p.dataset.vol===t.dataset.vol);
+        t.style.display=(panel && (+panel.dataset.mc||0)>0)?'':'none';
+      });
+    }else{
+      // 평상시: 활성 탭만
+      const active=series.dataset.activeVol||'0';
+      panels.forEach(p=>{ p.hidden = p.dataset.vol!==active; });
+      tabs.forEach(t=>{ t.style.display=''; t.classList.toggle('active', t.dataset.vol===active); });
+    }
+  }
+
   function apply(){
     const q = search.value.trim().toLowerCase();
     let visible = 0;
     document.querySelectorAll('.category').forEach(cat=>{
       const matchCat = activeSeries==='all' || cat.dataset.category===activeSeries;
       let catVisible = 0;
-      cat.querySelectorAll('.passage').forEach(p=>{
-        const hit = matchCat && (!q || p.dataset.search.includes(q));
-        p.style.display = hit ? '' : 'none';
-        if(hit){catVisible++;visible++;}
-      });
-      cat.querySelectorAll('.volume').forEach(v=>{
-        const any=[...v.querySelectorAll('.passage')].some(p=>p.style.display!=='none');
-        v.style.display=any?'':'none';
-      });
-      cat.querySelectorAll('.series').forEach(s=>{
-        const any=[...s.querySelectorAll('.passage')].some(p=>p.style.display!=='none');
-        s.style.display=any?'':'none';
+      cat.querySelectorAll('.series').forEach(series=>{
+        let seriesVisible=0;
+        series.querySelectorAll('.vol-panel').forEach(panel=>{
+          let mc=0;
+          panel.querySelectorAll('.passage').forEach(p=>{
+            const hit = matchCat && (!q || p.dataset.search.includes(q));
+            p.style.display = hit ? '' : 'none';
+            if(hit){mc++;seriesVisible++;catVisible++;visible++;}
+          });
+          panel.dataset.mc=mc;
+        });
+        syncTabs(series, q);
+        series.style.display = (matchCat && seriesVisible>0) ? '' : 'none';
       });
       cat.style.display = (matchCat && catVisible>0) ? '' : 'none';
     });
@@ -2327,6 +2367,14 @@
     activeSeries=b.dataset.target;
     apply();
   }));
+  // 볼륨 탭 전환
+  document.querySelectorAll('.vol-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const series=tab.closest('.series');
+      series.dataset.activeVol=tab.dataset.vol;
+      if(!search.value.trim()) syncTabs(series, '');
+    });
+  });
 </script>
 </body>
 </html>
