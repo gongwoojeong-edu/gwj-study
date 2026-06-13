@@ -129,7 +129,7 @@ const html = `<!doctype html>
   body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
   .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
   .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
-  .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,55vw);height:auto;z-index:0;pointer-events:none;opacity:.06}
+  .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,55vw);height:auto;z-index:5;pointer-events:none;opacity:.06}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:180px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .copy-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
