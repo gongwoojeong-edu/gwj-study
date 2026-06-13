@@ -291,7 +291,7 @@ const html = `<!doctype html>
   .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
   .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px;letter-spacing:-.3px}
   .brand-sub{font-size:11px;color:var(--muted)}
-  .watermark{position:fixed;inset:-60%;z-index:0;pointer-events:none;background-image:url(${LOGO});background-repeat:repeat;background-size:190px auto;opacity:.04;transform:rotate(-22deg)}
+  .watermark{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url(${LOGO});background-repeat:no-repeat;background-position:center center;background-size:min(460px,55vw) auto;opacity:.06}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:200px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
