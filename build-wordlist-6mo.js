@@ -6,6 +6,14 @@
 
 const fs = require('fs');
 const path = require('path');
+const {
+  usedGradesFromList,
+  gradeFilterHtml,
+  GRADE_FILTER_CSS,
+  GRADE_PRINT_CSS,
+  GRADE_FILTER_SCRIPT,
+  GRADE_ROW_FILTER_SCRIPT,
+} = require('./assets/build-page-ui');
 
 const ROOT = __dirname;
 const DATA = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'vocab-6mo.json'), 'utf8'));
@@ -31,9 +39,10 @@ for (const p of DATA) {
   for (const v of p.vocab) {
     const key = v.word.toLowerCase();
     if (!map.has(key)) {
-      map.set(key, { word: v.word, pos: new Set(), senses: [] });
+      map.set(key, { word: v.word, pos: new Set(), senses: [], grades: new Set() });
     }
     const e = map.get(key);
+    if (p.level) e.grades.add(p.level);
     if (v.pos) e.pos.add(v.pos.trim());
     for (const s of splitSenses(v.meaning)) {
       if (!e.senses.includes(s)) e.senses.push(s);
@@ -105,9 +114,11 @@ fs.writeFileSync(path.join(ROOT, 'collections', '6월모의고사-단어장.txt'
 // HTML 미리보기 (전체 복사 버튼)
 const today = new Date();
 const dateStr = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
+const usedGrades = ['고1','고2'].filter(g => list.some(e => e.grades.has(g)));
+const gradeFilters = gradeFilterHtml(usedGrades, esc);
 const rowsHtml = list
   .map(
-    (e) => `<tr data-search="${esc((e.word + ' ' + meaningStr(e)).toLowerCase())}">
+    (e) => `<tr data-search="${esc((e.word + ' ' + meaningStr(e)).toLowerCase())}" data-grade="${esc([...e.grades].sort().join(' '))}">
       <td class="c-word">${esc(e.word)}</td>
       <td class="c-pos">${esc(posStr(e))}</td>
       <td class="c-mean">${esc(meaningStr(e))}</td>
@@ -130,10 +141,19 @@ const html = `<!doctype html>
   .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
   .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
   .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
+  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
+  .grade-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .grade-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
+  .grade-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .is-hidden{display:none!important}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:180px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .copy-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
   .copy-btn:hover{background:var(--brand-dark)}
+  .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand-dark);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+  .print-btn:hover{background:var(--brand)}
   .container{max-width:880px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;padding:30px 28px;border-radius:18px;margin:22px 0 16px;box-shadow:0 6px 20px rgba(74,61,107,.22)}
   .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
@@ -156,7 +176,7 @@ const html = `<!doctype html>
   .no-result{display:none;text-align:center;padding:50px 20px;color:var(--muted)}
   .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--brand-dark);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;transition:.25s;z-index:100}
   .toast.show{opacity:1}
-  @media print{.toolbar{display:none!important}body{background:#fff}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}.watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:13mm}}
+  @media print{.toolbar,.filters{display:none!important}.is-hidden{display:none!important}body{background:#fff}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}.watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:13mm}}
 </style>
 </head>
 <body>
@@ -164,6 +184,7 @@ const html = `<!doctype html>
 <nav class="toolbar">
   <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
   <input type="search" class="search" id="search" placeholder="🔍 단어·뜻 검색…">
+  <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
   <button class="copy-btn" id="copyBtn">📋 전체 복사</button>
 </nav>
 <div class="container">
@@ -176,6 +197,7 @@ const html = `<!doctype html>
       <div class="stat"><b>${list.reduce((n, e) => n + e.senses.length, 0)}</b><span>뜻(센스)</span></div>
     </div>
   </div>
+  ${gradeFilters}
   <div class="hint">📋 <strong>전체 복사</strong> 버튼을 누르면 아래 형식의 전체 목록이 클립보드에 복사됩니다 → 단어학습기에 붙여넣기 하세요.<br>형식: <code>영단어 / 품사 - 뜻1 / 뜻2 …</code> (한 줄에 한 단어)</div>
   <table>
     <thead><tr><th>영단어</th><th>품사</th><th>한글뜻 (주요 다의 모두)</th></tr></thead>
@@ -190,12 +212,34 @@ const html = `<!doctype html>
   const search=document.getElementById('search');
   const noResult=document.getElementById('noResult');
   const rows=[...document.querySelectorAll('#tbody tr')];
-  search.addEventListener('input',()=>{
+  let activeGrade='all';
+  function beforePrint(){
+    if(activeGrade==='all'){
+      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\n\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\n\n그래도 전체 인쇄할까요?')) return;
+    }
+    window.print();
+  }
+  function rowMatchGrade(row){
+    if(activeGrade==='all') return true;
+    return (row.dataset.grade||'').split(/\s+/).includes(activeGrade);
+  }
+  function apply(){
     const q=search.value.trim().toLowerCase();
     let visible=0;
-    rows.forEach(r=>{const hit=!q||r.dataset.search.includes(q);r.style.display=hit?'':'none';if(hit)visible++;});
+    rows.forEach(r=>{
+      const hit=rowMatchGrade(r)&&(!q||r.dataset.search.includes(q));
+      r.classList.toggle('is-hidden',!hit);
+      if(hit) visible++;
+    });
     noResult.style.display=visible===0?'block':'none';
-  });
+  }
+  document.querySelectorAll('.grade-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.grade-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    activeGrade=b.dataset.grade;
+    apply();
+  }));
+  search.addEventListener('input',apply);
   const toast=document.getElementById('toast');
   function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1600);}
   document.getElementById('copyBtn').addEventListener('click',async()=>{

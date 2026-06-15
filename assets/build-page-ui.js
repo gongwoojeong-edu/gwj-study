@@ -1,0 +1,102 @@
+// 학년(고1/고2) 필터 + 인쇄 UI — 6월 모의고사 등 자료 페이지 공용
+
+const GRADE_ORDER = ['고1', '고2', '고3'];
+
+function usedGradesFromList(items, levelKey = 'level') {
+  return GRADE_ORDER.filter((g) => items.some((x) => x[levelKey] === g));
+}
+
+function gradeFilterHtml(grades, esc) {
+  if (!grades.length) return '';
+  return `<div class="filters">
+    <div class="filter-row">
+      <span class="filter-label">학년</span>
+      <button class="grade-btn active" data-grade="all">전체</button>${grades.map((g) => `<button class="grade-btn" data-grade="${esc(g)}">${esc(g)}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+const GRADE_FILTER_CSS = `
+  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
+  .grade-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .grade-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
+  .grade-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .is-hidden{display:none!important}`;
+
+const GRADE_PRINT_CSS = `
+    .is-hidden{display:none!important}`;
+
+// .series > .passage 구조용
+const GRADE_FILTER_SCRIPT = `
+  let activeGrade='all';
+  function beforePrint(){
+    if(activeGrade==='all'){
+      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\\n\\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\\n\\n그래도 전체 인쇄할까요?')) return;
+    }
+    window.print();
+  }
+  function apply(){
+    const q=search.value.trim().toLowerCase();
+    let visible=0;
+    document.querySelectorAll('.series').forEach(sec=>{
+      const matchGrade=activeGrade==='all'||sec.dataset.grade===activeGrade;
+      let secVisible=0;
+      sec.querySelectorAll('.passage').forEach(p=>{
+        const hit=matchGrade&&(!q||p.dataset.search.includes(q));
+        p.classList.toggle('is-hidden',!hit);
+        if(hit){secVisible++;visible++;}
+      });
+      sec.classList.toggle('is-hidden',!(matchGrade&&secVisible>0));
+    });
+    noResult.style.display=visible===0?'block':'none';
+  }
+  document.querySelectorAll('.grade-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.grade-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    activeGrade=b.dataset.grade;
+    apply();
+  }));
+  search.addEventListener('input',apply);`;
+
+// 단어장 등 flat table row용 (data-grade="고1 고2" 공백 구분)
+const GRADE_ROW_FILTER_SCRIPT = `
+  let activeGrade='all';
+  function beforePrint(){
+    if(activeGrade==='all'){
+      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\\n\\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\\n\\n그래도 전체 인쇄할까요?')) return;
+    }
+    window.print();
+  }
+  function rowMatchGrade(row){
+    if(activeGrade==='all') return true;
+    return (row.dataset.grade||'').split(/\\s+/).includes(activeGrade);
+  }
+  function apply(){
+    const q=search.value.trim().toLowerCase();
+    let visible=0;
+    rows.forEach(r=>{
+      const hit=rowMatchGrade(r)&&(!q||r.dataset.search.includes(q));
+      r.classList.toggle('is-hidden',!hit);
+      if(hit) visible++;
+    });
+    noResult.style.display=visible===0?'block':'none';
+  }
+  document.querySelectorAll('.grade-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.grade-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    activeGrade=b.dataset.grade;
+    apply();
+  }));
+  search.addEventListener('input',apply);`;
+
+module.exports = {
+  GRADE_ORDER,
+  usedGradesFromList,
+  gradeFilterHtml,
+  GRADE_FILTER_CSS,
+  GRADE_PRINT_CSS,
+  GRADE_FILTER_SCRIPT,
+  GRADE_ROW_FILTER_SCRIPT,
+};

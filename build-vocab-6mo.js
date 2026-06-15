@@ -5,6 +5,13 @@
 
 const fs = require('fs');
 const path = require('path');
+const {
+  usedGradesFromList,
+  gradeFilterHtml,
+  GRADE_FILTER_CSS,
+  GRADE_PRINT_CSS,
+  GRADE_FILTER_SCRIPT,
+} = require('./assets/build-page-ui');
 
 const ROOT = __dirname;
 const LOGO = fs.readFileSync(path.join(ROOT, 'assets', 'logo-base64.txt'), 'utf8').trim();
@@ -109,15 +116,14 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
         </div>`;
     }
     sections += `
-      <section class="series" data-series="${esc(lv)}">
+      <section class="series" data-grade="${esc(lv)}">
         <div class="series-head"><h2>${esc(g.label)}</h2><span class="series-count">지문 ${g.items.length}개 · ${g.items.reduce((n, x) => n + x.rows.length, 0)}단어</span></div>
         ${cards}
       </section>`;
   }
 
-  const filterBtns =
-    `<button class="filter-btn active" data-target="all">전체</button>` +
-    levels.map((lv) => `<button class="filter-btn" data-target="${esc(lv)}">${esc(groups.get(lv).label)}</button>`).join('');
+  const usedGrades = usedGradesFromList([...groups.keys()].map((lv) => ({ level: lv })));
+  const gradeFilters = gradeFilterHtml(usedGrades, esc);
 
   const today = new Date();
   const dateStr = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
@@ -161,10 +167,13 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
   .hero .stat span{font-size:11.5px;opacity:.85}
   .legend{display:flex;gap:14px;align-items:center;margin:0 0 14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
   .legend .chip{cursor:default}
-  .filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
-  .filter-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
-  .filter-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
-  .filter-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
+  .grade-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .grade-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
+  .grade-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .is-hidden{display:none!important}
   .series{margin-bottom:28px}
   .series-head{display:flex;align-items:baseline;gap:12px;padding-bottom:10px;margin-bottom:14px;border-bottom:2px solid var(--brand-light)}
   .series-head h2{font-size:19px;color:var(--brand-dark);font-weight:800}
@@ -192,6 +201,7 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
   .no-result{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
   @media print{
     .toolbar,.filters{display:none!important}
+    .is-hidden{display:none!important}
     body{background:#fff;padding:0}
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
@@ -208,7 +218,7 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
   <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
   <div class="links">${otherLinks}</div>
   <input type="search" class="search" id="search" placeholder="🔍 단어·뜻 검색…">
-  <button class="print-btn" onclick="window.print()">🖨 인쇄 / PDF</button>
+  <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
@@ -227,7 +237,7 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
     <span class="chip src-book"><span class="chip-en">교재</span></span> 분석교안 비고
     <span class="chip src-ai"><span class="chip-en">AI</span></span> AI 보강(검수 권장)
   </div>
-  <div class="filters">${filterBtns}</div>
+  ${gradeFilters}
   <div id="content">${sections}</div>
   <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
   <div class="footer">공우정바른학원 · GWJ EDU &nbsp;·&nbsp; 생성일 ${dateStr} &nbsp;·&nbsp; ${esc(title)}</div>
@@ -235,30 +245,35 @@ function buildOne({ kind, title, subtitle, accent, otherLinks }) {
 <script>
   const search=document.getElementById('search');
   const noResult=document.getElementById('noResult');
-  const filterBtns=document.querySelectorAll('.filter-btn');
-  let activeSeries='all';
+  let activeGrade='all';
+  function beforePrint(){
+    if(activeGrade==='all'){
+      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\n\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\n\n그래도 전체 인쇄할까요?')) return;
+    }
+    window.print();
+  }
   function apply(){
     const q=search.value.trim().toLowerCase();
     let visible=0;
     document.querySelectorAll('.series').forEach(sec=>{
-      const matchSeries=activeSeries==='all'||sec.dataset.series===activeSeries;
+      const matchGrade=activeGrade==='all'||sec.dataset.grade===activeGrade;
       let secVisible=0;
       sec.querySelectorAll('.passage').forEach(p=>{
-        const hit=matchSeries&&(!q||p.dataset.search.includes(q));
-        p.style.display=hit?'':'none';
+        const hit=matchGrade&&(!q||p.dataset.search.includes(q));
+        p.classList.toggle('is-hidden',!hit);
         if(hit){secVisible++;visible++;}
       });
-      sec.style.display=(matchSeries&&secVisible>0)?'':'none';
+      sec.classList.toggle('is-hidden',!(matchGrade&&secVisible>0));
     });
     noResult.style.display=visible===0?'block':'none';
   }
-  search.addEventListener('input',apply);
-  filterBtns.forEach(b=>b.addEventListener('click',()=>{
-    filterBtns.forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.grade-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.grade-btn').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
-    activeSeries=b.dataset.target;
+    activeGrade=b.dataset.grade;
     apply();
   }));
+  search.addEventListener('input',apply);
 </script>
 </body>
 </html>`;
