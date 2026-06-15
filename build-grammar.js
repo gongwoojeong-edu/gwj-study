@@ -135,6 +135,13 @@ function categoryOf(series) {
   return '부교재 지문';
 }
 
+function gradeOf(series) {
+  const m = String(series).match(/\(?(고[123])\)?/);
+  return m ? m[1] : '';
+}
+
+const GRADE_ORDER = ['고1', '고2', '고3'];
+
 // 그룹: series -> volume
 const seriesOrder = [];
 const seriesMap = new Map();
@@ -198,6 +205,7 @@ function buildSeries(series) {
   const vols = [...volMap.entries()].sort((a, b) => volNum(a[0]) - volNum(b[0]) || String(a[0]).localeCompare(String(b[0])));
   const seriesPassages = vols.reduce((n, [, arr]) => n + arr.length, 0);
   const id = `s${sid++}`;
+  const grade = gradeOf(series);
 
   // 볼륨이 1개이고 이름이 없으면 탭 없이 카드만
   const single = vols.length === 1 && !vols[0][0];
@@ -205,7 +213,7 @@ function buildSeries(series) {
     return {
       passages: seriesPassages,
       html: `
-      <section class="series" data-active-vol="0">
+      <section class="series" data-grade="${esc(grade)}" data-active-vol="0">
         <div class="series-head">
           <h3>${esc(series)}</h3>
           <span class="series-count">지문 ${seriesPassages}개</span>
@@ -231,7 +239,7 @@ function buildSeries(series) {
   return {
     passages: seriesPassages,
     html: `
-      <section class="series" data-series-id="${id}" data-active-vol="0">
+      <section class="series" data-series-id="${id}" data-grade="${esc(grade)}" data-active-vol="0">
         <div class="series-head">
           <h3>${esc(series)}</h3>
           <span class="series-count">지문 ${seriesPassages}개</span>
@@ -266,9 +274,15 @@ for (const cat of CATEGORY_ORDER) {
     </div>`;
 }
 
+const usedGrades = GRADE_ORDER.filter((g) => seriesOrder.some((s) => gradeOf(s) === g));
+
 const filterBtns =
   `<button class="filter-btn active" data-target="all">전체</button>` +
   usedCategories.map((c) => `<button class="filter-btn" data-target="${esc(c)}">${esc(c)}</button>`).join('');
+
+const gradeFilterBtns =
+  `<button class="grade-btn active" data-grade="all">전체</button>` +
+  usedGrades.map((g) => `<button class="grade-btn" data-grade="${esc(g)}">${esc(g)}</button>`).join('');
 
 const html = `<!doctype html>
 <html lang="ko">
@@ -305,10 +319,13 @@ const html = `<!doctype html>
   .hero .stats{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
   .hero .stat b{font-size:22px;font-weight:800;display:block}
   .hero .stat span{font-size:11.5px;opacity:.85}
-  .filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
-  .filter-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
-  .filter-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
-  .filter-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
+  .filter-btn,.grade-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .filter-btn:hover,.grade-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
+  .filter-btn.active,.grade-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .is-hidden{display:none!important}
   .category{margin-bottom:38px}
   .category-head{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;padding:13px 18px;border-radius:12px;margin-bottom:18px;box-shadow:0 3px 10px rgba(74,61,107,.18)}
   .category-head h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
@@ -344,12 +361,13 @@ const html = `<!doctype html>
   .no-result{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
   @media print{
     .toolbar,.filters{display:none!important}
+    .is-hidden{display:none!important}
     body{background:#fff;padding:0}
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
     .series{break-inside:auto}
     .vol-tabs{display:none!important}
-    .vol-panel[hidden]{display:block!important}
+    .series:not(.is-hidden) .vol-panel[hidden]{display:block!important}
     .vol-print-label{display:block;font-size:13.5px;color:var(--text);font-weight:700;margin:14px 0 10px;padding-left:9px;border-left:3px solid var(--brand)}
     .category-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:avoid}
     .watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -363,7 +381,7 @@ const html = `<!doctype html>
 <nav class="toolbar">
   <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
   <input type="search" class="search" id="search" placeholder="🔍 어법·제목 검색…">
-  <button class="print-btn" onclick="window.print()">🖨 인쇄 / PDF</button>
+  <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
@@ -377,7 +395,16 @@ const html = `<!doctype html>
       <div class="stat"><b>${seriesOrder.length}</b><span>자료</span></div>
     </div>
   </div>
-  <div class="filters">${filterBtns}</div>
+  <div class="filters">
+    <div class="filter-row">
+      <span class="filter-label">학년</span>
+      ${gradeFilterBtns}
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">분류</span>
+      ${filterBtns}
+    </div>
+  </div>
   <div id="content">${sections}</div>
   <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
   <div class="footer">공우정바른학원 · GWJ EDU &nbsp;·&nbsp; 생성일 ${dateStr}</div>
@@ -386,7 +413,17 @@ const html = `<!doctype html>
   const search = document.getElementById('search');
   const noResult = document.getElementById('noResult');
   const filterBtns = document.querySelectorAll('.filter-btn');
+  const gradeBtns = document.querySelectorAll('.grade-btn');
   let activeSeries = 'all';
+  let activeGrade = 'all';
+
+  function beforePrint(){
+    if(activeGrade==='all'){
+      const ok = confirm('학년이 "전체"입니다. 고1·고2가 함께 인쇄됩니다.\\n\\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\\n\\n그래도 전체 인쇄할까요?');
+      if(!ok) return;
+    }
+    window.print();
+  }
 
   function syncTabs(series, q){
     const tabs=[...series.querySelectorAll('.vol-tab')];
@@ -400,13 +437,16 @@ const html = `<!doctype html>
       panels.forEach(p=>{ p.hidden = (+p.dataset.mc||0)===0; });
       tabs.forEach(t=>{
         const panel=panels.find(p=>p.dataset.vol===t.dataset.vol);
-        t.style.display=(panel && (+panel.dataset.mc||0)>0)?'':'none';
+        t.classList.toggle('is-hidden', !(panel && (+panel.dataset.mc||0)>0));
       });
     }else{
       // 평상시: 활성 탭만
       const active=series.dataset.activeVol||'0';
       panels.forEach(p=>{ p.hidden = p.dataset.vol!==active; });
-      tabs.forEach(t=>{ t.style.display=''; t.classList.toggle('active', t.dataset.vol===active); });
+      tabs.forEach(t=>{
+        t.classList.remove('is-hidden');
+        t.classList.toggle('active', t.dataset.vol===active);
+      });
     }
   }
 
@@ -417,24 +457,32 @@ const html = `<!doctype html>
       const matchCat = activeSeries==='all' || cat.dataset.category===activeSeries;
       let catVisible = 0;
       cat.querySelectorAll('.series').forEach(series=>{
+        const matchGrade = activeGrade==='all' || series.dataset.grade===activeGrade;
         let seriesVisible=0;
         series.querySelectorAll('.vol-panel').forEach(panel=>{
           let mc=0;
           panel.querySelectorAll('.passage').forEach(p=>{
-            const hit = matchCat && (!q || p.dataset.search.includes(q));
-            p.style.display = hit ? '' : 'none';
+            const hit = matchCat && matchGrade && (!q || p.dataset.search.includes(q));
+            p.classList.toggle('is-hidden', !hit);
             if(hit){mc++;seriesVisible++;catVisible++;visible++;}
           });
           panel.dataset.mc=mc;
+          panel.classList.toggle('is-hidden', mc===0);
         });
         syncTabs(series, q);
-        series.style.display = (matchCat && seriesVisible>0) ? '' : 'none';
+        series.classList.toggle('is-hidden', !(matchCat && matchGrade && seriesVisible>0));
       });
-      cat.style.display = (matchCat && catVisible>0) ? '' : 'none';
+      cat.classList.toggle('is-hidden', !(matchCat && catVisible>0));
     });
     noResult.style.display = visible===0 ? 'block':'none';
   }
   search.addEventListener('input',apply);
+  gradeBtns.forEach(b=>b.addEventListener('click',()=>{
+    gradeBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    activeGrade=b.dataset.grade;
+    apply();
+  }));
   filterBtns.forEach(b=>b.addEventListener('click',()=>{
     filterBtns.forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
