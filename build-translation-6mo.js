@@ -8,6 +8,7 @@ const {
   usedGradesFromList,
   gradeFilterHtml,
   LOGO_LOCKUP_CSS,
+  TOOLBAR_CSS,
   PAGE_NAV_CSS,
   sixMoPageNavHtml,
   toolbarLeftHtml,
@@ -154,7 +155,7 @@ const html = `<!doctype html>
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
-  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:72px}
+  ${TOOLBAR_CSS}
   .toolbar-brand{display:flex;align-items:center;gap:10px}
   .toolbar .logo-img{height:30px;width:auto;display:block}
   ${LOGO_LOCKUP_CSS}

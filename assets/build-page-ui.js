@@ -16,7 +16,8 @@ function gradeFilterHtml(grades, esc) {
   </div>`;
 }
 
-const LOGO_LOCKUP_CSS = `.toolbar .logo-lockup{height:68px;width:auto;display:block;border-radius:4px;flex-shrink:0}`;
+const LOGO_LOCKUP_CSS = `.toolbar .logo-lockup{height:88px;width:auto;display:block;border-radius:4px;flex-shrink:0}`;
+const TOOLBAR_CSS = `.toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:92px}`;
 
 const SIXMO_VOCAB_PAGES = [
   { id: 'syn', href: '6월모의고사-유의어.html' },
@@ -131,6 +132,7 @@ module.exports = {
   usedGradesFromList,
   gradeFilterHtml,
   LOGO_LOCKUP_CSS,
+  TOOLBAR_CSS,
   PAGE_NAV_CSS,
   sixMoPageNavHtml,
   toolbarLeftHtml,
