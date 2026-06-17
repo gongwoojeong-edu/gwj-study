@@ -1735,7 +1735,7 @@
     </tr></tbody>
   </table>
   <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
-  <div class="footer">공우정바른학원 · GWJ EDU &nbsp;·&nbsp; 생성일 2026. 6. 16. &nbsp;·&nbsp; 6월 모의고사 단어장</div>
+  <div class="footer">공우정바른학원 · GWJ EDU &nbsp;·&nbsp; 생성일 2026. 6. 17. &nbsp;·&nbsp; 6월 모의고사 단어장</div>
 </div>
 <div class="toast" id="toast">클립보드에 복사되었습니다</div>
 <textarea id="raw" style="position:absolute;left:-9999px;top:-9999px" readonly>access / v. - 접근하다, ~에 이르다 / 접근(n.) / 이용 권한
@@ -2160,11 +2160,7 @@ yield / v. - 산출하다, 가져오다 / 양보하다, 굴복하다 / 수확량
   let activeGrade='all';
   function beforePrint(){
     if(activeGrade==='all'){
-      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.
-
-고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.
-
-그래도 전체 인쇄할까요?')) return;
+      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\n\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\n\n그래도 전체 인쇄할까요?')) return;
     }
     window.print();
   }

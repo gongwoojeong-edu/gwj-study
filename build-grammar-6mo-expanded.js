@@ -329,7 +329,7 @@ const html = `<!doctype html>
   let activeGrade='all';
   function beforePrint(){
     if(activeGrade==='all'){
-      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\n\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\n\n그래도 전체 인쇄할까요?')) return;
+      if(!confirm('학년이 "전체"입니다. 고1·고2 가 함께 인쇄됩니다.\\n\\n고1 또는 고2를 먼저 선택하면 해당 학년만 인쇄됩니다.\\n\\n그래도 전체 인쇄할까요?')) return;
     }
     window.print();
   }
