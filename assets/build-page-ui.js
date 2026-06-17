@@ -11,13 +11,44 @@ function gradeFilterHtml(grades, esc) {
   return `<div class="filters">
     <div class="filter-row">
       <span class="filter-label">학년</span>
-      <button class="grade-btn active" data-grade="all">전체</button>${grades.map((g) => `<button class="grade-btn" data-grade="${esc(g)}">${esc(g)}</button>`).join('')}
+      <button type="button" class="grade-btn active" data-grade="all">전체</button>${grades.map((g) => `<button type="button" class="grade-btn" data-grade="${esc(g)}">${esc(g)}</button>`).join('')}
     </div>
   </div>`;
 }
 
+const LOGO_LOCKUP_CSS = `.toolbar .logo-lockup{height:68px;width:auto;display:block;border-radius:4px;flex-shrink:0}`;
+
+const SIXMO_VOCAB_PAGES = [
+  { id: 'syn', href: '6월모의고사-유의어.html' },
+  { id: 'ant', href: '6월모의고사-반의어.html' },
+  { id: 'trans', href: '6월모의고사-한줄해석.html' },
+];
+
+function sixMoNavLabel(id) {
+  if (id === 'ant') return '↔ 반의어';
+  if (id === 'trans') return '📝 한줄해석';
+  return '↔ 유의어';
+}
+
+const PAGE_NAV_CSS = `
+  .toolbar-left{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+  .page-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .nav-link{padding:9px 16px;border:1px solid var(--brand-light);border-radius:8px;background:#faf9fc;color:var(--brand-dark);font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1.2}
+  .nav-link:hover{background:var(--brand-light)}
+  .nav-link.current{background:var(--brand);border-color:var(--brand);color:#fff;pointer-events:none}`;
+
+function sixMoPageNavHtml(current, esc) {
+  return `<div class="page-nav">${SIXMO_VOCAB_PAGES.filter((p) => p.id !== current).map((p) =>
+    `<a class="nav-link" href="${esc(p.href)}">${esc(sixMoNavLabel(p.id))}</a>`,
+  ).join('')}</div>`;
+}
+
+function toolbarLeftHtml(lockupSrc, pageNavHtml) {
+  return `<div class="toolbar-left"><img class="logo-lockup" src="${lockupSrc}" alt="공우정바른학원 GWJ EDU">${pageNavHtml}</div>`;
+}
+
 const GRADE_FILTER_CSS = `
-  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;position:relative;z-index:10}
   .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
   .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
   .grade-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
@@ -52,12 +83,14 @@ const GRADE_FILTER_SCRIPT = `
     });
     noResult.style.display=visible===0?'block':'none';
   }
-  document.querySelectorAll('.grade-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('.grade-btn');
+    if(!btn) return;
     document.querySelectorAll('.grade-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    activeGrade=b.dataset.grade;
+    btn.classList.add('active');
+    activeGrade=btn.dataset.grade;
     apply();
-  }));
+  });
   search.addEventListener('input',apply);`;
 
 // 단어장 등 flat table row용 (data-grade="고1 고2" 공백 구분)
@@ -83,18 +116,24 @@ const GRADE_ROW_FILTER_SCRIPT = `
     });
     noResult.style.display=visible===0?'block':'none';
   }
-  document.querySelectorAll('.grade-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('.grade-btn');
+    if(!btn) return;
     document.querySelectorAll('.grade-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    activeGrade=b.dataset.grade;
+    btn.classList.add('active');
+    activeGrade=btn.dataset.grade;
     apply();
-  }));
+  });
   search.addEventListener('input',apply);`;
 
 module.exports = {
   GRADE_ORDER,
   usedGradesFromList,
   gradeFilterHtml,
+  LOGO_LOCKUP_CSS,
+  PAGE_NAV_CSS,
+  sixMoPageNavHtml,
+  toolbarLeftHtml,
   GRADE_FILTER_CSS,
   GRADE_PRINT_CSS,
   GRADE_FILTER_SCRIPT,
