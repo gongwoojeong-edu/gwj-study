@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인동고1 1학기말_부교재분석자료</title>
+<style>
+  :root {
+    --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3;
+    --bg: #F7F5F0; --card: #fff; --border: #e8e4f3;
+    --text: #2a2438; --text-soft: #6c6480; --text-muted: #999;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', 'Malgun Gothic', -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    padding: 24px 16px; min-height: 100vh;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* 헤더 */
+  .header {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff; padding: 36px 28px; border-radius: 18px;
+    text-align: center; margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(74,61,107,0.2);
+  }
+  .brand { font-size: 13px; opacity: 0.9; letter-spacing: 0.12em; margin-bottom: 8px; }
+  h1 { font-size: 28px; margin-bottom: 8px; word-break: keep-all; font-weight: 700; }
+  .subtitle { font-size: 14px; opacity: 0.92; }
+  .intro {
+    background: #fff; border-left: 4px solid var(--brand);
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 18px;
+    font-size: 14px; color: var(--text-soft);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  /* 레벨 섹션 */
+  .level-section {
+    background: var(--card); border-radius: 16px;
+    padding: 22px 24px; margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .level-header {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding-bottom: 14px; margin-bottom: 18px;
+    border-bottom: 2px solid var(--brand-light);
+  }
+  .level-badge {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff; padding: 6px 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  }
+  .level-name {
+    font-size: 18px; font-weight: 700; color: var(--brand-dark);
+  }
+  .level-count {
+    margin-left: auto; font-size: 12px; color: var(--text-muted);
+    background: var(--brand-light); padding: 4px 10px; border-radius: 12px;
+  }
+
+  /* 시리즈 블록 */
+  .series-block { margin-bottom: 22px; }
+  .series-block:last-child { margin-bottom: 0; }
+  .series-title {
+    font-size: 17px; font-weight: 700; color: var(--brand-dark);
+    margin-bottom: 12px; padding-left: 6px;
+    border-left: 4px solid var(--brand);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .series-count {
+    background: #f0ede6; color: var(--text-soft);
+    padding: 1px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600;
+  }
+
+  /* 권/볼륨 블록 */
+  .volume-block {
+    background: #faf9fc; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .volume-block:last-child { margin-bottom: 0; }
+  .volume-title {
+    font-size: 14px; font-weight: 600; color: var(--text-soft);
+    margin-bottom: 12px;
+  }
+
+  /* 유닛 그리드 (카드) */
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .unit-card {
+    display: block;
+    background: #fff; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+    text-decoration: none; color: inherit;
+    transition: all 0.18s;
+    cursor: pointer;
+  }
+  .unit-card:hover {
+    border-color: var(--brand);
+    background: linear-gradient(135deg, #fff, var(--brand-light));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107,91,149,0.15);
+  }
+  .unit-badge {
+    display: inline-block;
+    background: var(--brand); color: #fff;
+    padding: 2px 9px; border-radius: 5px;
+    font-size: 11px; font-weight: 700;
+    margin-bottom: 6px;
+    font-family: 'SF Mono', Consolas, monospace;
+  }
+  .unit-title {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    line-height: 1.4; word-break: keep-all;
+  }
+  .unit-card:hover .unit-title { color: var(--brand-dark); }
+
+  .footer {
+    text-align: center; padding: 24px 0 8px; font-size: 12px; color: var(--text-muted);
+  }
+
+  /* 모바일 */
+  @media (max-width: 600px) {
+    body { padding: 16px 12px; }
+    h1 { font-size: 22px; }
+    .level-section { padding: 16px; }
+    .units-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">공우정바른학원 · GWJ EDU</div>
+    <h1>인동고1 1학기말_부교재분석자료</h1>
+    <div class="subtitle">17개 자료 · 2026. 6. 20. 오후 3:41:02</div>
+  </div>
+  
+  <div class="book"><h2 class="book-title">📚 6강</h2><div class="chapter"><h3 class="chapter-title">📖 1번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/1번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">1</code>
+              <strong class="item-title">지각 확장 도구의 역할</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/1번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/1번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 2번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/2번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">2</code>
+              <strong class="item-title">지식과 행동의 간극</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/2번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/2번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 3번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/3번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">3</code>
+              <strong class="item-title">구체적 질문의 중요성</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/3번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/3번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 4번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/4번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">4</code>
+              <strong class="item-title">윤작의 원리와 지속가능성</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/4번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/6강/4번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div></div><div class="book"><h2 class="book-title">📚 7강</h2><div class="chapter"><h3 class="chapter-title">📖 7강 1번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_1번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">1</code>
+              <strong class="item-title">동물 실험과 의학 발전</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_1번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_1번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 7강 2번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_2번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">2</code>
+              <strong class="item-title">소리 내어 읽기의 뇌 활성화 효과</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_2번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_2번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 7강 3번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_3번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">3</code>
+              <strong class="item-title">AI와 의식의 공진화</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_3번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_3번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 7강 4번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_4번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">4</code>
+              <strong class="item-title">고래, 기후변화 해법</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_4번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/7강/7강_4번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div></div><div class="book"><h2 class="book-title">📚 11강</h2><div class="chapter"><h3 class="chapter-title">📖 1번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/11강/1번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">1</code>
+              <strong class="item-title">가축화할 수 없는 동물</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/11강/1번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/11강/1번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div></div><div class="book"><h2 class="book-title">📚 15강</h2><div class="chapter"><h3 class="chapter-title">📖 15강 1번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_1번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">1</code>
+              <strong class="item-title">기억의 재구성 과정</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_1번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_1번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 15강 2번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_2번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">2</code>
+              <strong class="item-title">주인공과 관객의 정서적 유대</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_2번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_2번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 15강 3번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_3번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">3</code>
+              <strong class="item-title">정치적 물 위기와 불평등</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_3번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_3번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 15강 4번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_4번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">4</code>
+              <strong class="item-title">벼락치기의 함정</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_4번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/15강/15강_4번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div></div><div class="book"><h2 class="book-title">📚 16강</h2><div class="chapter"><h3 class="chapter-title">📖 16강 1번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_1번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">1</code>
+              <strong class="item-title">마찰력의 원리</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_1번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_1번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 16강 2번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_2번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">2</code>
+              <strong class="item-title">역사 반복론의 한계</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_2번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_2번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 16강 3번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_3번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">3</code>
+              <strong class="item-title">노력 칭찬과 성장 마인드셋</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_3번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_3번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 16강 4번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_4번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">4</code>
+              <strong class="item-title">우울증, 의식의 병</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_4번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L08/고1_2026_올림포스기출/16강/16강_4번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div></div>
+  <div class="footer">Powered by GWJ AI 영어 분석기</div>
+</div>
+</body>
+</html>
