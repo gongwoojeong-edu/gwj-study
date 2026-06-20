@@ -6397,7 +6397,7 @@ function showGithubPublishedModal(rec, urls, mode) {
 async function updateGithubCatalog(cfg) {
   if (!cfg || !cfg.token || !cfg.owner || !cfg.repo) return;
 
-  const publishedRecs = library.filter(r => r.githubUrl);
+  const publishedRecs = library.filter(r => r.githubUrl && r.kind !== 'collection');
   if (publishedRecs.length === 0) return;
 
   // 🆕 새 5계층 구조 우선 그룹핑: Level > Series > Volume > Unit
@@ -6670,7 +6670,7 @@ async function regenerateCatalog() {
     showToast('⚠️ GitHub 설정이 필요합니다', 'error');
     return;
   }
-  const publishedCount = library.filter(r => r.githubUrl).length;
+  const publishedCount = library.filter(r => r.githubUrl && r.kind !== 'collection').length;
   if (publishedCount === 0) {
     showToast('⚠️ 먼저 자료를 웹공개 해주세요', 'error');
     return;
@@ -7226,9 +7226,9 @@ async function selectAllAndCreateCollection() {
   if (!confirm('책장의 모든 자료(' + library.length + '개)를 선택해서 공유용 목차를 만들까요?\n\n(미공개 자료는 자동으로 먼저 GitHub에 배포됩니다)')) {
     return;
   }
-  // 전체 선택
+  // 전체 선택 (묶음 결과물 제외)
   selectedRecIds.clear();
-  library.forEach(r => selectedRecIds.add(r.id));
+  library.forEach(r => { if (r.kind !== 'collection') selectedRecIds.add(r.id); });
   renderLibrary();
   updateSelectionBar();
   // 약간 딜레이 후 자동 실행
@@ -7316,6 +7316,16 @@ async function quickCreateCollection() {
 
     // 5) 성공 모달 + 공유 텍스트
     const publicUrl = buildGithubPublicUrl('collections/' + autoSlug + '.html');
+
+    // 결과물을 책장에 보관
+    await saveCollectionRecord({
+      collectionType: 'index',
+      title: autoTitle,
+      url: publicUrl,
+      filePath: 'collections/' + autoSlug + '.html',
+      count: publishedSelected.length,
+      itemIds: publishedSelected.map(r => r.id)
+    });
     let shareText = '📚 ' + autoTitle + '\n';
     shareText += '🔗 ' + publicUrl + '\n\n';
     shareText += '📝 포함 자료 (' + publishedSelected.length + '개):\n';
@@ -7614,6 +7624,63 @@ function filterCards(q){
 </html>`;
 }
 
+// 생성한 묶음 결과물(목차/어법·어휘)을 책장에 보관용 레코드로 저장
+async function saveCollectionRecord(info) {
+  const teacher = (document.getElementById('in-teacher')?.value || '').trim();
+  const record = {
+    id: 'col_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+    kind: 'collection',
+    collectionType: info.collectionType || 'index',
+    title: info.title,
+    githubUrl: info.url,
+    filePath: info.filePath,
+    count: info.count || 0,
+    itemIds: info.itemIds || [],
+    author: teacher,
+    createdAt: new Date().toISOString(),
+    favorite: false,
+    data: { title_ko: info.title, item_code: '' }
+  };
+  await saveRecord(record);
+  return record;
+}
+
+// 책장의 묶음 결과물 카드 (분석 자료와 구분되는 형태)
+function collectionCardHtml(r) {
+  const isVocab = r.collectionType === 'grammar-vocab';
+  const typeLabel = isVocab ? '📚 어법·어휘 모음' : '🗂 묶음 목차';
+  const accent = isVocab ? '#e65100' : 'var(--brand,#6B5B95)';
+  const url = r.githubUrl || '';
+  return `
+    <div class="library-card" data-rec-id="${r.id}" style="border-left:4px solid ${accent};">
+      <button class="fav-btn ${r.favorite ? 'active' : ''}" onclick="toggleFavorite('${r.id}')" title="즐겨찾기">★</button>
+      <div class="card-meta">
+        <span class="badge" style="background:${accent};color:#fff;">${typeLabel}</span>
+        ${r.count ? `<span class="badge item-code">📄 ${escapeHtml(String(r.count))}개</span>` : ''}
+        ${r.author ? `<span class="badge author">👤 ${escapeHtml(r.author)}</span>` : ''}
+      </div>
+      <div class="card-title">${escapeHtml(r.title || r.data?.title_ko || '제목 없음')}</div>
+      <div class="card-preview">${isVocab ? '주요어법 · 유의어 · 반의어 묶음 페이지' : '선택 자료 묶음 목차 페이지'}</div>
+      <div class="card-date">📅 ${formatDate(r.createdAt)}${url ? ' · <a href="' + escapeAttr(url) + '" target="_blank" style="color:#2d7a3f;font-weight:600;text-decoration:none;">🌐 공개중</a>' : ''}</div>
+      <div class="card-footer">
+        <button class="card-btn card-btn-icon" onclick="window.open('${escapeJs(url)}','_blank')" title="🌐 페이지 열기">🌐</button>
+        <button class="card-btn card-btn-icon" onclick="copyToClipboardSafe('${escapeJs(url)}');showToast('📋 URL 복사됨','success')" title="📋 URL 복사">📋</button>
+        <button class="card-btn card-btn-icon" onclick="shareCollectionText('${r.id}')" title="📋 공지용 텍스트">📝</button>
+        <button class="card-btn card-btn-icon danger" onclick="deleteRecord('${r.id}')" title="🗑 책장에서 삭제">🗑</button>
+      </div>
+    </div>`;
+}
+
+// 묶음 카드의 공지용 텍스트 복사
+function shareCollectionText(id) {
+  const r = library.find(x => x.id === id);
+  if (!r) return;
+  let t = '📚 ' + (r.title || '') + '\n🔗 ' + (r.githubUrl || '') + '\n';
+  if (r.count) t += '· 포함 자료 ' + r.count + '개\n';
+  copyToClipboardSafe(t);
+  showToast('📋 공지용 텍스트 복사됨', 'success');
+}
+
 async function createGrammarVocabCollection() {
   if (selectedRecIds.size === 0) {
     showToast('⚠️ 먼저 자료를 선택해주세요', 'error');
@@ -7680,9 +7747,20 @@ async function createGrammarVocabCollection() {
     const filePath = 'collections/' + autoSlug + '.html';
     await uploadFileToGithub(cfg, filePath, html, '어법·어휘 모음: ' + autoTitle);
 
+    const publicUrl = buildGithubPublicUrl(filePath);
+
+    // 결과물을 책장에 보관
+    await saveCollectionRecord({
+      collectionType: 'grammar-vocab',
+      title: autoTitle,
+      url: publicUrl,
+      filePath: filePath,
+      count: items.length,
+      itemIds: freshSelected.map(r => r.id)
+    });
+
     hideProgressBar();
 
-    const publicUrl = buildGithubPublicUrl(filePath);
     const gCnt = items.filter(it => it.grammar.length).length;
     const sCnt = items.filter(it => it.syn.length).length;
     const aCnt = items.filter(it => it.ant.length).length;
@@ -9647,12 +9725,14 @@ async function deleteRecord(id) {
   }
 
   // 자료 정보를 모달에 표시
-  const displayName = [
-    rec.data.textbook,
-    rec.data.lesson,
-    rec.data.item_code,
-    rec.data.expected_title
-  ].filter(Boolean).join(' · ');
+  const displayName = rec.kind === 'collection'
+    ? ('📚 묶음 결과물: ' + (rec.title || ''))
+    : [
+        rec.data.textbook,
+        rec.data.lesson,
+        rec.data.item_code,
+        rec.data.expected_title
+      ].filter(Boolean).join(' · ');
 
   document.getElementById('confirm-target-name').textContent = displayName || '제목 없음';
   pendingDeleteId = id;
@@ -9673,7 +9753,7 @@ async function migrateLibraryToRubelStructure() {
   }
 
   // 마이그레이션 필요한 자료 카운트
-  const needMigration = library.filter(r => !r.data.level || !r.data.series_title || !r.data.unit_title);
+  const needMigration = library.filter(r => r.kind !== 'collection' && (!r.data.level || !r.data.series_title || !r.data.unit_title));
   const alreadyMigrated = library.length - needMigration.length;
 
   if (needMigration.length === 0) {
@@ -9763,7 +9843,7 @@ async function redeployAllPublished() {
     return;
   }
 
-  const published = library.filter(r => r.githubUrl);
+  const published = library.filter(r => r.githubUrl && r.kind !== 'collection');
   if (published.length === 0) {
     showToast('⚠️ 공개된 자료가 없습니다', 'error');
     return;
@@ -9936,7 +10016,8 @@ async function confirmDelete() {
   try {
     // 삭제 전에 rec 정보 저장 (GitHub 파일 삭제용)
     const rec = library.find(r => r.id === id);
-    const wasPublished = rec && rec.githubUrl;
+    // 묶음 결과물(collection)은 책장 레코드만 삭제하고 GitHub 공개 파일은 보존 (공유 링크 유지)
+    const wasPublished = rec && rec.githubUrl && rec.kind !== 'collection';
 
     const key = STORAGE_PREFIX + id;
     const result = await window.storage.delete(key);
@@ -10148,9 +10229,10 @@ function renderLevelTabs() {
   const levelCounts = {};
   let totalCount = 0;
   library.forEach(r => {
+    totalCount++;
+    if (r.kind === 'collection') return; // 묶음 결과물은 레벨 버킷에 넣지 않음 ('전체'에만 집계)
     const lv = r.data.level || r.learnerMeta?.level || 'L08';
     levelCounts[lv] = (levelCounts[lv] || 0) + 1;
-    totalCount++;
   });
 
   const usedLevels = Object.keys(levelCounts).sort();
@@ -10215,6 +10297,8 @@ function renderLibrary() {
   let filtered = library.filter(r => {
     // 🆕 검색어가 있으면 레벨 탭 무시 (모든 레벨에서 검색)
     if (!search && activeLevelTab !== 'all') {
+      // 묶음 결과물(collection)은 '전체' 탭에서만 표시
+      if (r.kind === 'collection') return false;
       const recLevel = r.data.level || r.learnerMeta?.level || 'L08';
       if (recLevel !== activeLevelTab) return false;
     }
@@ -10233,6 +10317,7 @@ function renderLibrary() {
     if (search) {
       // 🆕 검색 대상에 새 5계층 필드도 포함
       const hay = (
+        (r.title || '') + ' ' +
         (r.data.topic_ko || '') + ' ' +
         (r.data.topic_en || '') + ' ' +
         (r.data.title_ko || '') + ' ' +
@@ -10300,7 +10385,7 @@ function renderLibrary() {
     return;
   }
 
-  container.innerHTML = '<div class="library-grid">' + filtered.map(r => `
+  container.innerHTML = '<div class="library-grid">' + filtered.map(r => r.kind === 'collection' ? collectionCardHtml(r) : `
     <div class="library-card" data-rec-id="${r.id}">
       <label class="card-select-check" title="선택">
         <input type="checkbox" class="card-select-input" data-rec-id="${r.id}"
