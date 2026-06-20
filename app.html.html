@@ -960,7 +960,7 @@ body.edit-mode .page::before {
 (두 번째 지문...)" oninput="previewBatchPassages()"></textarea>
         <label class="batch-option">
           <input type="checkbox" id="in-batch-mode" onchange="previewBatchPassages()">
-          <span><strong>여러 지문 일괄 처리</strong> — 구분선(<code>---</code>) 또는 <code>18번</code>·<code>19번</code> 표시로 나눠 붙여넣으면 순서대로 자동 생성 (유닛 번호 자동 증가, 대기 중 다른 작업 가능)</span>
+          <span><strong>여러 지문 일괄 처리</strong> — <code>[6강 3번] 한글제목</code> + 영문, <code>---</code> 구분선, 또는 <code>18번</code> 형식</span>
         </label>
         <div class="batch-preview" id="batch-preview"></div>
       </div>
@@ -8920,8 +8920,8 @@ function parsePassageBlocks(raw, batchMode) {
 
   if (!batchMode) return [{ unitTitle: null, passage: text }];
 
-  // [6강 1번], **[1회 36번]** — 유형, [강10-Ex1] 등
-  const bracketHeaderRe = /^\s*(?:\*\*)?\[([^\]]+)\](?:\*\*)?(?:\s*[—\-–].*)?\s*$/;
+  // [6강 1번], **[1회 36번]** — 유형, [6강 3번] 한글제목 한 줄 등
+  const bracketHeaderRe = /^\s*(?:\*\*)?\[([^\]]+)\](?:\*\*)?(?:\s*[—\-–][^\n]*)?(?:\s+[^\n\[]*)?\s*$/;
   const simpleHeaderRe = /^\s*(?:\[(\d+)\]|(\d+)\s*번|(?:No\.?\s*|Passage\s*)(\d+)|(\d+)\.)\s*$/i;
 
   const lines = text.split('\n');
