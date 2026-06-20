@@ -57,6 +57,10 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 }
 .tips-card { background: rgb(250, 250, 247); border: 1px dashed rgb(204, 204, 204); border-radius: 10px; padding: 16px 20px; font-size: 12px; color: var(--text-muted); line-height: 1.75; }
 .tips-card strong { color: var(--brand-dark); }
+.batch-preview { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.6; display: none; background: rgb(244, 242, 248); border: 1px solid rgb(214, 207, 233); color: var(--brand-dark); }
+.batch-preview code { background: rgb(255, 255, 255); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+.batch-option { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--text); }
+.batch-option input { margin-top: 3px; accent-color: var(--brand); }
 .library-view { max-width: 1080px; margin: 24px auto; padding: 0px 20px; }
 .library-toolbar { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .library-toolbar input, .library-toolbar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 12.5px; background: rgb(250, 250, 247); }
@@ -277,7 +281,8 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
   @page { size: a4; margin: 0px; }
-}</style>
+}
+</style>
 </head>
 <body>
 
