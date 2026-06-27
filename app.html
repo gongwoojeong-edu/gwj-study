@@ -7481,8 +7481,9 @@ function splitVocabNote(note) {
   const res = { syn: '', ant: '', etc: '' };
   if (!note) return res;
   const text = String(note).trim();
-  const synM = text.match(/유의어\s*[:：]?\s*([^|;]*?)\s*(?=(반의어|비고|$))/);
-  const antM = text.match(/반의어\s*[:：]?\s*([^|;]*?)\s*(?=(유의어|비고|$))/);
+  // 라벨 경계: 다른 라벨(유의어/반의어/비고) · 구분자(| ;) · 끝 에서 멈춤 (| 구분 포맷도 지원)
+  const synM = text.match(/유의어\s*[:：]?\s*(.*?)\s*(?=(\||;|반의어|비고|$))/);
+  const antM = text.match(/반의어\s*[:：]?\s*(.*?)\s*(?=(\||;|유의어|비고|$))/);
   if (synM) res.syn = synM[1].replace(/[,\u00b7/\s]+$/, '').trim();
   if (antM) res.ant = antM[1].replace(/[,\u00b7/\s]+$/, '').trim();
   if (!synM && !antM) res.etc = text;
@@ -7523,8 +7524,419 @@ function safeInlineHtml(s) {
   return t.replace(/\u0000(\d+)\u0000/g, (_, i) => ph[+i]);
 }
 
-// 어법·어휘 모음 페이지 HTML (자체 완결형)
-function buildGrammarVocabHtml(title, items, sections) {
+// ===== 정교 템플릿용 헬퍼 (기존 build-vocab-6mo.js / build-page-ui.js 디자인 이식) =====
+
+// 로고 자산 캐시 (assets/ 상대경로 1회 로드, 폴백: 공개 페이지 URL)
+let _gwjBrandAssets = null;
+async function loadBrandAssets() {
+  if (_gwjBrandAssets) return _gwjBrandAssets;
+  const fetchTxt = async (p) => {
+    try { const r = await fetch(p, { cache: 'force-cache' }); if (!r.ok) return ''; return (await r.text()).trim(); }
+    catch (e) { return ''; }
+  };
+  let logo = await fetchTxt('assets/logo-base64.txt');
+  let lockup = await fetchTxt('assets/logo-lockup-color.txt');
+  if (!logo) logo = await fetchTxt('https://gongwoojeong-edu.github.io/gwj-study/assets/logo-base64.txt');
+  if (!lockup) lockup = await fetchTxt('https://gongwoojeong-edu.github.io/gwj-study/assets/logo-lockup-color.txt');
+  _gwjBrandAssets = { logo, lockup };
+  return _gwjBrandAssets;
+}
+
+const GWJ_GRADE_ORDER = ['예비고1', '고1', '고2', '고3', '중1', '중2', '중3', '초고', '초저', '예비중1'];
+function gwjGradeFromLevel(level) {
+  const m = { L01: '초저', L02: '초고', L03: '예비중1', L04: '중1', L05: '중2', L06: '중3', L07: '예비고1', L08: '고1', L09: '고2', L10: '고3' };
+  return m[level] || '';
+}
+
+// "eng(한글)" → {en, ko}
+function gwjParseEntry(str) {
+  const s = String(str == null ? '' : str).trim();
+  const m = s.match(/^([^(]+?)\s*\(([^)]*)\)\s*$/);
+  if (m) return { en: m[1].trim(), ko: m[2].trim() };
+  return { en: s, ko: '' };
+}
+function gwjSplitList(str) {
+  if (!str) return [];
+  return String(str).split(/[,/·;]|\s{2,}/).map(s => s.trim()).filter(Boolean);
+}
+function gwjChip(e) {
+  const srcCls = e.src === '교재' ? 'src-book' : 'src-ai';
+  const ko = e.ko ? '<span class="chip-ko">' + escapeHtml(e.ko) + '</span>' : '';
+  return '<span class="chip ' + srcCls + '" title="출처: ' + escapeHtml(e.src) + '"><span class="chip-en">' + escapeHtml(e.en) + '</span>' + ko + '</span>';
+}
+
+// 노트에서 교재 표기 유의어/반의어 추출
+function gwjBookRelations(note) {
+  const parts = splitVocabNote(note);
+  return {
+    syn: gwjSplitList(parts.syn).map(gwjParseEntry),
+    ant: gwjSplitList(parts.ant).map(gwjParseEntry)
+  };
+}
+
+// 선택 자료의 고유 어휘 목록
+function collectVocabWords(records) {
+  const seen = new Map();
+  records.forEach(r => {
+    ((r.data && r.data.vocabulary) || []).forEach(v => {
+      if (!v || !v.word) return;
+      const k = String(v.word).toLowerCase();
+      if (!seen.has(k)) seen.set(k, { word: v.word, meaning: v.meaning || '' });
+    });
+  });
+  return [...seen.values()];
+}
+
+// 유의어·반의어 AI 보강 (한글뜻 포함). 반환: { wordLower: {syn:[{en,ko}], ant:[{en,ko}]} }
+async function aiAugmentRelations(words, onProgress) {
+  const out = {};
+  if (!words.length) return out;
+  const userApiKey = await getStoredApiKey();
+  const isArtifactEnv = (typeof window.storage === 'object' && window.storage !== null && !window._gwjPolyfillUsed);
+  if (!isArtifactEnv && !userApiKey) {
+    throw new Error('🔑 Anthropic API 키가 필요합니다. ⚙️ 설정에서 입력해주세요.');
+  }
+  const BATCH = 25;
+  const batches = [];
+  for (let i = 0; i < words.length; i += BATCH) batches.push(words.slice(i, i + BATCH));
+
+  for (let bi = 0; bi < batches.length; bi++) {
+    if (onProgress) onProgress(bi, batches.length);
+    const list = batches[bi].map(w => '- ' + w.word + (w.meaning ? ' (' + w.meaning + ')' : '')).join('\n');
+    const prompt =
+'당신은 한국 고등학교 수능 영어 어휘 전문가입니다. 다음 영어 단어/어구 각각에 대해 유의어(synonyms)와 반의어(antonyms)를 최대한 풍부하게 제시하세요.\n\n' +
+'규칙:\n' +
+'- 각 항목은 반드시 "영어(한글뜻)" 형식. 예: "increase(증가하다)", "be reluctant to(꺼리다)"\n' +
+'- 한글뜻은 그 단어의 핵심 의미를 2~6자로 자연스럽게.\n' +
+'- 제시 어휘는 해당 단어가 그 지문 맥락에서 쓰인 품사·의미에 맞는 것으로. (다의어는 주어진 한글 의미 기준)\n' +
+'- 유의어는 단어당 3~5개, 반의어는 단어당 2~4개를 목표로 하되, 자연스럽게 성립하는 것만 넣고 억지로 채우지 말 것.\n' +
+'- 유의어/반의어가 정말 없으면 빈 배열([]).\n' +
+'- 고등~수능 수준에서 함께 외우면 좋은 어휘 위주(너무 쉬운 기초어/너무 희귀어는 지양), 빈도 높은 동의어·반의어 우선.\n' +
+'- 중복 금지, 표제어 자체 반복 금지.\n' +
+'- 반드시 아래 JSON만 출력(설명/마크다운/코드펜스 금지):\n\n' +
+'{ "단어소문자": { "syn": ["영어(한글)", ...], "ant": ["영어(한글)", ...] } }\n\n' +
+'대상 단어:\n' + list;
+
+    const headers = { "Content-Type": "application/json" };
+    if (!isArtifactEnv) {
+      headers["x-api-key"] = userApiKey;
+      headers["anthropic-version"] = "2023-06-01";
+      headers["anthropic-dangerous-direct-browser-access"] = "true";
+    }
+    let resp;
+    try {
+      resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", headers,
+        body: JSON.stringify({ model: "claude-sonnet-4-5", max_tokens: 12000, messages: [{ role: "user", content: prompt }] })
+      });
+    } catch (e) { console.warn('보강 네트워크 오류(배치 ' + bi + ')', e); continue; }
+    if (!resp.ok) { console.warn('보강 실패(배치 ' + bi + ', HTTP ' + resp.status + ')'); continue; }
+    const data = await resp.json();
+    let text = data.content.map(b => b.type === 'text' ? b.text : '').join('').trim();
+    text = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+    const fb = text.indexOf('{'), lb = text.lastIndexOf('}');
+    if (fb >= 0 && lb > fb) text = text.slice(fb, lb + 1);
+    let parsed = {};
+    try { parsed = JSON.parse(text); } catch (e) { console.warn('보강 JSON 파싱 실패(배치 ' + bi + ')', e); continue; }
+    Object.keys(parsed).forEach(k => {
+      const v = parsed[k] || {};
+      out[String(k).toLowerCase()] = {
+        syn: (v.syn || []).map(gwjParseEntry),
+        ant: (v.ant || []).map(gwjParseEntry)
+      };
+    });
+  }
+  return out;
+}
+
+// 선택 자료 → 지문별 enriched 데이터 (grammar + syn/ant 병합, 출처 포함)
+function extractCollectionData(records, augMap) {
+  augMap = augMap || {};
+  const mergeRel = (bookArr, augArr) => {
+    const seen = new Set(); const res = [];
+    bookArr.forEach(e => { const k = e.en.toLowerCase(); if (e.en && !seen.has(k)) { seen.add(k); res.push({ ...e, src: '교재' }); } });
+    augArr.forEach(e => { const k = e.en.toLowerCase(); if (e.en && !seen.has(k)) { seen.add(k); res.push({ ...e, src: 'AI' }); } });
+    return res;
+  };
+  return records.map(r => {
+    const d = r.data || {};
+    const level = d.level || (r.learnerMeta && r.learnerMeta.level) || 'L08';
+    const grammar = ((d.transformations && d.transformations.grammar_points) || [])
+      .map(g => String(g).trim()).filter(Boolean);
+    const synRows = [], antRows = [];
+    (d.vocabulary || []).forEach(v => {
+      if (!v || !v.word) return;
+      const book = gwjBookRelations(v.note);
+      const aug = augMap[String(v.word).toLowerCase()] || { syn: [], ant: [] };
+      const syn = mergeRel(book.syn, aug.syn);
+      const ant = mergeRel(book.ant, aug.ant);
+      if (syn.length) synRows.push({ word: v.word, meaning: v.meaning || '', entries: syn });
+      if (ant.length) antRows.push({ word: v.word, meaning: v.meaning || '', entries: ant });
+    });
+    return {
+      level, grade: gwjGradeFromLevel(level),
+      seriesLabel: d.series_title || d.textbook || '기타 자료',
+      code: d.item_code || '',
+      koTitle: d.title_ko || d.expected_title || d.item_code || '무제',
+      enTitle: d.expected_title || '',
+      url: r.githubUrlAnalysis || r.githubUrl || '',
+      grammar, synRows, antRows,
+      sortKey: parseInt(d.item_code, 10) || 999
+    };
+  }).sort((a, b) => a.sortKey - b.sortKey || String(a.code).localeCompare(String(b.code), 'ko', { numeric: true }));
+}
+
+// 어법·어휘 모음 페이지 HTML (정교 템플릿, 자체 완결형)
+function buildGrammarVocabHtml(title, items, sections, assets) {
+  const sec = sections || { grammar: true, syn: true, ant: true };
+  const A = assets || { logo: '', lockup: '' };
+  const now = new Date();
+  const dateStr = now.getFullYear() + '. ' + (now.getMonth() + 1) + '. ' + now.getDate() + '.';
+
+  const subParts = [];
+  if (sec.grammar) subParts.push('주요어법');
+  if (sec.syn) subParts.push('유의어');
+  if (sec.ant) subParts.push('반의어');
+  const subLabel = subParts.join(' · ');
+
+  // 통계
+  const totalPassages = items.length;
+  const grammarPts = items.reduce((n, it) => n + it.grammar.length, 0);
+  const synPairs = items.reduce((n, it) => n + it.synRows.reduce((m, r) => m + r.entries.length, 0), 0);
+  const antPairs = items.reduce((n, it) => n + it.antRows.reduce((m, r) => m + r.entries.length, 0), 0);
+
+  // 학년 필터 목록
+  const usedGrades = GWJ_GRADE_ORDER.filter(g => items.some(it => it.grade === g));
+  const gradeFilterHtml = usedGrades.length
+    ? '<div class="filters"><div class="filter-row"><span class="filter-label">학년</span>' +
+        '<button type="button" class="grade-btn active" data-grade="all">전체</button>' +
+        usedGrades.map(g => '<button type="button" class="grade-btn" data-grade="' + escapeAttr(g) + '">' + escapeHtml(g) + '</button>').join('') +
+      '</div></div>'
+    : '';
+
+  const passageHead = (it, countLabel) =>
+    '<div class="passage-head">' +
+      '<span class="code-badge">' + escapeHtml(it.code) + (/\d$/.test(it.code) ? '번' : '') + '</span>' +
+      '<div class="passage-titles"><div class="t-ko">' + escapeHtml(it.koTitle) + '</div>' +
+        (it.enTitle ? '<div class="t-en">' + escapeHtml(it.enTitle) + '</div>' : '') + '</div>' +
+      (countLabel ? '<span class="line-count">' + escapeHtml(countLabel) + '</span>' : '') +
+      (it.url ? '<a class="passage-link" href="' + escapeAttr(it.url) + '#analysis" target="_blank" rel="noopener">분석교안 ↗</a>' : '') +
+    '</div>';
+
+  const groupBySeries = (list) => {
+    const m = new Map();
+    list.forEach(it => {
+      const key = it.seriesLabel || '기타 자료';
+      if (!m.has(key)) m.set(key, { label: key, grade: it.grade, items: [] });
+      m.get(key).items.push(it);
+    });
+    return [...m.values()];
+  };
+
+  const emptyMsg = '<div class="empty">수록된 자료가 없습니다. (분석에 데이터가 없을 수 있어요)</div>';
+
+  const grammarKindHtml = () => {
+    const groups = groupBySeries(items.filter(it => it.grammar.length));
+    if (!groups.length) return emptyMsg;
+    return groups.map(g =>
+      '<section class="series" data-grade="' + escapeAttr(g.grade || '') + '">' +
+        '<div class="series-head"><h3>' + escapeHtml(g.label) + '</h3><span class="series-count">지문 ' + g.items.length + '개</span></div>' +
+        g.items.map(it =>
+          '<div class="passage" data-search="' + escapeAttr((it.koTitle + ' ' + it.enTitle + ' ' + it.grammar.join(' ')).toLowerCase()) + '">' +
+            passageHead(it, it.grammar.length + '개') +
+            '<ul class="g-list">' + it.grammar.map(x => '<li>' + safeInlineHtml(x) + '</li>').join('') + '</ul>' +
+          '</div>'
+        ).join('') +
+      '</section>'
+    ).join('');
+  };
+
+  const relKindHtml = (rowsKey, label) => {
+    const groups = groupBySeries(items.filter(it => it[rowsKey].length));
+    if (!groups.length) return emptyMsg;
+    return groups.map(g =>
+      '<section class="series" data-grade="' + escapeAttr(g.grade || '') + '">' +
+        '<div class="series-head"><h3>' + escapeHtml(g.label) + '</h3><span class="series-count">지문 ' + g.items.length + '개</span></div>' +
+        g.items.map(it => {
+          const trs = it[rowsKey].map(r =>
+            '<tr><td class="w-word">' + escapeHtml(r.word) + '</td><td class="w-mean">' + escapeHtml(r.meaning) + '</td><td class="w-chips">' + r.entries.map(gwjChip).join('') + '</td></tr>'
+          ).join('');
+          const search = (it.koTitle + ' ' + it[rowsKey].map(r => r.word + ' ' + r.entries.map(e => e.en + ' ' + e.ko).join(' ')).join(' ')).toLowerCase();
+          return '<div class="passage" data-search="' + escapeAttr(search) + '">' +
+            passageHead(it, it[rowsKey].length + '단어') +
+            '<table class="vtable"><thead><tr><th>단어·어구</th><th>뜻</th><th>' + label + '</th></tr></thead><tbody>' + trs + '</tbody></table>' +
+          '</div>';
+        }).join('') +
+      '</section>'
+    ).join('');
+  };
+
+  const statBlock = (b, label) => '<div class="stat"><b>' + b + '</b><span>' + label + '</span></div>';
+  const statsHtml =
+    statBlock(totalPassages, '수록 지문') +
+    (sec.grammar ? statBlock(grammarPts, '어법 포인트') : '') +
+    (sec.syn ? statBlock(synPairs, '유의어 수') : '') +
+    (sec.ant ? statBlock(antPairs, '반의어 수') : '');
+
+  const navHtml =
+    (sec.grammar ? '<a class="nav-link" href="#sec-grammar">③ 주요어법</a>' : '') +
+    (sec.syn ? '<a class="nav-link" href="#sec-syn">↔ 유의어</a>' : '') +
+    (sec.ant ? '<a class="nav-link" href="#sec-ant">↔ 반의어</a>' : '');
+
+  const lockupImg = A.lockup ? '<img class="logo-lockup" src="' + A.lockup + '" alt="공우정바른학원 GWJ EDU">' : '<span class="brand-mark">공우정바른학원</span>';
+  const heroLogo = A.logo ? '<img class="hero-logo" src="' + A.logo + '" alt="공우정바른학원">' : '';
+  const watermark = A.logo ? 'background:url("' + A.logo + '") center center no-repeat;background-size:340px auto;' : '';
+
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(title)} · 공우정바른학원</title>
+<style>
+  :root{--brand:#6B5B95;--brand-dark:#4A3D6B;--brand-light:#E8E4F3;--brand-bg:#F4F2F8;--bg:#F7F5F0;--card:#fff;--border:#E3DFD5;--text:#2A2A2A;--muted:#6E6B65;--accent:#B5532A;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
+  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:92px}
+  .toolbar .logo-lockup{height:88px;width:auto;display:block;border-radius:4px;flex-shrink:0}
+  .toolbar-left{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+  .page-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .nav-link{padding:9px 16px;border:1px solid var(--brand-light);border-radius:8px;background:#faf9fc;color:var(--brand-dark);font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1.2}
+  .nav-link:hover{background:var(--brand-light)}
+  .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px}
+  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;${watermark}opacity:.07}
+  .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:170px}
+  .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
+  .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+  .print-btn:hover{background:var(--brand-dark)}
+  .container{max-width:1000px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+  .hero{background:linear-gradient(135deg,var(--brand-dark),var(--accent));color:#fff;padding:32px 30px;border-radius:18px;margin:22px 0 16px;box-shadow:0 6px 20px rgba(74,61,107,.22);position:relative;overflow:hidden}
+  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
+  .hero .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.9;margin-bottom:8px}
+  .hero h1{font-size:26px;font-weight:800;margin-bottom:9px;word-break:keep-all}
+  .hero p{font-size:13px;opacity:.92;line-height:1.7;max-width:720px}
+  .hero .stats{display:flex;gap:22px;margin-top:15px;flex-wrap:wrap}
+  .hero .stat b{font-size:21px;font-weight:800;display:block}
+  .hero .stat span{font-size:11.5px;opacity:.85}
+  .legend{display:flex;gap:14px;align-items:center;margin:0 0 14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;position:relative;z-index:10}
+  .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
+  .grade-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .grade-btn:hover{border-color:var(--brand);color:var(--brand-dark)}
+  .grade-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .is-hidden{display:none!important}
+  .kind-block{margin-bottom:30px;scroll-margin-top:104px}
+  .kind-title{font-size:21px;color:var(--brand-dark);font-weight:800;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--accent)}
+  .series{margin-bottom:24px}
+  .series-head{display:flex;align-items:baseline;gap:12px;padding-bottom:10px;margin-bottom:14px;border-bottom:2px solid var(--brand-light)}
+  .series-head h3{font-size:17px;color:var(--brand-dark);font-weight:800}
+  .series-count{font-size:12px;color:var(--muted);background:var(--brand-bg);padding:2px 10px;border-radius:12px}
+  .passage{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:11px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+  .passage-head{display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap}
+  .code-badge{background:var(--brand);color:#fff;font-size:12px;font-weight:700;padding:3px 11px;border-radius:7px;white-space:nowrap}
+  .passage-titles{flex:1;min-width:140px}
+  .t-ko{font-size:14px;font-weight:700;color:var(--text)}
+  .t-en{font-size:11px;color:var(--muted)}
+  .line-count{font-size:11px;font-weight:700;color:var(--accent);background:#eee;padding:2px 9px;border-radius:10px;white-space:nowrap}
+  .passage-link{font-size:11px;color:var(--brand-dark);text-decoration:none;padding:3px 9px;border:1px solid var(--brand-light);border-radius:6px;white-space:nowrap}
+  .passage-link:hover{background:var(--brand-light)}
+  .g-list{margin:2px 0 0 18px}
+  .g-list li{margin:5px 0;font-size:13.5px}
+  .vtable{width:100%;border-collapse:collapse;font-size:12.5px}
+  .vtable thead th{background:var(--brand-bg);color:var(--brand-dark);padding:6px 10px;border:1px solid var(--border);font-weight:700;text-align:left;font-size:11px}
+  .vtable tbody td{padding:7px 10px;border:1px solid var(--border);vertical-align:top;line-height:1.55}
+  .w-word{font-weight:700;width:20%;color:var(--text)}
+  .w-mean{width:24%;color:var(--muted);font-size:11.5px}
+  .w-chips{width:56%}
+  .chip{display:inline-flex;align-items:baseline;gap:4px;margin:2px 4px 2px 0;padding:2px 8px;border-radius:12px;font-size:11.5px;border:1px solid transparent;white-space:nowrap}
+  .chip-en{font-weight:700}
+  .chip-ko{font-size:10px;opacity:.8}
+  .src-ai{background:#eef0fb;border-color:#d6daf5;color:#3a3f7a}
+  .src-book{background:#e6f4ef;border-color:#bfe3d6;color:#0f6e56}
+  .empty{color:var(--muted);font-size:14px;padding:8px 2px}
+  .no-result{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
+  .footer{text-align:center;padding:28px 20px 10px;font-size:12px;color:var(--muted)}
+  @media print{.toolbar,.filters{display:none!important}.is-hidden{display:none!important}body{background:#fff;padding:0}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}.passage{break-inside:avoid;box-shadow:none}.chip,.vtable thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:13mm}}
+  @media(max-width:560px){.hero h1{font-size:21px}.w-word,.w-mean{width:auto}}
+</style>
+</head>
+<body>
+<div class="watermark" aria-hidden="true"></div>
+<nav class="toolbar">
+  <div class="toolbar-left">${lockupImg}<div class="page-nav">${navHtml}</div></div>
+  <input type="search" class="search" id="search" placeholder="🔍 단어·내용 검색…">
+  <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
+</nav>
+<div class="container">
+  <div class="hero">
+    ${heroLogo}
+    <div class="eyebrow">공우정바른학원 · GWJ EDU</div>
+    <h1>${escapeHtml(title)}</h1>
+    <p>각 지문 핵심 어휘의 <strong>${escapeHtml(subLabel)}</strong>를 모았습니다. 분석교안 비고(교재)와 AI 보강 항목을 출처로 구분 표시했으니, 검수 후 학습·암기용으로 활용하세요.</p>
+    <div class="stats">${statsHtml}</div>
+  </div>
+  <div class="legend">
+    <span>출처 구분:</span>
+    <span class="chip src-book"><span class="chip-en">교재</span></span> 분석교안 비고
+    <span class="chip src-ai"><span class="chip-en">AI</span></span> AI 보강(검수 권장)
+  </div>
+  ${gradeFilterHtml}
+  <div id="content">
+    ${sec.grammar ? '<div class="kind-block" id="sec-grammar"><div class="kind-title">③ 주요 어법 포인트</div>' + grammarKindHtml() + '</div>' : ''}
+    ${sec.syn ? '<div class="kind-block" id="sec-syn"><div class="kind-title">↔ 유의어 (Synonyms)</div>' + relKindHtml('synRows', '유의어 (Synonyms)') + '</div>' : ''}
+    ${sec.ant ? '<div class="kind-block" id="sec-ant"><div class="kind-title">↔ 반의어 (Antonyms)</div>' + relKindHtml('antRows', '반의어 (Antonyms)') + '</div>' : ''}
+  </div>
+  <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
+  <div class="footer">공우정바른학원 · GWJ EDU &nbsp;·&nbsp; 생성일 ${escapeHtml(dateStr)} &nbsp;·&nbsp; ${escapeHtml(title)}</div>
+</div>
+<scr` + `ipt>
+  var search=document.getElementById('search');
+  var noResult=document.getElementById('noResult');
+  var activeGrade='all';
+  function beforePrint(){
+    if(activeGrade==='all'){
+      var hasGrade=document.querySelector('.grade-btn[data-grade]:not([data-grade="all"])');
+      if(hasGrade&&!confirm('학년이 "전체"입니다. 모든 학년이 함께 인쇄됩니다.\\n\\n특정 학년을 먼저 선택하면 해당 학년만 인쇄됩니다.\\n\\n그래도 전체 인쇄할까요?')) return;
+    }
+    window.print();
+  }
+  function apply(){
+    var q=(search.value||'').trim().toLowerCase();
+    var visible=0;
+    document.querySelectorAll('.series').forEach(function(secEl){
+      var matchGrade=activeGrade==='all'||secEl.getAttribute('data-grade')===activeGrade;
+      var secVisible=0;
+      secEl.querySelectorAll('.passage').forEach(function(p){
+        var hay=p.getAttribute('data-search')||'';
+        var hit=matchGrade&&(!q||hay.indexOf(q)>=0);
+        p.classList.toggle('is-hidden',!hit);
+        if(hit){secVisible++;visible++;}
+      });
+      secEl.classList.toggle('is-hidden',!(matchGrade&&secVisible>0));
+    });
+    document.querySelectorAll('.kind-block').forEach(function(kb){
+      var anyVis=kb.querySelector('.series:not(.is-hidden)');
+      kb.classList.toggle('is-hidden',!anyVis);
+    });
+    noResult.style.display=visible===0?'block':'none';
+  }
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.grade-btn');
+    if(!btn) return;
+    document.querySelectorAll('.grade-btn').forEach(function(x){x.classList.remove('active');});
+    btn.classList.add('active');
+    activeGrade=btn.getAttribute('data-grade');
+    apply();
+  });
+  if(search) search.addEventListener('input',apply);
+<\/scr` + `ipt>
+</body>
+</html>`;
+}
+
+// (구) 단순 템플릿 — 보존용 미사용
+function buildGrammarVocabHtmlLegacy(title, items, sections) {
   const sec = sections || { grammar: true, syn: true, ant: true };
   const now = new Date().toLocaleString('ko-KR');
   const grammarItems = items.filter(it => it.grammar.length);
@@ -7747,6 +8159,7 @@ function openGrammarVocabBuilder() {
         '<label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;"><input type="checkbox" id="gv-syn" checked style="width:17px;height:17px;accent-color:#e65100;"> 🟰 유의어</label>' +
         '<label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;"><input type="checkbox" id="gv-ant" checked style="width:17px;height:17px;accent-color:#e65100;"> ↔️ 반의어</label>' +
       '</div>' +
+      '<div style="font-size:12px;color:#888;background:#fff8f0;border:1px solid #ffe0c2;border-radius:6px;padding:8px 10px;margin-bottom:14px;line-height:1.5;">💡 유의어·반의어 선택 시 <strong>AI 보강</strong>(한글뜻·출처 표시)이 자동 실행됩니다. Anthropic API 키가 필요하며 단어 수에 따라 시간이 걸릴 수 있어요.</div>' +
       '<div class="modal-actions" style="display:flex;gap:8px;justify-content:flex-end;">' +
         '<button class="modal-close-btn" onclick="document.getElementById(\'gv-builder-modal\').remove()">취소</button>' +
         '<button class="action-btn" onclick="confirmGrammarVocabBuilder()" style="background:#e65100;color:#fff;font-weight:600;">🚀 생성</button>' +
@@ -7820,14 +8233,35 @@ async function createGrammarVocabCollection(opts) {
       }
     }
 
-    // 2) 데이터 추출 (record 데이터에서 직접 — 배포 성공 여부와 무관하게 내용은 생성)
+    // 2) 데이터 추출 + AI 보강 (유의어·반의어)
     const freshSelected = library.filter(r => selectedRecIds.has(r.id));
-    const items = extractGrammarVocab(freshSelected);
+
+    // 로고 자산 + AI 보강은 유의어/반의어 선택 시에만
+    const [assets] = await Promise.all([loadBrandAssets()]);
+
+    let augMap = {};
+    if (sections.syn || sections.ant) {
+      const words = collectVocabWords(freshSelected);
+      if (words.length) {
+        try {
+          augMap = await aiAugmentRelations(words, (bi, total) => {
+            updateProgressBar(bi, total, 'AI 유의어·반의어 보강 중... (' + (bi + 1) + '/' + total + ')');
+          });
+        } catch (e) {
+          hideProgressBar();
+          showToast('❌ ' + (e.message || 'AI 보강 실패'), 'error');
+          if (/API 키/.test(e.message || '')) setTimeout(() => openApiKeyModal(), 500);
+          return;
+        }
+      }
+    }
+
+    const items = extractCollectionData(freshSelected, augMap);
 
     const hasContent = items.some(it =>
       (sections.grammar && it.grammar.length) ||
-      (sections.syn && it.syn.length) ||
-      (sections.ant && it.ant.length)
+      (sections.syn && it.synRows.length) ||
+      (sections.ant && it.antRows.length)
     );
     if (!hasContent) {
       hideProgressBar();
@@ -7837,7 +8271,7 @@ async function createGrammarVocabCollection(opts) {
 
     // 3) 페이지 생성 및 업로드
     updateProgressBar(notPublished.length, notPublished.length + 1, '어법·어휘 페이지 생성...');
-    const html = buildGrammarVocabHtml(autoTitle, items, sections);
+    const html = buildGrammarVocabHtml(autoTitle, items, sections, assets);
     const filePath = 'collections/' + autoSlug + '.html';
     await uploadFileToGithub(cfg, filePath, html, '어법·어휘 모음: ' + autoTitle);
 
@@ -7858,8 +8292,8 @@ async function createGrammarVocabCollection(opts) {
 
     const statParts = [];
     if (sections.grammar) statParts.push('주요어법 ' + items.filter(it => it.grammar.length).length + '개 지문');
-    if (sections.syn) statParts.push('유의어 ' + items.filter(it => it.syn.length).length + '개');
-    if (sections.ant) statParts.push('반의어 ' + items.filter(it => it.ant.length).length + '개');
+    if (sections.syn) statParts.push('유의어 ' + items.reduce((n, it) => n + it.synRows.reduce((m, r) => m + r.entries.length, 0), 0) + '개');
+    if (sections.ant) statParts.push('반의어 ' + items.reduce((n, it) => n + it.antRows.reduce((m, r) => m + r.entries.length, 0), 0) + '개');
     let shareText = '📚 ' + autoTitle + ' (어법·어휘 모음)\n';
     shareText += '🔗 ' + publicUrl + '\n\n';
     shareText += '· ' + statParts.join(' · ') + '\n';
@@ -10587,10 +11021,10 @@ function openRecord(record) {
   document.getElementById('tab-analysis').classList.add('active');
 }
 
-// 단일 자료의 주요어법/유의어/반의어 탭 렌더링
+// 단일 자료의 주요어법/유의어/반의어 탭 렌더링 (교재 비고 기반, 칩 디자인)
 function renderRecordExtraTabs(d) {
-  const items = extractGrammarVocab([{ data: d }]);
-  const it = items[0] || { grammar: [], syn: [], ant: [] };
+  const items = extractCollectionData([{ data: d }], {});
+  const it = items[0] || { grammar: [], synRows: [], antRows: [] };
   const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
 
   // 주요어법
@@ -10606,35 +11040,45 @@ function renderRecordExtraTabs(d) {
     gEl.innerHTML = '<div class="empty-state"><div class="icon">③</div><h2>주요어법 데이터가 없습니다</h2><p>이 자료에는 어법 포인트가 없어요.</p></div>';
   }
 
-  // 유의어 / 반의어 공통 테이블 렌더러
-  const relTable = (list, label) =>
-    '<table style="width:100%;border-collapse:collapse;font-size:15px;">' +
+  // 칩 (출처색 인라인)
+  const chipHtml = (e) => {
+    const isBook = e.src === '교재';
+    const bg = isBook ? '#e6f4ef' : '#eef0fb';
+    const bd = isBook ? '#bfe3d6' : '#d6daf5';
+    const cl = isBook ? '#0f6e56' : '#3a3f7a';
+    const ko = e.ko ? '<span style="font-size:11px;opacity:.8;margin-left:3px;">' + escapeHtml(e.ko) + '</span>' : '';
+    return '<span title="출처: ' + escapeHtml(e.src) + '" style="display:inline-flex;align-items:baseline;gap:3px;margin:2px 5px 2px 0;padding:3px 9px;border-radius:12px;font-size:12.5px;border:1px solid ' + bd + ';background:' + bg + ';color:' + cl + ';white-space:nowrap;"><b>' + escapeHtml(e.en) + '</b>' + ko + '</span>';
+  };
+
+  const relTable = (rows, label) =>
+    '<table style="width:100%;border-collapse:collapse;font-size:14px;">' +
       '<thead><tr>' +
-        '<th style="text-align:left;padding:10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);">단어·어구</th>' +
-        '<th style="text-align:left;padding:10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);">의미</th>' +
-        '<th style="text-align:left;padding:10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);">' + label + '</th>' +
+        '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);width:22%;">단어·어구</th>' +
+        '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);width:26%;">뜻</th>' +
+        '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);">' + label + '</th>' +
       '</tr></thead><tbody>' +
-        list.map(e =>
+        rows.map(r =>
           '<tr>' +
-            '<td style="padding:9px 10px;border-bottom:1px solid #f0eef6;font-weight:600;">' + safeInlineHtml(e.word) + '</td>' +
-            '<td style="padding:9px 10px;border-bottom:1px solid #f0eef6;color:#6c6480;">' + safeInlineHtml(e.meaning) + '</td>' +
-            '<td style="padding:9px 10px;border-bottom:1px solid #f0eef6;">' + safeInlineHtml(e.rel) + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;font-weight:700;">' + escapeHtml(r.word) + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;color:#6c6480;font-size:12.5px;">' + escapeHtml(r.meaning) + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;">' + r.entries.map(chipHtml).join('') + '</td>' +
           '</tr>'
         ).join('') +
-      '</tbody></table>';
+      '</tbody></table>' +
+      '<p style="margin-top:12px;font-size:12px;color:#999;">※ 책장에서 여러 자료를 선택해 “📚 어법·어휘 모음 만들기”로 묶으면 AI 보강(유의어·반의어 자동 확장)까지 적용됩니다.</p>';
 
   const sEl = document.getElementById('synonym-container');
-  if (it.syn.length) {
-    sEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">🟰 유의어 (Synonyms)</h2>' + relTable(it.syn, '유의어'));
+  if (it.synRows.length) {
+    sEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">🟰 유의어 (Synonyms)</h2>' + relTable(it.synRows, '유의어 (Synonyms)'));
   } else {
-    sEl.innerHTML = '<div class="empty-state"><div class="icon">🟰</div><h2>유의어 데이터가 없습니다</h2><p>단어표에 유의어 표기가 없어요.</p></div>';
+    sEl.innerHTML = '<div class="empty-state"><div class="icon">🟰</div><h2>유의어 데이터가 없습니다</h2><p>단어표 비고에 유의어 표기가 없어요. 모음 만들기로 AI 보강이 가능합니다.</p></div>';
   }
 
   const aEl = document.getElementById('antonym-container');
-  if (it.ant.length) {
-    aEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">↔️ 반의어 (Antonyms)</h2>' + relTable(it.ant, '반의어'));
+  if (it.antRows.length) {
+    aEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">↔️ 반의어 (Antonyms)</h2>' + relTable(it.antRows, '반의어 (Antonyms)'));
   } else {
-    aEl.innerHTML = '<div class="empty-state"><div class="icon">↔️</div><h2>반의어 데이터가 없습니다</h2><p>단어표에 반의어 표기가 없어요.</p></div>';
+    aEl.innerHTML = '<div class="empty-state"><div class="icon">↔️</div><h2>반의어 데이터가 없습니다</h2><p>단어표 비고에 반의어 표기가 없어요. 모음 만들기로 AI 보강이 가능합니다.</p></div>';
   }
 }
 
