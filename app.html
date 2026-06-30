@@ -771,32 +771,51 @@ body.edit-mode .page::before {
   z-index: 5;
 }
 
+.line-translation-wrap {
+  max-width: 720px; margin: 0 auto; padding: 16px 20px 40px;
+}
 .line-translation-note {
-  font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;
+  font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;
+}
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading {
+  font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700;
 }
 .line-translation-list {
   list-style: none; padding: 0; margin: 0;
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 0;
 }
 .line-translation-item {
-  display: flex; gap: 10px; align-items: flex-start;
-  line-height: 1.75; font-size: 15px;
-  padding: 10px 12px; background: #fafaf7;
-  border: 1px solid var(--border); border-radius: 8px;
+  display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start;
+  line-height: 1.55; font-size: 14px;
+  padding: 5px 0 5px 6px;
+  border-left: 2px solid rgba(107, 91, 149, 0.18);
+  background: transparent;
+}
+.line-translation-item + .line-translation-item {
+  margin-top: 1px;
+}
+.line-translation-item:nth-child(even) {
+  background: rgba(107, 91, 149, 0.035);
 }
 .line-translation-num {
-  flex-shrink: 0; font-weight: 700; color: var(--brand); min-width: 24px;
+  flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55;
 }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
 .line-translation-passage {
-  margin-bottom: 28px; padding-bottom: 22px;
-  border-bottom: 1px dashed var(--border);
+  margin-bottom: 18px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
 }
 .line-translation-passage:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .line-translation-passage h3 {
-  font-size: 15px; color: var(--brand-dark); margin-bottom: 10px; line-height: 1.5;
+  font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700;
+  padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12);
 }
 .line-translation-passage .passage-meta {
-  display: block; font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 2px;
+  display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px;
+}
+.line-translation-empty-line {
+  color: #999; font-size: 12px; margin: 2px 0 0 34px;
 }
 
 @media print {
@@ -818,7 +837,36 @@ body.edit-mode .page::before {
   .page:last-child { page-break-after: auto; }
   .structure-view { page-break-before: always; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  /* 한줄해석·모음 인쇄: 여백·잉크 절약 */
+  #tab-line-translation.print-target .line-translation-wrap {
+    max-width: none; padding: 0; margin: 0;
+  }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage {
+    margin-bottom: 8pt; padding-bottom: 6pt;
+    page-break-inside: avoid; break-inside: avoid-page;
+  }
+  #tab-line-translation.print-target .line-translation-passage h3 {
+    font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt;
+    border-bottom-color: #ccc;
+  }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: #555; }
+  #tab-line-translation.print-target .line-translation-item {
+    grid-template-columns: 16pt 1fr; gap: 4pt;
+    font-size: 9.5pt; line-height: 1.38;
+    padding: 0.5pt 0; border-left: none;
+    background: transparent !important;
+  }
+  #tab-line-translation.print-target .line-translation-num {
+    font-size: 9pt; color: #333; font-weight: 600;
+  }
+  #tab-line-translation.print-target .line-translation-empty-line {
+    font-size: 8.5pt; margin-left: 16pt;
+  }
   @page { size: A4; margin: 0; }
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
 }
 </style>
 </head>
@@ -11285,16 +11333,20 @@ function sortRecordsForDisplay(records) {
 
 function renderLineTranslationListHtml(koLines) {
   if (!koLines.length) {
-    return '<p style="color:#999;font-size:13px;margin:4px 0 0;">직독·의역 데이터가 없습니다.</p>';
+    return '<p class="line-translation-empty-line">직독·의역 데이터가 없습니다.</p>';
   }
   return '<ol class="line-translation-list">' +
     koLines.map((line, i) =>
       '<li class="line-translation-item">' +
         '<span class="line-translation-num">' + (LINE_TRANSLATION_NUMS[i] || (i + 1) + '.') + '</span>' +
-        '<span>' + escapeHtml(line) + '</span>' +
+        '<span class="line-translation-text">' + escapeHtml(line) + '</span>' +
       '</li>'
     ).join('') +
   '</ol>';
+}
+
+function lineTranslationWrap(inner) {
+  return '<div class="line-translation-wrap">' + inner + '</div>';
 }
 
 function openBatchLineTranslation() {
@@ -11314,7 +11366,6 @@ function openBatchLineTranslation() {
 function renderLineTranslationTab() {
   const ltEl = document.getElementById('line-translation-container');
   if (!ltEl) return;
-  const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
   const records = getViewerRecords();
   if (!records.length) {
     ltEl.innerHTML = viewerEmptyHint('&gt;');
@@ -11325,9 +11376,9 @@ function renderLineTranslationTab() {
     const rec = records[0];
     const koLines = extractKoLinesFromData(rec.data);
     if (koLines.length) {
-      ltEl.innerHTML = wrap(
-        '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석</h2>' +
-        '<p class="line-translation-note"><strong>' + escapeHtml(getRecordDisplayTitle(rec)) + '</strong> — 분석교안 <strong>직독·의역</strong>을 문장 순서대로 정리했습니다.</p>' +
+      ltEl.innerHTML = lineTranslationWrap(
+        '<h2 class="line-translation-heading">&gt; 한줄해석</h2>' +
+        '<p class="line-translation-note"><strong>' + escapeHtml(getRecordDisplayTitle(rec)) + '</strong> · 직독·의역 ' + koLines.length + '문장</p>' +
         renderLineTranslationListHtml(koLines)
       );
     } else {
@@ -11337,9 +11388,9 @@ function renderLineTranslationTab() {
   }
 
   const withData = records.filter(r => extractKoLinesFromData(r.data).length > 0).length;
-  ltEl.innerHTML = wrap(
-    '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석 모음</h2>' +
-    '<p class="line-translation-note">선택 <strong>' + records.length + '개</strong> 지문 · 해석 있음 <strong>' + withData + '개</strong>. 지문별 직독·의역만 모았습니다.</p>' +
+  ltEl.innerHTML = lineTranslationWrap(
+    '<h2 class="line-translation-heading">&gt; 한줄해석 모음</h2>' +
+    '<p class="line-translation-note">선택 <strong>' + records.length + '개</strong> 지문 · 해석 <strong>' + withData + '개</strong></p>' +
     records.map((rec, idx) =>
       '<section class="line-translation-passage">' +
         (getRecordMetaLabel(rec) ? '<span class="passage-meta">' + escapeHtml(getRecordMetaLabel(rec)) + '</span>' : '') +
