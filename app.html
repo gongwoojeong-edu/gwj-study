@@ -771,23 +771,6 @@ body.edit-mode .page::before {
   z-index: 5;
 }
 
-.line-translation-note {
-  font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;
-}
-.line-translation-list {
-  list-style: none; padding: 0; margin: 0;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.line-translation-item {
-  display: flex; gap: 10px; align-items: flex-start;
-  line-height: 1.75; font-size: 15px;
-  padding: 10px 12px; background: #fafaf7;
-  border: 1px solid var(--border); border-radius: 8px;
-}
-.line-translation-num {
-  flex-shrink: 0; font-weight: 700; color: var(--brand); min-width: 24px;
-}
-
 @media print {
   body { background: #fff; }
   body.edit-mode .page::before { display: none !important; }
@@ -834,7 +817,6 @@ body.edit-mode .page::before {
     <button class="tab-btn" data-tab="grammar" id="btn-grammar" disabled="">③ 주요어법</button>
     <button class="tab-btn" data-tab="synonym" id="btn-synonym" disabled="">🟰 유의어</button>
     <button class="tab-btn" data-tab="antonym" id="btn-antonym" disabled="">↔️ 반의어</button>
-    <button class="tab-btn" data-tab="line-translation" id="btn-line-translation" disabled="">&gt; 한줄해석</button>
   </div>
   <div class="dropdown" id="download-dropdown">
     <button class="action-btn" onclick="toggleDownloadMenu(event)" id="download-btn" disabled="">📥 다운로드 ▾</button>
@@ -4853,11 +4835,6 @@ body.edit-mode .page::before {
 <div class="tab-panel" id="tab-antonym">
   <div id="antonym-container">
     <div class="empty-state"><div class="icon">↔️</div><h2>반의어가 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>
-  </div>
-</div>
-<div class="tab-panel" id="tab-line-translation">
-  <div id="line-translation-container">
-    <div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석이 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>
   </div>
 </div>
 
@@ -9318,7 +9295,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 function printPage() {
   const activeTab = document.querySelector('.tab-panel.active');
   if (!activeTab || activeTab.id === 'tab-input' || activeTab.id === 'tab-library') {
-    showToast('분석교안·구조도·한줄해석 등 열람 탭으로 이동 후 인쇄해주세요.', 'info');
+    showToast('분석교안 또는 구조도 탭으로 이동 후 인쇄해주세요.', 'info');
     return;
   }
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('print-target'));
@@ -11021,7 +10998,6 @@ function openRecord(record) {
   document.getElementById('btn-grammar').disabled = false;
   document.getElementById('btn-synonym').disabled = false;
   document.getElementById('btn-antonym').disabled = false;
-  document.getElementById('btn-line-translation').disabled = false;
   document.getElementById('print-btn').disabled = false;
   document.getElementById('download-btn').disabled = false;
 
@@ -11104,28 +11080,6 @@ function renderRecordExtraTabs(d) {
   } else {
     aEl.innerHTML = '<div class="empty-state"><div class="icon">↔️</div><h2>반의어 데이터가 없습니다</h2><p>단어표 비고에 반의어 표기가 없어요. 모음 만들기로 AI 보강이 가능합니다.</p></div>';
   }
-
-  const ltEl = document.getElementById('line-translation-container');
-  const circledNums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
-  const koLines = (d.sentences || [])
-    .map(s => String(s.translation || '').replace(/^▶?\s*직독[·ㆍ]의역\s*/, '').trim())
-    .filter(Boolean);
-  if (koLines.length) {
-    ltEl.innerHTML = wrap(
-      '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석</h2>' +
-      '<p class="line-translation-note">분석교안 <strong>직독·의역</strong>을 문장 순서대로 정리한 자료입니다. 빈칸·워크북 제작용으로 활용하세요.</p>' +
-      '<ol class="line-translation-list">' +
-        koLines.map((line, i) =>
-          '<li class="line-translation-item">' +
-            '<span class="line-translation-num">' + (circledNums[i] || (i + 1) + '.') + '</span>' +
-            '<span>' + escapeHtml(line) + '</span>' +
-          '</li>'
-        ).join('') +
-      '</ol>'
-    );
-  } else {
-    ltEl.innerHTML = '<div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석 데이터가 없습니다</h2><p>분석교안에 직독·의역(translation)이 없어요.</p></div>';
-  }
 }
 
 function closeViewing() {
@@ -11136,7 +11090,6 @@ function closeViewing() {
   document.getElementById('btn-grammar').disabled = true;
   document.getElementById('btn-synonym').disabled = true;
   document.getElementById('btn-antonym').disabled = true;
-  document.getElementById('btn-line-translation').disabled = true;
   document.getElementById('print-btn').disabled = true;
   document.getElementById('download-btn').disabled = true;
   document.body.classList.remove('edit-mode');
@@ -11150,8 +11103,6 @@ function closeViewing() {
     <div class="empty-state"><div class="icon">🟰</div><h2>유의어가 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>`;
   document.getElementById('antonym-container').innerHTML = `
     <div class="empty-state"><div class="icon">↔️</div><h2>반의어가 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>`;
-  document.getElementById('line-translation-container').innerHTML = `
-    <div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석이 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>`;
 
   // 책장 탭으로 전환
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
