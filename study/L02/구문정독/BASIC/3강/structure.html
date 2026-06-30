@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>The Only Way to Overcome Fear</title>
+<title>Facing Fear: The Only Way to Overcome</title>
 <style>*, ::before, ::after { box-sizing: border-box; margin: 0px; padding: 0px; }
 :root { --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3; --brand-bg: #F4F2F8; --paper: #ffffff; --bg: #F7F5F0; --border: #E3DFD5; --text: #2A2A2A; --text-muted: #6E6B65; --charcoal: #3D3D3D; --accent-red: #A32D2D; --accent-teal: #0F6E56; --accent-blue: #185FA5; --accent-amber: #c8900a; --navy: var(--brand-dark); --navy-dark: var(--brand-dark); --accent-purple: var(--brand); }
 body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -57,6 +57,10 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 }
 .tips-card { background: rgb(250, 250, 247); border: 1px dashed rgb(204, 204, 204); border-radius: 10px; padding: 16px 20px; font-size: 12px; color: var(--text-muted); line-height: 1.75; }
 .tips-card strong { color: var(--brand-dark); }
+.batch-preview { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.6; display: none; background: rgb(244, 242, 248); border: 1px solid rgb(214, 207, 233); color: var(--brand-dark); }
+.batch-preview code { background: rgb(255, 255, 255); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+.batch-option { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--text); }
+.batch-option input { margin-top: 3px; accent-color: var(--brand); }
 .library-view { max-width: 1080px; margin: 24px auto; padding: 0px 20px; }
 .library-toolbar { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .library-toolbar input, .library-toolbar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 12.5px; background: rgb(250, 250, 247); }
@@ -263,6 +267,21 @@ body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; trans
 body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
 body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
 body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+.line-translation-wrap { max-width: 720px; margin: 0px auto; padding: 16px 20px 40px; }
+.line-translation-note { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading { font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700; }
+.line-translation-list { list-style: none; padding: 0px; margin: 0px; display: flex; flex-direction: column; gap: 0px; }
+.line-translation-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; line-height: 1.55; font-size: 14px; padding: 5px 0px 5px 6px; border-left: 2px solid rgba(107, 91, 149, 0.18); background: transparent; }
+.line-translation-item + .line-translation-item { margin-top: 1px; }
+.line-translation-item:nth-child(2n) { background: rgba(107, 91, 149, 0.035); }
+.line-translation-num { flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55; }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
+.line-translation-passage { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.line-translation-passage:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; margin-bottom: 0px; padding-bottom: 0px; }
+.line-translation-passage h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12); }
+.line-translation-passage .passage-meta { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.line-translation-empty-line { color: rgb(153, 153, 153); font-size: 12px; margin: 2px 0px 0px 34px; }
 @media print {
   body { background: rgb(255, 255, 255); }
   body.edit-mode .page::before { display: none !important; }
@@ -276,9 +295,19 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .page:last-child { break-after: auto; }
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  #tab-line-translation.print-target .line-translation-wrap { max-width: none; padding: 0px; margin: 0px; }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage { margin-bottom: 8pt; padding-bottom: 6pt; break-inside: avoid-page; }
+  #tab-line-translation.print-target .line-translation-passage h3 { font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt; border-bottom-color: rgb(204, 204, 204); }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: rgb(85, 85, 85); }
+  #tab-line-translation.print-target .line-translation-item { grid-template-columns: 16pt 1fr; gap: 4pt; font-size: 9.5pt; line-height: 1.38; padding: 0.5pt 0px; border-left-width: medium; border-left-style: none; border-left-color: currentcolor; background: transparent !important; }
+  #tab-line-translation.print-target .line-translation-num { font-size: 9pt; color: rgb(51, 51, 51); font-weight: 600; }
+  #tab-line-translation.print-target .line-translation-empty-line { font-size: 8.5pt; margin-left: 16pt; }
   @page { size: a4; margin: 0px; }
-}
-</style>
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
+}</style>
 </head>
 <body>
 
@@ -304,47 +333,47 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
           </defs>
           <g class="node-g" onclick="showDetail(0)">
             <rect x="14" y="24" width="170" height="62" rx="10" fill="#F1EFE8" stroke="#8a8880" stroke-width="1"/>
-            <text x="99" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#3d3d3a">① 두려움 정의</text>
+            <text x="99" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#3d3d3a">① 두려움의 정의</text>
             <text x="99" y="68" text-anchor="middle" font-size="10.5" fill="#6a6a65">자연스러운 감정</text>
           </g>
           <line x1="184" y1="55" x2="214" y2="55" stroke="#bbb" stroke-width="1.5" marker-end="url(#arr)"/>
           <g class="node-g" onclick="showDetail(1)">
             <rect x="216" y="24" width="198" height="62" rx="10" fill="#FCEBEB" stroke="#A32D2D" stroke-width="1"/>
             <text x="315" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#791F1F">② 두려움의 결과</text>
-            <text x="315" y="68" text-anchor="middle" font-size="10.5" fill="#A32D2D">사람은 두려워함</text>
+            <text x="315" y="68" text-anchor="middle" font-size="10.5" fill="#A32D2D">사람이 두려워함</text>
           </g>
           <line x1="414" y1="55" x2="444" y2="55" stroke="#bbb" stroke-width="1.5" marker-end="url(#arr)"/>
           <g class="node-g" onclick="showDetail(2)">
             <rect x="446" y="24" width="220" height="62" rx="10" fill="#FCEBEB" stroke="#A32D2D" stroke-width="1"/>
-            <text x="556" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#791F1F">③ 회피 경향</text>
-            <text x="556" y="68" text-anchor="middle" font-size="10.5" fill="#A32D2D">원하지 않음</text>
+            <text x="556" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#791F1F">③ 일반적 반응 (회피)</text>
+            <text x="556" y="68" text-anchor="middle" font-size="10.5" fill="#A32D2D">원치 않음</text>
           </g>
           <line x1="556" y1="86" x2="556" y2="116" stroke="#bbb" stroke-width="1.5" marker-end="url(#arr)"/>
           <g class="node-g" onclick="showDetail(3)">
             <rect x="14" y="118" width="652" height="68" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="2"/>
-            <text x="340" y="142" text-anchor="middle" font-size="14" font-weight="700" fill="#085041">④ ★ 역접 전환</text>
+            <text x="340" y="142" text-anchor="middle" font-size="14" font-weight="700" fill="#085041">④ ★ 역접 전환 (But)</text>
             <text x="340" y="166" text-anchor="middle" font-size="11" fill="#0F6E56">하지만</text>
           </g>
           <line x1="250" y1="186" x2="250" y2="216" stroke="#bbb" stroke-width="1.5" marker-end="url(#arr)"/>
           <line x1="490" y1="186" x2="490" y2="216" stroke="#bbb" stroke-width="1.5" marker-end="url(#arr)"/>
           <g class="node-g" onclick="showDetail(4)">
             <rect x="14" y="218" width="460" height="62" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="1"/>
-            <text x="244" y="241" text-anchor="middle" font-size="13" font-weight="700" fill="#0C447C">⑤ 극복 방법</text>
-            <text x="244" y="262" text-anchor="middle" font-size="10.5" fill="#185FA5">유일한 방법</text>
+            <text x="244" y="241" text-anchor="middle" font-size="13" font-weight="700" fill="#0C447C">⑤ 해결책 제시</text>
+            <text x="244" y="262" text-anchor="middle" font-size="10.5" fill="#185FA5">극복의 유일한 방법</text>
           </g>
           <line x1="474" y1="249" x2="494" y2="249" stroke="#bbb" stroke-width="1.5" marker-end="url(#arr)"/>
           <g class="node-g" onclick="showDetail(5)">
             <rect x="496" y="218" width="170" height="62" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="2"/>
-            <text x="581" y="241" text-anchor="middle" font-size="13" font-weight="700" fill="#3C3489">⑥ ★ 결론: 직면</text>
+            <text x="581" y="241" text-anchor="middle" font-size="13" font-weight="700" fill="#3C3489">⑥ ★ 핵심 주장 (직면)</text>
             <text x="581" y="262" text-anchor="middle" font-size="10.5" fill="#534AB7">그것을 직면하는 것</text>
           </g>
           <rect x="14" y="308" width="652" height="44" rx="8" fill="#fafafa" stroke="#e0e0d8" stroke-width="0.5"/>
           <text x="24" y="326" font-size="11" font-weight="700" fill="#A32D2D">심경 변화</text>
-          <text x="110" y="326" font-size="11" fill="#A32D2D">회피·불안</text>
+          <text x="110" y="326" font-size="11" fill="#A32D2D">회피·소극</text>
           <text x="110" y="342" font-size="10" fill="#bbb">(do not want it to happen)</text>
           <line x1="220" y1="330" x2="380" y2="330" stroke="#ccc" stroke-width="1" marker-end="url(#arr)"/>
-          <text x="296" y="322" text-anchor="middle" font-size="10" fill="#888">But 역접 후</text>
-          <text x="400" y="326" font-size="11" font-weight="700" fill="#3C3489">수용·극복</text>
+          <text x="296" y="322" text-anchor="middle" font-size="10" fill="#888">But (역접 전환)</text>
+          <text x="400" y="326" font-size="11" font-weight="700" fill="#3C3489">직면·적극</text>
           <text x="400" y="342" font-size="10" fill="#bbb">(to face it)</text>
           <text x="600" y="330" text-anchor="middle" font-size="10" font-weight="700" fill="#0a9a60">★ 빈출 유형</text>
         </svg>
@@ -377,7 +406,7 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
 <script>
 
 
-const structureData = [{"badge":"단계 ① — 두려움 정의","badgeBg":"#F1EFE8","badgeColor":"#555","title":"① 두려움은 자연스러운 감정","en":"<span class='hl-blue'>Fear is a natural feeling.</span>","ko":"두려움은 자연스러운 감정이다","pt":"<strong>SVC 2형식</strong> / 주제 제시"},{"badge":"단계 ② — 두려움의 결과","badgeBg":"#FCEBEB","badgeColor":"#791F1F","title":"② 두려움을 가진 사람의 상태","en":"<span class='hl-teal'>When a person has fear</span>, he or she is <span class='hl-red'>afraid</span>.","ko":"사람이 두려움을 가질 때<br>그 사람은 두려워한다","pt":"<strong>시간부사절</strong> When / 보어 afraid"},{"badge":"단계 ③ — 회피 경향","badgeBg":"#FCEBEB","badgeColor":"#791F1F","title":"③ 많은 사람들의 반응","en":"<span class='hl-red'>Many people do not want</span> it <span class='hl-red'>to happen</span>.","ko":"많은 사람들은 그것이<br>일어나기를 원하지 않는다","pt":"<strong>부정문</strong> do not want / <strong>목적어</strong> it to happen"},{"badge":"단계 ④ — ★ 전환점 — 역접 전환","badgeBg":"#E1F5EE","badgeColor":"#085041","title":"④ 전환점 (But)","en":"<span class='hl-purple'>But</span>","ko":"하지만","pt":"<strong>역접</strong> 접속사 / 회피 ↔ 직면"},{"badge":"단계 ⑤ — 극복 방법","badgeBg":"#E6F1FB","badgeColor":"#0C447C","title":"⑤ 두려움 극복 방법","en":"<span class='hl-purple'>the only way to overcome fear</span>","ko":"두려움을 극복하는 유일한 방법","pt":"<strong>to부정사</strong> 형용사적 용법 / the only way"},{"badge":"단계 ⑥ — ★ 결론 — 결론: 직면","badgeBg":"#EEEDFE","badgeColor":"#3C3489","title":"⑥ 주제문·결론","en":"is <span class='hl-purple'>to face it</span>.","ko":"그것을 직면하는 것이다","pt":"<strong>to부정사</strong> 명사적 용법(보어) / <strong>주제</strong> 직면"}];
+const structureData = [{"badge":"단계 ① — 두려움의 정의","badgeBg":"#F1EFE8","badgeColor":"#555","title":"Fear is a natural feeling","en":"Fear <span class='hl-blue'>is</span> a <span class='hl-blue'>natural feeling</span>.","ko":"두려움은 자연스러운 감정이다.","pt":"<strong>2형식 SVC</strong> / Fear (추상명사, 무관사)"},{"badge":"단계 ② — 두려움의 결과","badgeBg":"#FCEBEB","badgeColor":"#791F1F","title":"When a person has fear","en":"<span class='hl-teal'>When a person has fear</span>, he or she <span class='hl-blue'>is afraid</span>.","ko":"어떤 사람이 두려움을 가질 때,<br>그는 두려워한다.","pt":"<strong>시간 부사절</strong> (When) / 대명사 he or she (선행사 a person)"},{"badge":"단계 ③ — 일반적 반응 (회피)","badgeBg":"#FCEBEB","badgeColor":"#791F1F","title":"Many people do not want it to happen","en":"Many people <span class='hl-red'>do not want</span> <span class='hl-blue'>it to happen</span>.","ko":"많은 사람들은 그것이 일어나기를 원하지 않는다.","pt":"<strong>목적격보어 to부정사</strong> (want O to-v) / it = fear"},{"badge":"단계 ④ — ★ 전환점 — 역접 전환 (But)","badgeBg":"#E1F5EE","badgeColor":"#085041","title":"Contrast conjunction","en":"<span class='hl-purple'>But</span>","ko":"하지만 (역접 전환)","pt":"<strong>접속사 But</strong> / 앞 내용과 대조 (회피 ↔ 직면)"},{"badge":"단계 ⑤ — 해결책 제시","badgeBg":"#E6F1FB","badgeColor":"#0C447C","title":"the only way to overcome fear","en":"<span class='hl-blue'>the only way to overcome fear</span>","ko":"두려움을 극복하는 유일한 방법","pt":"<strong>to부정사 형용사적 용법</strong> (way를 수식) / the only (강조)"},{"badge":"단계 ⑥ — ★ 결론 — 핵심 주장 (직면)","badgeBg":"#EEEDFE","badgeColor":"#3C3489","title":"is to face it","en":"is <span class='hl-purple'>to face it</span>.","ko":"그것을 직면하는 것이다.","pt":"<strong>to부정사 명사적 용법</strong> (주격보어) / face (직면하다) ↔ avoid (피하다)"}];
 let currentDetail = -1;
 function showDetail(i) {
   if (currentDetail === i) { closeDetail(); return; }
