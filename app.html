@@ -6808,8 +6808,11 @@ function updateSelectionBar() {
   const count = selectedRecIds.size;
   if (count === 0) {
     if (bar) bar.remove();
-    if (document.getElementById('tab-line-translation')?.classList.contains('active')) {
-      renderLineTranslationTab();
+    if (document.getElementById('tab-line-translation')?.classList.contains('active') ||
+        document.getElementById('tab-grammar')?.classList.contains('active') ||
+        document.getElementById('tab-synonym')?.classList.contains('active') ||
+        document.getElementById('tab-antonym')?.classList.contains('active')) {
+      renderExtraViewerTabs();
       syncViewerActionButtons();
     }
     return;
@@ -6829,8 +6832,11 @@ function updateSelectionBar() {
     '<button class="action-btn" onclick="openBatchLineTranslation()" style="background:linear-gradient(135deg,#ede7f6,#fff);border-color:#7e57c2;color:#4527a0;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 지문의 직독·의역(한줄해석)을 지문별로 모아 보기">▸ 한줄해석 모음</button>' +
     '<button class="action-btn" onclick="openGrammarVocabBuilder()" style="margin-left:auto;background:linear-gradient(135deg,#fff3e0,#fff);border-color:#fb8c00;color:#e65100;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 자료들의 주요어법·유의어·반의어 중 원하는 것만 골라 URL 모음 생성">📚 어법·어휘 모음 만들기</button>' +
     '<button class="action-btn" onclick="quickCreateCollection()" style="background:var(--brand,#6B5B95);color:#fff;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 자료들로 공지용 묶음 목차 + 복사용 텍스트 생성">📝 선택 목차 만들기</button>';
-  if (document.getElementById('tab-line-translation')?.classList.contains('active')) {
-    renderLineTranslationTab();
+  if (document.getElementById('tab-line-translation')?.classList.contains('active') ||
+      document.getElementById('tab-grammar')?.classList.contains('active') ||
+      document.getElementById('tab-synonym')?.classList.contains('active') ||
+      document.getElementById('tab-antonym')?.classList.contains('active')) {
+    renderExtraViewerTabs();
     syncViewerActionButtons();
   }
 }
@@ -9332,23 +9338,30 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'library') renderLibrary();
-    if (btn.dataset.tab === 'line-translation') renderLineTranslationTab();
+    if (['grammar', 'synonym', 'antonym', 'line-translation'].includes(btn.dataset.tab)) {
+      renderExtraViewerTabs();
+    }
     syncViewerActionButtons();
   });
 });
 
 function syncViewerActionButtons() {
   const hasOpenRecord = !!currentViewingId;
-  const ltPanel = document.getElementById('tab-line-translation');
-  const hasBatchLineTranslation = !!(ltPanel && ltPanel.classList.contains('active') && lineTranslationHasContent());
-  const enable = hasOpenRecord || hasBatchLineTranslation;
+  const hasBatchView = extraViewerTabHasContent();
+  const enable = hasOpenRecord || hasBatchView;
   document.getElementById('print-btn').disabled = !enable;
   document.getElementById('download-btn').disabled = !hasOpenRecord;
 }
 
+function extraViewerTabHasContent() {
+  const panel = document.querySelector('.tab-panel.active');
+  if (!panel || !['tab-grammar', 'tab-synonym', 'tab-antonym', 'tab-line-translation'].includes(panel.id)) return false;
+  const box = panel.querySelector('[id$="-container"]');
+  return !!(box && box.querySelector('.line-translation-passage, .line-translation-list, table, ul'));
+}
+
 function lineTranslationHasContent() {
-  const el = document.getElementById('line-translation-container');
-  return !!(el && el.querySelector('.line-translation-list, .line-translation-passage'));
+  return extraViewerTabHasContent();
 }
 
 function printPage() {
@@ -11050,7 +11063,7 @@ function openRecord(record) {
   const d = record.data;
   renderAnalysis(d);
   renderStructure(d);
-  renderRecordExtraTabs(d);
+  renderExtraViewerTabs();
 
   syncViewerActionButtons();
 
@@ -11074,67 +11087,173 @@ function openRecord(record) {
   document.getElementById('tab-analysis').classList.add('active');
 }
 
-// 단일 자료의 주요어법/유의어/반의어 탭 렌더링 (교재 비고 기반, 칩 디자인)
-function renderRecordExtraTabs(d) {
-  const items = extractCollectionData([{ data: d }], {});
-  const it = items[0] || { grammar: [], synRows: [], antRows: [] };
-  const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
-
-  // 주요어법
-  const gEl = document.getElementById('grammar-container');
-  if (it.grammar.length) {
-    gEl.innerHTML = wrap(
-      '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">③ 주요 어법 포인트</h2>' +
-      '<ul style="margin-left:20px;line-height:1.9;font-size:15px;">' +
-        it.grammar.map(g => '<li style="margin:6px 0;">' + safeInlineHtml(g) + '</li>').join('') +
-      '</ul>'
-    );
-  } else {
-    gEl.innerHTML = '<div class="empty-state"><div class="icon">③</div><h2>주요어법 데이터가 없습니다</h2><p>이 자료에는 어법 포인트가 없어요.</p></div>';
-  }
-
-  // 칩 (출처색 인라인)
-  const chipHtml = (e) => {
-    const isBook = e.src === '교재';
-    const bg = isBook ? '#e6f4ef' : '#eef0fb';
-    const bd = isBook ? '#bfe3d6' : '#d6daf5';
-    const cl = isBook ? '#0f6e56' : '#3a3f7a';
-    const ko = e.ko ? '<span style="font-size:11px;opacity:.8;margin-left:3px;">' + escapeHtml(e.ko) + '</span>' : '';
-    return '<span title="출처: ' + escapeHtml(e.src) + '" style="display:inline-flex;align-items:baseline;gap:3px;margin:2px 5px 2px 0;padding:3px 9px;border-radius:12px;font-size:12.5px;border:1px solid ' + bd + ';background:' + bg + ';color:' + cl + ';white-space:nowrap;"><b>' + escapeHtml(e.en) + '</b>' + ko + '</span>';
-  };
-
-  const relTable = (rows, label) =>
-    '<table style="width:100%;border-collapse:collapse;font-size:14px;">' +
-      '<thead><tr>' +
-        '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);width:22%;">단어·어구</th>' +
-        '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);width:26%;">뜻</th>' +
-        '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);">' + label + '</th>' +
-      '</tr></thead><tbody>' +
-        rows.map(r =>
-          '<tr>' +
-            '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;font-weight:700;">' + escapeHtml(r.word) + '</td>' +
-            '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;color:#6c6480;font-size:12.5px;">' + escapeHtml(r.meaning) + '</td>' +
-            '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;">' + r.entries.map(chipHtml).join('') + '</td>' +
-          '</tr>'
-        ).join('') +
-      '</tbody></table>' +
-      '<p style="margin-top:12px;font-size:12px;color:#999;">※ 책장에서 여러 자료를 선택해 “📚 어법·어휘 모음 만들기”로 묶으면 AI 보강(유의어·반의어 자동 확장)까지 적용됩니다.</p>';
-
-  const sEl = document.getElementById('synonym-container');
-  if (it.synRows.length) {
-    sEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">🟰 유의어 (Synonyms)</h2>' + relTable(it.synRows, '유의어 (Synonyms)'));
-  } else {
-    sEl.innerHTML = '<div class="empty-state"><div class="icon">🟰</div><h2>유의어 데이터가 없습니다</h2><p>단어표 비고에 유의어 표기가 없어요. 모음 만들기로 AI 보강이 가능합니다.</p></div>';
-  }
-
-  const aEl = document.getElementById('antonym-container');
-  if (it.antRows.length) {
-    aEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">↔️ 반의어 (Antonyms)</h2>' + relTable(it.antRows, '반의어 (Antonyms)'));
-  } else {
-    aEl.innerHTML = '<div class="empty-state"><div class="icon">↔️</div><h2>반의어 데이터가 없습니다</h2><p>단어표 비고에 반의어 표기가 없어요. 모음 만들기로 AI 보강이 가능합니다.</p></div>';
-  }
-
+// 주요어법/유의어/반의어/한줄해석 탭 렌더링 (단일 📖 열람 또는 ☑ 선택 모음)
+function renderExtraViewerTabs() {
+  renderGrammarTab();
+  renderSynonymTab();
+  renderAntonymTab();
   renderLineTranslationTab();
+}
+
+function getViewerRecords() {
+  if (currentViewingId) {
+    const rec = library.find(r => r.id === currentViewingId);
+    return rec ? [rec] : [];
+  }
+  return sortRecordsForDisplay(
+    library.filter(r => selectedRecIds.has(r.id) && r.kind !== 'collection' && r.data)
+  );
+}
+
+function viewerEmptyHint(kind) {
+  return '<div class="empty-state"><div class="icon">' + kind + '</div>' +
+    '<h2>자료를 불러오려면</h2>' +
+    '<p style="line-height:1.8;">① 책장 카드 <strong>📖 열람</strong> → 한 지문<br>' +
+    '② 책장 ☑ 여러 지문 선택 → 이 탭 또는 하단 <strong>▸ 한줄해석 모음</strong></p></div>';
+}
+
+function renderGrammarTab() {
+  const gEl = document.getElementById('grammar-container');
+  if (!gEl) return;
+  const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
+  const records = getViewerRecords();
+  if (!records.length) {
+    gEl.innerHTML = viewerEmptyHint('③');
+    return;
+  }
+
+  if (currentViewingId) {
+    const items = extractCollectionData(records, {});
+    const it = items[0] || { grammar: [] };
+    if (it.grammar.length) {
+      gEl.innerHTML = wrap(
+        '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">③ 주요 어법 포인트</h2>' +
+        '<ul style="margin-left:20px;line-height:1.9;font-size:15px;">' +
+          it.grammar.map(g => '<li style="margin:6px 0;">' + safeInlineHtml(g) + '</li>').join('') +
+        '</ul>'
+      );
+    } else {
+      gEl.innerHTML = '<div class="empty-state"><div class="icon">③</div><h2>주요어법 데이터가 없습니다</h2><p>이 자료에는 어법 포인트가 없어요.</p></div>';
+    }
+    return;
+  }
+
+  const withData = records.filter(rec => (extractCollectionData([rec], {})[0]?.grammar || []).length).length;
+  gEl.innerHTML = wrap(
+    '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">③ 주요어법 모음</h2>' +
+    '<p class="line-translation-note">선택 <strong>' + records.length + '개</strong> 지문 · 어법 있음 <strong>' + withData + '개</strong></p>' +
+    records.map((rec, idx) => {
+      const it = extractCollectionData([rec], {})[0] || { grammar: [], koTitle: getRecordDisplayTitle(rec) };
+      return '<section class="line-translation-passage">' +
+        (getRecordMetaLabel(rec) ? '<span class="passage-meta">' + escapeHtml(getRecordMetaLabel(rec)) + '</span>' : '') +
+        '<h3>' + String(idx + 1).padStart(2, '0') + '. ' + escapeHtml(it.koTitle || getRecordDisplayTitle(rec)) + '</h3>' +
+        (it.grammar.length
+          ? '<ul style="margin-left:20px;line-height:1.9;font-size:15px;">' + it.grammar.map(g => '<li style="margin:6px 0;">' + safeInlineHtml(g) + '</li>').join('') + '</ul>'
+          : '<p style="color:#999;font-size:13px;">어법 포인트 없음</p>') +
+      '</section>';
+    }).join('')
+  );
+}
+
+function vocabChipHtml(e) {
+  const isBook = e.src === '교재';
+  const bg = isBook ? '#e6f4ef' : '#eef0fb';
+  const bd = isBook ? '#bfe3d6' : '#d6daf5';
+  const cl = isBook ? '#0f6e56' : '#3a3f7a';
+  const ko = e.ko ? '<span style="font-size:11px;opacity:.8;margin-left:3px;">' + escapeHtml(e.ko) + '</span>' : '';
+  return '<span title="출처: ' + escapeHtml(e.src) + '" style="display:inline-flex;align-items:baseline;gap:3px;margin:2px 5px 2px 0;padding:3px 9px;border-radius:12px;font-size:12.5px;border:1px solid ' + bd + ';background:' + bg + ';color:' + cl + ';white-space:nowrap;"><b>' + escapeHtml(e.en) + '</b>' + ko + '</span>';
+}
+
+function vocabRelTable(rows, label) {
+  return '<table style="width:100%;border-collapse:collapse;font-size:14px;">' +
+    '<thead><tr>' +
+      '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);width:22%;">단어·어구</th>' +
+      '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);width:26%;">뜻</th>' +
+      '<th style="text-align:left;padding:9px 10px;background:#f4f2f8;border-bottom:2px solid var(--border,#e8e4f3);color:var(--brand-dark,#4A3D6B);">' + label + '</th>' +
+    '</tr></thead><tbody>' +
+    rows.map(r =>
+      '<tr><td style="padding:8px 10px;border-bottom:1px solid #f0eef6;font-weight:700;">' + escapeHtml(r.word) + '</td>' +
+      '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;color:#6c6480;font-size:12.5px;">' + escapeHtml(r.meaning) + '</td>' +
+      '<td style="padding:8px 10px;border-bottom:1px solid #f0eef6;">' + r.entries.map(vocabChipHtml).join('') + '</td></tr>'
+    ).join('') +
+    '</tbody></table>';
+}
+
+function renderSynonymTab() {
+  const sEl = document.getElementById('synonym-container');
+  if (!sEl) return;
+  const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
+  const records = getViewerRecords();
+  if (!records.length) {
+    sEl.innerHTML = viewerEmptyHint('🟰');
+    return;
+  }
+
+  const items = extractCollectionData(records, {});
+  if (currentViewingId) {
+    const it = items[0] || { synRows: [] };
+    if (it.synRows.length) {
+      sEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">🟰 유의어 (Synonyms)</h2>' + vocabRelTable(it.synRows, '유의어 (Synonyms)'));
+    } else {
+      sEl.innerHTML = '<div class="empty-state"><div class="icon">🟰</div><h2>유의어 데이터가 없습니다</h2><p>단어표 비고에 유의어 표기가 없어요.</p></div>';
+    }
+    return;
+  }
+
+  const withData = records.filter(rec => (extractCollectionData([rec], {})[0]?.synRows || []).length).length;
+  sEl.innerHTML = wrap(
+    '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">🟰 유의어 모음</h2>' +
+    '<p class="line-translation-note">선택 <strong>' + records.length + '개</strong> 지문 · 유의어 있음 <strong>' + withData + '개</strong></p>' +
+    records.map((rec, idx) => {
+      const it = extractCollectionData([rec], {})[0] || { synRows: [], koTitle: getRecordDisplayTitle(rec) };
+      return '<section class="line-translation-passage">' +
+        (getRecordMetaLabel(rec) ? '<span class="passage-meta">' + escapeHtml(getRecordMetaLabel(rec)) + '</span>' : '') +
+        '<h3>' + String(idx + 1).padStart(2, '0') + '. ' + escapeHtml(it.koTitle || getRecordDisplayTitle(rec)) + '</h3>' +
+        (it.synRows.length ? vocabRelTable(it.synRows, '유의어') : '<p style="color:#999;font-size:13px;">유의어 데이터 없음</p>') +
+      '</section>';
+    }).join('')
+  );
+}
+
+function renderAntonymTab() {
+  const aEl = document.getElementById('antonym-container');
+  if (!aEl) return;
+  const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
+  const records = getViewerRecords();
+  if (!records.length) {
+    aEl.innerHTML = viewerEmptyHint('↔️');
+    return;
+  }
+
+  const items = extractCollectionData(records, {});
+  if (currentViewingId) {
+    const it = items[0] || { antRows: [] };
+    if (it.antRows.length) {
+      aEl.innerHTML = wrap('<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:14px;">↔️ 반의어 (Antonyms)</h2>' + vocabRelTable(it.antRows, '반의어 (Antonyms)'));
+    } else {
+      aEl.innerHTML = '<div class="empty-state"><div class="icon">↔️</div><h2>반의어 데이터가 없습니다</h2><p>단어표 비고에 반의어 표기가 없어요.</p></div>';
+    }
+    return;
+  }
+
+  const withData = records.filter(rec => (extractCollectionData([rec], {})[0]?.antRows || []).length).length;
+  aEl.innerHTML = wrap(
+    '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">↔️ 반의어 모음</h2>' +
+    '<p class="line-translation-note">선택 <strong>' + records.length + '개</strong> 지문 · 반의어 있음 <strong>' + withData + '개</strong></p>' +
+    records.map((rec, idx) => {
+      const it = extractCollectionData([rec], {})[0] || { antRows: [], koTitle: getRecordDisplayTitle(rec) };
+      return '<section class="line-translation-passage">' +
+        (getRecordMetaLabel(rec) ? '<span class="passage-meta">' + escapeHtml(getRecordMetaLabel(rec)) + '</span>' : '') +
+        '<h3>' + String(idx + 1).padStart(2, '0') + '. ' + escapeHtml(it.koTitle || getRecordDisplayTitle(rec)) + '</h3>' +
+        (it.antRows.length ? vocabRelTable(it.antRows, '반의어') : '<p style="color:#999;font-size:13px;">반의어 데이터 없음</p>') +
+      '</section>';
+    }).join('')
+  );
+}
+
+// legacy name kept for callers
+function renderRecordExtraTabs(d) {
+  renderExtraViewerTabs();
 }
 
 const LINE_TRANSLATION_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
@@ -11187,7 +11306,7 @@ function openBatchLineTranslation() {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelector('[data-tab="line-translation"]').classList.add('active');
   document.getElementById('tab-line-translation').classList.add('active');
-  renderLineTranslationTab();
+  renderExtraViewerTabs();
   syncViewerActionButtons();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -11196,10 +11315,15 @@ function renderLineTranslationTab() {
   const ltEl = document.getElementById('line-translation-container');
   if (!ltEl) return;
   const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
+  const records = getViewerRecords();
+  if (!records.length) {
+    ltEl.innerHTML = viewerEmptyHint('&gt;');
+    return;
+  }
 
   if (currentViewingId) {
-    const rec = library.find(r => r.id === currentViewingId);
-    const koLines = rec?.data ? extractKoLinesFromData(rec.data) : [];
+    const rec = records[0];
+    const koLines = extractKoLinesFromData(rec.data);
     if (koLines.length) {
       ltEl.innerHTML = wrap(
         '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석</h2>' +
@@ -11212,30 +11336,18 @@ function renderLineTranslationTab() {
     return;
   }
 
-  const selected = sortRecordsForDisplay(
-    library.filter(r => selectedRecIds.has(r.id) && r.kind !== 'collection' && r.data)
+  const withData = records.filter(r => extractKoLinesFromData(r.data).length > 0).length;
+  ltEl.innerHTML = wrap(
+    '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석 모음</h2>' +
+    '<p class="line-translation-note">선택 <strong>' + records.length + '개</strong> 지문 · 해석 있음 <strong>' + withData + '개</strong>. 지문별 직독·의역만 모았습니다.</p>' +
+    records.map((rec, idx) =>
+      '<section class="line-translation-passage">' +
+        (getRecordMetaLabel(rec) ? '<span class="passage-meta">' + escapeHtml(getRecordMetaLabel(rec)) + '</span>' : '') +
+        '<h3>' + String(idx + 1).padStart(2, '0') + '. ' + escapeHtml(getRecordDisplayTitle(rec)) + '</h3>' +
+        renderLineTranslationListHtml(extractKoLinesFromData(rec.data)) +
+      '</section>'
+    ).join('')
   );
-  if (selected.length) {
-    const withData = selected.filter(r => extractKoLinesFromData(r.data).length > 0).length;
-    ltEl.innerHTML = wrap(
-      '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석 모음</h2>' +
-      '<p class="line-translation-note">선택 <strong>' + selected.length + '개</strong> 지문 · 해석 있음 <strong>' + withData + '개</strong>. 지문별 직독·의역만 모았습니다. 빈칸·워크북 제작용으로 활용하세요.</p>' +
-      selected.map((rec, idx) => {
-        const meta = getRecordMetaLabel(rec);
-        const title = getRecordDisplayTitle(rec);
-        return '<section class="line-translation-passage">' +
-          (meta ? '<span class="passage-meta">' + escapeHtml(meta) + '</span>' : '') +
-          '<h3>' + String(idx + 1).padStart(2, '0') + '. ' + escapeHtml(title) + '</h3>' +
-          renderLineTranslationListHtml(extractKoLinesFromData(rec.data)) +
-        '</section>';
-      }).join('')
-    );
-    return;
-  }
-
-  ltEl.innerHTML = '<div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석을 보려면</h2>' +
-    '<p style="line-height:1.8;">① 책장 카드의 <strong>📖 열람</strong> → 한 지문 보기<br>' +
-    '② 책장에서 ☑ 여러 지문 선택 → 하단 <strong>▸ 한줄해석 모음</strong> 또는 이 탭 클릭</p></div>';
 }
 
 function closeViewing() {
