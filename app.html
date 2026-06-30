@@ -829,12 +829,12 @@ body.edit-mode .page::before {
   <div class="tab-group">
     <button class="tab-btn" data-tab="input">✍️ 입력</button>
     <button class="tab-btn active" data-tab="library">📚 책장<span class="count-badge" id="lib-count">145</span></button>
-    <button class="tab-btn" data-tab="analysis" id="btn-analysis" disabled="">📄 분석교안</button>
-    <button class="tab-btn" data-tab="structure" id="btn-structure" disabled="">🗂 구조도</button>
-    <button class="tab-btn" data-tab="grammar" id="btn-grammar" disabled="">③ 주요어법</button>
-    <button class="tab-btn" data-tab="synonym" id="btn-synonym" disabled="">🟰 유의어</button>
-    <button class="tab-btn" data-tab="antonym" id="btn-antonym" disabled="">↔️ 반의어</button>
-    <button class="tab-btn" data-tab="line-translation" id="btn-line-translation" disabled="">&gt; 한줄해석</button>
+    <button class="tab-btn" data-tab="analysis" id="btn-analysis">📄 분석교안</button>
+    <button class="tab-btn" data-tab="structure" id="btn-structure">🗂 구조도</button>
+    <button class="tab-btn" data-tab="grammar" id="btn-grammar">③ 주요어법</button>
+    <button class="tab-btn" data-tab="synonym" id="btn-synonym">🟰 유의어</button>
+    <button class="tab-btn" data-tab="antonym" id="btn-antonym">↔️ 반의어</button>
+    <button class="tab-btn" data-tab="line-translation" id="btn-line-translation">&gt; 한줄해석</button>
   </div>
   <div class="dropdown" id="download-dropdown">
     <button class="action-btn" onclick="toggleDownloadMenu(event)" id="download-btn" disabled="">📥 다운로드 ▾</button>
@@ -11016,12 +11016,6 @@ function openRecord(record) {
   renderStructure(d);
   renderRecordExtraTabs(d);
 
-  document.getElementById('btn-analysis').disabled = false;
-  document.getElementById('btn-structure').disabled = false;
-  document.getElementById('btn-grammar').disabled = false;
-  document.getElementById('btn-synonym').disabled = false;
-  document.getElementById('btn-antonym').disabled = false;
-  document.getElementById('btn-line-translation').disabled = false;
   document.getElementById('print-btn').disabled = false;
   document.getElementById('download-btn').disabled = false;
 
@@ -11131,12 +11125,6 @@ function renderRecordExtraTabs(d) {
 function closeViewing() {
   currentViewingId = null;
   document.getElementById('viewing-bar').style.display = 'none';
-  document.getElementById('btn-analysis').disabled = true;
-  document.getElementById('btn-structure').disabled = true;
-  document.getElementById('btn-grammar').disabled = true;
-  document.getElementById('btn-synonym').disabled = true;
-  document.getElementById('btn-antonym').disabled = true;
-  document.getElementById('btn-line-translation').disabled = true;
   document.getElementById('print-btn').disabled = true;
   document.getElementById('download-btn').disabled = true;
   document.body.classList.remove('edit-mode');
