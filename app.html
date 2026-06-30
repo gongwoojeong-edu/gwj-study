@@ -898,6 +898,17 @@ body.edit-mode .page::before {
   <div class="dropdown" id="download-dropdown">
     <button class="action-btn" onclick="toggleDownloadMenu(event)" id="download-btn" disabled="">📥 다운로드 ▾</button>
     <div class="dropdown-menu" id="download-menu">
+      <div class="submenu-item" id="download-lt-block" style="display:none;">
+        <button class="submenu-trigger">
+          <span>📋 한줄해석</span>
+          <span class="arrow">▸</span>
+        </button>
+        <div class="submenu">
+          <button onclick="downloadLineTranslationHtml(); closeDropdowns();">📋 HTML 저장</button>
+          <button onclick="downloadLineTranslationPdf(); closeDropdowns();">📕 PDF 인쇄용 HTML</button>
+        </div>
+      </div>
+      <div id="download-record-block">
       <div class="submenu-item">
         <button class="submenu-trigger">
           <span>📄 HTML (웹·러버블)</span>
@@ -919,6 +930,7 @@ body.edit-mode .page::before {
           <button onclick="downloadPdf(&#39;analysis&#39;); closeDropdowns();">📕 분석교안만 PDF</button>
           <button onclick="downloadPdf(&#39;structure&#39;); closeDropdowns();">📕 구조도만 PDF</button>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -9395,10 +9407,24 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 function syncViewerActionButtons() {
   const hasOpenRecord = !!currentViewingId;
+  const hasLtContent = lineTranslationTabHasContent();
   const hasBatchView = extraViewerTabHasContent();
-  const enable = hasOpenRecord || hasBatchView;
-  document.getElementById('print-btn').disabled = !enable;
-  document.getElementById('download-btn').disabled = !hasOpenRecord;
+  document.getElementById('print-btn').disabled = !(hasOpenRecord || hasBatchView);
+  document.getElementById('download-btn').disabled = !(hasOpenRecord || hasLtContent);
+  updateDownloadMenuVisibility(hasOpenRecord, hasLtContent);
+}
+
+function lineTranslationTabHasContent() {
+  const panel = document.getElementById('tab-line-translation');
+  if (!panel?.classList.contains('active')) return false;
+  return lineTranslationHasContent();
+}
+
+function updateDownloadMenuVisibility(hasRecord, hasLineTranslation) {
+  const recordBlock = document.getElementById('download-record-block');
+  const ltBlock = document.getElementById('download-lt-block');
+  if (recordBlock) recordBlock.style.display = hasRecord ? '' : 'none';
+  if (ltBlock) ltBlock.style.display = hasLineTranslation ? '' : 'none';
 }
 
 function extraViewerTabHasContent() {
@@ -11447,6 +11473,87 @@ function cardDownloadPdf(id) {
 // ============================================================
 // HTML 다운로드
 // ============================================================
+// ============================================================
+// HTML 다운로드
+// ============================================================
+function extractPageStyles() {
+  try {
+    return Array.from(document.styleSheets)
+      .map(sheet => {
+        try { return Array.from(sheet.cssRules).map(r => r.cssText).join('\n'); }
+        catch (e) { return ''; }
+      }).join('\n');
+  } catch (e) { return ''; }
+}
+
+function lineTranslationDownloadFilename() {
+  const records = getViewerRecords();
+  if (currentViewingId && records[0]) {
+    const rec = records[0];
+    return [rec.data?.textbook, rec.data?.lesson, rec.data?.item_code, '한줄해석']
+      .filter(Boolean).join('_').replace(/[^\w가-힣]+/g, '_').replace(/_+/g, '_');
+  }
+  if (records.length) {
+    return '한줄해석모음_' + records.length + '지문';
+  }
+  return '한줄해석';
+}
+
+function buildLineTranslationStandaloneHtml(forPdf) {
+  const box = document.getElementById('line-translation-container');
+  const inner = box?.querySelector('.line-translation-wrap, .empty-state')?.outerHTML || box?.innerHTML || '';
+  if (!inner || inner.includes('empty-state')) {
+    throw new Error('한줄해석 내용이 없습니다. ☑ 선택 또는 📖 열람 후 다시 시도해주세요.');
+  }
+  const title = lineTranslationDownloadFilename();
+  const styles = extractPageStyles();
+  const pdfBanner = forPdf ? (
+    '<style>@media screen{.pdf-guide-banner{position:fixed;top:0;left:0;right:0;z-index:99999;background:#4A3D6B;color:#fff;padding:12px 16px;font-family:\'Pretendard\',\'Noto Sans KR\',sans-serif;font-size:12px;text-align:center;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.15)}body{padding-top:72px!important}}@media print{.pdf-guide-banner{display:none!important}body{padding-top:0!important}}</style>' +
+    '<div class="pdf-guide-banner"><strong>PDF 저장:</strong> Ctrl+P → PDF → 저장 <button type="button" onclick="window.print()">🖨 인쇄/PDF</button></div>'
+  ) : '';
+  const autoPrint = forPdf ? '<script>window.addEventListener("load",function(){setTimeout(function(){try{window.print()}catch(e){}},400)});<\/script>' : '';
+  return '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>' + escapeHtml(title) + '</title><style>' +
+    styles +
+    '@media print{#selection-bar,.toolbar,.viewing-bar{display:none!important}#tab-line-translation{padding:10mm 12mm 8mm}}' +
+    '</style></head><body>' + pdfBanner + inner + autoPrint + '</body></html>';
+}
+
+function downloadLineTranslationHtml() {
+  try {
+    const html = buildLineTranslationStandaloneHtml(false);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = lineTranslationDownloadFilename() + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('📥 한줄해석 HTML 저장 완료', 'success');
+  } catch (e) {
+    showToast('❌ ' + (e.message || e), 'error');
+  }
+}
+
+function downloadLineTranslationPdf() {
+  try {
+    const html = buildLineTranslationStandaloneHtml(true);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = lineTranslationDownloadFilename() + '_PDF인쇄용.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('📕 PDF 인쇄용 HTML 저장 — 열어서 Ctrl+P', 'success');
+  } catch (e) {
+    showToast('❌ ' + (e.message || e), 'error');
+  }
+}
+
 function downloadCurrent(scope) {
   // scope: 'all' | 'analysis' | 'structure' (기본값 'all')
   if (!currentViewingId) {
