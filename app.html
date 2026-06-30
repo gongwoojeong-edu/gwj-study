@@ -787,6 +787,17 @@ body.edit-mode .page::before {
 .line-translation-num {
   flex-shrink: 0; font-weight: 700; color: var(--brand); min-width: 24px;
 }
+.line-translation-passage {
+  margin-bottom: 28px; padding-bottom: 22px;
+  border-bottom: 1px dashed var(--border);
+}
+.line-translation-passage:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.line-translation-passage h3 {
+  font-size: 15px; color: var(--brand-dark); margin-bottom: 10px; line-height: 1.5;
+}
+.line-translation-passage .passage-meta {
+  display: block; font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 2px;
+}
 
 @media print {
   body { background: #fff; }
@@ -4819,7 +4830,7 @@ body.edit-mode .page::before {
     <div class="empty-state">
       <div class="icon">📄</div>
       <h2>분석교안이 없습니다</h2>
-      <p>책장에서 자료를 선택하거나, 입력 탭에서 새로 생성해주세요.</p>
+      <p>책장 카드의 <strong>📖 열람</strong>을 눌러주세요. (☑ 체크 선택만으로는 열람되지 않습니다)</p>
     </div>
   </div>
 </div>
@@ -4832,7 +4843,7 @@ body.edit-mode .page::before {
     <div class="empty-state">
       <div class="icon">🗂</div>
       <h2>구조도가 없습니다</h2>
-      <p>책장에서 자료를 선택하거나, 입력 탭에서 새로 생성해주세요.</p>
+      <p>책장 카드의 <strong>📖 열람</strong>을 눌러주세요. (☑ 체크 선택만으로는 열람되지 않습니다)</p>
     </div>
   </div>
 </div>
@@ -4857,7 +4868,7 @@ body.edit-mode .page::before {
 </div>
 <div class="tab-panel" id="tab-line-translation">
   <div id="line-translation-container">
-    <div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석이 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>
+    <div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석이 없습니다</h2><p>책장에서 📖 열람 또는 ☑ 선택 후 ▸ 한줄해석 모음을 이용해주세요.</p></div>
   </div>
 </div>
 
@@ -6797,6 +6808,10 @@ function updateSelectionBar() {
   const count = selectedRecIds.size;
   if (count === 0) {
     if (bar) bar.remove();
+    if (document.getElementById('tab-line-translation')?.classList.contains('active')) {
+      renderLineTranslationTab();
+      syncViewerActionButtons();
+    }
     return;
   }
   if (!bar) {
@@ -6811,8 +6826,13 @@ function updateSelectionBar() {
     '<button class="action-btn" onclick="clearAllSelection()" style="font-size:12px;background:#fee;">해제</button>' +
     '<button class="action-btn" onclick="bulkPublishSelected()" style="font-size:12px;background:linear-gradient(135deg,#e3f2fd,#fff);border-color:#1976d2;color:#0d47a1;font-weight:600;" title="선택한 자료들을 한꺼번에 웹공개 (GitHub Pages에 배포만)">🌐 일괄 웹공개</button>' +
     '<button class="action-btn" onclick="bulkSendToLearner()" style="font-size:12px;background:linear-gradient(135deg,#e8f5e9,#fff);border-color:#4caf50;color:#2d7a3f;font-weight:600;" title="선택한 자료들을 한꺼번에 공우정에듀 학습기로 전송">📚 일괄 학습기 전송</button>' +
+    '<button class="action-btn" onclick="openBatchLineTranslation()" style="background:linear-gradient(135deg,#ede7f6,#fff);border-color:#7e57c2;color:#4527a0;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 지문의 직독·의역(한줄해석)을 지문별로 모아 보기">▸ 한줄해석 모음</button>' +
     '<button class="action-btn" onclick="openGrammarVocabBuilder()" style="margin-left:auto;background:linear-gradient(135deg,#fff3e0,#fff);border-color:#fb8c00;color:#e65100;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 자료들의 주요어법·유의어·반의어 중 원하는 것만 골라 URL 모음 생성">📚 어법·어휘 모음 만들기</button>' +
     '<button class="action-btn" onclick="quickCreateCollection()" style="background:var(--brand,#6B5B95);color:#fff;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 자료들로 공지용 묶음 목차 + 복사용 텍스트 생성">📝 선택 목차 만들기</button>';
+  if (document.getElementById('tab-line-translation')?.classList.contains('active')) {
+    renderLineTranslationTab();
+    syncViewerActionButtons();
+  }
 }
 
 // 🌐 선택한 자료들 일괄 웹공개 (목차 생성 없이 배포만)
@@ -9312,8 +9332,24 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'library') renderLibrary();
+    if (btn.dataset.tab === 'line-translation') renderLineTranslationTab();
+    syncViewerActionButtons();
   });
 });
+
+function syncViewerActionButtons() {
+  const hasOpenRecord = !!currentViewingId;
+  const ltPanel = document.getElementById('tab-line-translation');
+  const hasBatchLineTranslation = !!(ltPanel && ltPanel.classList.contains('active') && lineTranslationHasContent());
+  const enable = hasOpenRecord || hasBatchLineTranslation;
+  document.getElementById('print-btn').disabled = !enable;
+  document.getElementById('download-btn').disabled = !hasOpenRecord;
+}
+
+function lineTranslationHasContent() {
+  const el = document.getElementById('line-translation-container');
+  return !!(el && el.querySelector('.line-translation-list, .line-translation-passage'));
+}
 
 function printPage() {
   const activeTab = document.querySelector('.tab-panel.active');
@@ -11016,8 +11052,7 @@ function openRecord(record) {
   renderStructure(d);
   renderRecordExtraTabs(d);
 
-  document.getElementById('print-btn').disabled = false;
-  document.getElementById('download-btn').disabled = false;
+  syncViewerActionButtons();
 
   // 편집 모드 체크박스 초기화 (자료 바뀔 때마다 OFF)
   const editCheck = document.getElementById('edit-mode-check');
@@ -11099,34 +11134,114 @@ function renderRecordExtraTabs(d) {
     aEl.innerHTML = '<div class="empty-state"><div class="icon">↔️</div><h2>반의어 데이터가 없습니다</h2><p>단어표 비고에 반의어 표기가 없어요. 모음 만들기로 AI 보강이 가능합니다.</p></div>';
   }
 
-  const ltEl = document.getElementById('line-translation-container');
-  const circledNums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
-  const koLines = (d.sentences || [])
+  renderLineTranslationTab();
+}
+
+const LINE_TRANSLATION_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
+
+function extractKoLinesFromData(d) {
+  return (d?.sentences || [])
     .map(s => String(s.translation || '').replace(/^▶?\s*직독[·ㆍ]의역\s*/, '').trim())
     .filter(Boolean);
-  if (koLines.length) {
-    ltEl.innerHTML = wrap(
-      '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석</h2>' +
-      '<p class="line-translation-note">분석교안 <strong>직독·의역</strong>을 문장 순서대로 정리한 자료입니다. 빈칸·워크북 제작용으로 활용하세요.</p>' +
-      '<ol class="line-translation-list">' +
-        koLines.map((line, i) =>
-          '<li class="line-translation-item">' +
-            '<span class="line-translation-num">' + (circledNums[i] || (i + 1) + '.') + '</span>' +
-            '<span>' + escapeHtml(line) + '</span>' +
-          '</li>'
-        ).join('') +
-      '</ol>'
-    );
-  } else {
-    ltEl.innerHTML = '<div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석 데이터가 없습니다</h2><p>분석교안에 직독·의역(translation)이 없어요.</p></div>';
+}
+
+function getRecordDisplayTitle(rec) {
+  const d = rec.data || {};
+  return d.title_ko || d.expected_title || d.topic_ko || d.topic_en || '제목 없음';
+}
+
+function getRecordMetaLabel(rec) {
+  const d = rec.data || {};
+  return [d.series_title || d.textbook, d.volume_title || d.lesson, d.unit_title || d.item_code].filter(Boolean).join(' · ');
+}
+
+function sortRecordsForDisplay(records) {
+  return [...records].sort((a, b) => {
+    const ad = a.data || {}, bd = b.data || {};
+    const ak = [ad.textbook || '', ad.lesson || '', ad.item_code || ''].join('|');
+    const bk = [bd.textbook || '', bd.lesson || '', bd.item_code || ''].join('|');
+    return ak.localeCompare(bk, 'ko', { numeric: true });
+  });
+}
+
+function renderLineTranslationListHtml(koLines) {
+  if (!koLines.length) {
+    return '<p style="color:#999;font-size:13px;margin:4px 0 0;">직독·의역 데이터가 없습니다.</p>';
   }
+  return '<ol class="line-translation-list">' +
+    koLines.map((line, i) =>
+      '<li class="line-translation-item">' +
+        '<span class="line-translation-num">' + (LINE_TRANSLATION_NUMS[i] || (i + 1) + '.') + '</span>' +
+        '<span>' + escapeHtml(line) + '</span>' +
+      '</li>'
+    ).join('') +
+  '</ol>';
+}
+
+function openBatchLineTranslation() {
+  if (selectedRecIds.size === 0) {
+    showToast('책장에서 지문을 체크(☑)로 선택해주세요.', 'info');
+    return;
+  }
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="line-translation"]').classList.add('active');
+  document.getElementById('tab-line-translation').classList.add('active');
+  renderLineTranslationTab();
+  syncViewerActionButtons();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderLineTranslationTab() {
+  const ltEl = document.getElementById('line-translation-container');
+  if (!ltEl) return;
+  const wrap = (inner) => '<div style="max-width:860px;margin:0 auto;padding:24px 16px;">' + inner + '</div>';
+
+  if (currentViewingId) {
+    const rec = library.find(r => r.id === currentViewingId);
+    const koLines = rec?.data ? extractKoLinesFromData(rec.data) : [];
+    if (koLines.length) {
+      ltEl.innerHTML = wrap(
+        '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석</h2>' +
+        '<p class="line-translation-note"><strong>' + escapeHtml(getRecordDisplayTitle(rec)) + '</strong> — 분석교안 <strong>직독·의역</strong>을 문장 순서대로 정리했습니다.</p>' +
+        renderLineTranslationListHtml(koLines)
+      );
+    } else {
+      ltEl.innerHTML = '<div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석 데이터가 없습니다</h2><p>이 자료의 분석교안에 직독·의역(translation)이 없어요.</p></div>';
+    }
+    return;
+  }
+
+  const selected = sortRecordsForDisplay(
+    library.filter(r => selectedRecIds.has(r.id) && r.kind !== 'collection' && r.data)
+  );
+  if (selected.length) {
+    const withData = selected.filter(r => extractKoLinesFromData(r.data).length > 0).length;
+    ltEl.innerHTML = wrap(
+      '<h2 style="font-size:20px;color:var(--brand-dark,#4A3D6B);margin-bottom:8px;">&gt; 한줄해석 모음</h2>' +
+      '<p class="line-translation-note">선택 <strong>' + selected.length + '개</strong> 지문 · 해석 있음 <strong>' + withData + '개</strong>. 지문별 직독·의역만 모았습니다. 빈칸·워크북 제작용으로 활용하세요.</p>' +
+      selected.map((rec, idx) => {
+        const meta = getRecordMetaLabel(rec);
+        const title = getRecordDisplayTitle(rec);
+        return '<section class="line-translation-passage">' +
+          (meta ? '<span class="passage-meta">' + escapeHtml(meta) + '</span>' : '') +
+          '<h3>' + String(idx + 1).padStart(2, '0') + '. ' + escapeHtml(title) + '</h3>' +
+          renderLineTranslationListHtml(extractKoLinesFromData(rec.data)) +
+        '</section>';
+      }).join('')
+    );
+    return;
+  }
+
+  ltEl.innerHTML = '<div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석을 보려면</h2>' +
+    '<p style="line-height:1.8;">① 책장 카드의 <strong>📖 열람</strong> → 한 지문 보기<br>' +
+    '② 책장에서 ☑ 여러 지문 선택 → 하단 <strong>▸ 한줄해석 모음</strong> 또는 이 탭 클릭</p></div>';
 }
 
 function closeViewing() {
   currentViewingId = null;
   document.getElementById('viewing-bar').style.display = 'none';
-  document.getElementById('print-btn').disabled = true;
-  document.getElementById('download-btn').disabled = true;
+  syncViewerActionButtons();
   document.body.classList.remove('edit-mode');
   document.getElementById('analysis-container').innerHTML = `
     <div class="empty-state"><div class="icon">📄</div><h2>분석교안이 없습니다</h2><p>책장에서 자료를 선택하거나, 입력 탭에서 새로 생성해주세요.</p></div>`;
@@ -11139,7 +11254,9 @@ function closeViewing() {
   document.getElementById('antonym-container').innerHTML = `
     <div class="empty-state"><div class="icon">↔️</div><h2>반의어가 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>`;
   document.getElementById('line-translation-container').innerHTML = `
-    <div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석이 없습니다</h2><p>책장에서 자료를 선택해주세요.</p></div>`;
+    <div class="empty-state"><div class="icon">&gt;</div><h2>한줄해석이 없습니다</h2><p>책장에서 📖 열람 또는 ☑ 선택 후 ▸ 한줄해석 모음을 이용해주세요.</p></div>`;
+
+  syncViewerActionButtons();
 
   // 책장 탭으로 전환
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
