@@ -6,21 +6,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const {
-  usedGradesFromList,
-  gradeFilterHtml,
-  GRADE_FILTER_CSS,
-  GRADE_PRINT_CSS,
-  GRADE_FILTER_SCRIPT,
-  GRADE_ROW_FILTER_SCRIPT,
-} = require('./assets/build-page-ui');
+const { usedGradesFromList, gradeFilterHtml, GRADE_FILTER_CSS, GRADE_PRINT_CSS, GRADE_FILTER_SCRIPT, GRADE_ROW_FILTER_SCRIPT, brandCss, BRAND_PRINT_CSS, heroBrandHtml, watermarkHtml, toolbarLeftHtml, TOOLBAR_CSS } = require('./assets/build-page-ui');
 
 const ROOT = __dirname;
 const DATA = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'vocab-6mo.json'), 'utf8'));
 const AUG_PATH = path.join(ROOT, 'assets', 'vocab-meaning-aug-6mo.json');
 const AUG = fs.existsSync(AUG_PATH) ? JSON.parse(fs.readFileSync(AUG_PATH, 'utf8')) : {};
 const LOGO = fs.readFileSync(path.join(ROOT, 'assets', 'logo-base64.txt'), 'utf8').trim();
-const LOCKUP = fs.readFileSync(path.join(ROOT, 'assets', 'logo-lockup-color.txt'), 'utf8').trim();
 
 const esc = (s) =>
   String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -138,9 +130,8 @@ const html = `<!doctype html>
   :root{--brand:#6B5B95;--brand-dark:#4A3D6B;--brand-light:#E8E4F3;--brand-bg:#F4F2F8;--bg:#F7F5F0;--card:#fff;--border:#E3DFD5;--text:#2A2A2A;--muted:#6E6B65}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
-  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-  .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
-  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
+  ${TOOLBAR_CSS}
+  ${brandCss(LOGO)}
   .filters{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
   .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
   .filter-label{font-size:12px;font-weight:700;color:var(--muted);min-width:32px;flex-shrink:0}
@@ -156,7 +147,6 @@ const html = `<!doctype html>
   .print-btn:hover{background:var(--brand)}
   .container{max-width:880px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;padding:30px 28px;border-radius:18px;margin:22px 0 16px;box-shadow:0 6px 20px rgba(74,61,107,.22)}
-  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
   .hero h1{font-size:25px;font-weight:800;margin-bottom:9px}
   .hero p{font-size:13px;opacity:.92;max-width:680px}
   .hero .stats{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
@@ -176,20 +166,20 @@ const html = `<!doctype html>
   .no-result{display:none;text-align:center;padding:50px 20px;color:var(--muted)}
   .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--brand-dark);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;transition:.25s;z-index:100}
   .toast.show{opacity:1}
-  @media print{.toolbar,.filters{display:none!important}.is-hidden{display:none!important}body{background:#fff}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}.watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:13mm}}
+  @media print{.toolbar,.filters{display:none!important}.is-hidden{display:none!important}body{background:#fff}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}${BRAND_PRINT_CSS}@page{size:A4;margin:13mm}}
 </style>
 </head>
 <body>
-<div class="watermark" aria-hidden="true"></div>
+${watermarkHtml()}
 <nav class="toolbar">
-  <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
+  ${toolbarLeftHtml(LOGO, '')}
   <input type="search" class="search" id="search" placeholder="🔍 단어·뜻 검색…">
   <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
   <button class="copy-btn" id="copyBtn">📋 전체 복사</button>
 </nav>
 <div class="container">
   <div class="hero">
-    <img class="hero-logo" src="${LOGO}" alt="공우정바른학원">
+    ${heroBrandHtml(LOGO)}
     <h1>2026 6월 모의고사 · 단어장</h1>
     <p>6월 모의고사 전 지문 핵심 어휘를 단어학습기 import용으로 정리했습니다. 형식은 <strong>영단어 / 품사 - 한글뜻</strong>이며, 다의어는 주요 의미를 모두 표기했습니다.</p>
     <div class="stats">

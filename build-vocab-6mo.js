@@ -5,22 +5,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const {
-  usedGradesFromList,
-  gradeFilterHtml,
-  LOGO_LOCKUP_CSS,
-  TOOLBAR_CSS,
-  PAGE_NAV_CSS,
-  sixMoPageNavHtml,
-  toolbarLeftHtml,
-  GRADE_FILTER_CSS,
-  GRADE_PRINT_CSS,
-  GRADE_FILTER_SCRIPT,
-} = require('./assets/build-page-ui');
+const { usedGradesFromList, gradeFilterHtml, brandCss, BRAND_PRINT_CSS, heroBrandHtml, watermarkHtml, TOOLBAR_CSS, toolbarLeftHtml, PAGE_NAV_CSS, sixMoPageNavHtml, GRADE_FILTER_CSS, GRADE_PRINT_CSS, GRADE_FILTER_SCRIPT } = require('./assets/build-page-ui');
 
 const ROOT = __dirname;
 const LOGO = fs.readFileSync(path.join(ROOT, 'assets', 'logo-base64.txt'), 'utf8').trim();
-const LOCKUP = fs.readFileSync(path.join(ROOT, 'assets', 'logo-lockup-color.txt'), 'utf8').trim();
 const DATA = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'vocab-6mo.json'), 'utf8'));
 const AUG = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'vocab-aug-6mo.json'), 'utf8'));
 
@@ -150,18 +138,16 @@ function buildOne({ kind, pageId, title, subtitle, accent }) {
   ${TOOLBAR_CSS}
   .toolbar-brand{display:flex;align-items:center;gap:10px}
   .toolbar .logo-img{height:30px;width:auto;display:block}
-  ${LOGO_LOCKUP_CSS}
   ${PAGE_NAV_CSS}
   .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px;letter-spacing:-.3px}
   .brand-sub{font-size:11px;color:var(--muted)}
-  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
+  ${brandCss(LOGO)}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:170px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
   .print-btn:hover{background:var(--brand-dark)}
   .container{max-width:1000px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--accent));color:#fff;padding:32px 30px;border-radius:18px;margin:22px 0 16px;box-shadow:0 6px 20px rgba(74,61,107,.22);position:relative;overflow:hidden}
-  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
   .hero .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.9;margin-bottom:8px}
   .hero h1{font-size:26px;font-weight:800;margin-bottom:9px;word-break:keep-all}
   .hero p{font-size:13px;opacity:.92;line-height:1.7;max-width:720px}
@@ -203,22 +189,22 @@ function buildOne({ kind, pageId, title, subtitle, accent }) {
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
     .chip,.vtable thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    ${BRAND_PRINT_CSS}
     @page{size:A4;margin:13mm}
   }
   @media(max-width:560px){.hero h1{font-size:21px}.w-word,.w-mean{width:auto}}
 </style>
 </head>
 <body>
-<div class="watermark" aria-hidden="true"></div>
+${watermarkHtml()}
 <nav class="toolbar">
-  ${toolbarLeftHtml(LOCKUP, sixMoPageNavHtml(pageId, esc))}
+  ${toolbarLeftHtml(LOGO, sixMoPageNavHtml(pageId, esc))}
   <input type="search" class="search" id="search" placeholder="🔍 단어·뜻 검색…">
   <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
-    <img class="hero-logo" src="${LOGO}" alt="공우정바른학원">
+    ${heroBrandHtml(LOGO)}
     <div class="eyebrow">공우정바른학원 · GWJ EDU</div>
     <h1>${esc(title)}</h1>
     <p>${subtitle}</p>

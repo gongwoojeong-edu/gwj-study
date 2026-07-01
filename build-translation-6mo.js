@@ -4,24 +4,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const {
-  usedGradesFromList,
-  gradeFilterHtml,
-  LOGO_LOCKUP_CSS,
-  TOOLBAR_CSS,
-  PAGE_NAV_CSS,
-  sixMoPageNavHtml,
-  toolbarLeftHtml,
-  GRADE_FILTER_CSS,
-  GRADE_PRINT_CSS,
-  GRADE_FILTER_SCRIPT,
-} = require('./assets/build-page-ui');
+const { usedGradesFromList, gradeFilterHtml, brandCss, BRAND_PRINT_CSS, heroBrandHtml, watermarkHtml, TOOLBAR_CSS, toolbarLeftHtml, PAGE_NAV_CSS, sixMoPageNavHtml, GRADE_FILTER_CSS, GRADE_PRINT_CSS, GRADE_FILTER_SCRIPT } = require('./assets/build-page-ui');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'collections', '6월모의고사-한줄해석.html');
 
 const LOGO = fs.readFileSync(path.join(ROOT, 'assets', 'logo-base64.txt'), 'utf8').trim();
-const LOCKUP = fs.readFileSync(path.join(ROOT, 'assets', 'logo-lockup-color.txt'), 'utf8').trim();
 
 const SOURCES = [
   { level: '고1', label: '(고1) 2026 6월 모의고사', file: 'collections/고1-2026년-6모고.html' },
@@ -158,18 +146,16 @@ const html = `<!doctype html>
   ${TOOLBAR_CSS}
   .toolbar-brand{display:flex;align-items:center;gap:10px}
   .toolbar .logo-img{height:30px;width:auto;display:block}
-  ${LOGO_LOCKUP_CSS}
   ${PAGE_NAV_CSS}
   .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px;letter-spacing:-.3px}
   .brand-sub{font-size:11px;color:var(--muted)}
-  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
+  ${brandCss(LOGO)}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:180px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
   .print-btn:hover{background:var(--brand-dark)}
   .container{max-width:980px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;padding:34px 30px;border-radius:18px;margin:22px 0 18px;box-shadow:0 6px 20px rgba(74,61,107,.22);position:relative;overflow:hidden}
-  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
   .hero .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.9;margin-bottom:8px}
   .hero h1{font-size:27px;font-weight:800;margin-bottom:10px;word-break:keep-all}
   .hero p{font-size:13.5px;opacity:.92;line-height:1.7;max-width:700px}
@@ -204,22 +190,22 @@ const html = `<!doctype html>
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
     .trans-list li:nth-child(odd){-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    ${BRAND_PRINT_CSS}
     @page{size:A4;margin:14mm}
   }
   @media(max-width:560px){.hero h1{font-size:22px}.toolbar .search{min-width:130px}}
 </style>
 </head>
 <body>
-<div class="watermark" aria-hidden="true"></div>
+${watermarkHtml()}
 <nav class="toolbar">
-  ${toolbarLeftHtml(LOCKUP, sixMoPageNavHtml('trans', esc))}
+  ${toolbarLeftHtml(LOGO, sixMoPageNavHtml('trans', esc))}
   <input type="search" class="search" id="search" placeholder="🔍 해석·제목 검색…">
   <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
-    <img class="hero-logo" src="${LOGO}" alt="공우정바른학원">
+    ${heroBrandHtml(LOGO)}
     <div class="eyebrow">공우정바른학원 · GWJ EDU</div>
     <h1>2026 6월 모의고사 · 전 지문 한줄해석</h1>
     <p>각 지문을 문장 단위로 끊어 읽은 <strong>직독·의역(한글)</strong>만 모았습니다. 빠른 의미 점검과 끊어읽기 연습, 그리고 빈칸넣기 워크북 제작의 기반 자료로 활용하세요. ( / 표시는 의미 단위 끊어읽기)</p>

@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { brandCss, BRAND_PRINT_CSS, heroBrandHtml, watermarkHtml, toolbarLeftHtml, TOOLBAR_CSS } = require('./assets/build-page-ui');
 
 const SRC = path.join(__dirname, 'gwj_backup_2026-04-28.json');
 const OUT = path.join(__dirname, 'collections', '지문별-어법포인트-모음.html');
@@ -12,7 +13,6 @@ const records = raw.records || [];
 
 // 공우정 심볼/로고 (분석교안에서 추출한 base64 PNG)
 const LOGO = fs.readFileSync(path.join(__dirname, 'assets', 'logo-base64.txt'), 'utf8').trim();
-const LOCKUP = fs.readFileSync(path.join(__dirname, 'assets', 'logo-lockup-color.txt'), 'utf8').trim();
 
 const esc = (s) =>
   String(s == null ? '' : s)
@@ -299,20 +299,14 @@ const html = `<!doctype html>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
   a{color:inherit}
-  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-  .toolbar-brand{display:flex;align-items:center;gap:10px}
-  .toolbar .logo-img{height:30px;width:auto;display:block}
-  .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
-  .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px;letter-spacing:-.3px}
-  .brand-sub{font-size:11px;color:var(--muted)}
-  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
+  ${TOOLBAR_CSS}
+  ${brandCss(LOGO)}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:200px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
   .print-btn:hover{background:var(--brand-dark)}
   .container{max-width:980px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;padding:34px 30px;border-radius:18px;margin:22px 0 18px;box-shadow:0 6px 20px rgba(74,61,107,.22);position:relative;overflow:hidden}
-  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
   .hero .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.9;margin-bottom:8px}
   .hero h1{font-size:27px;font-weight:800;margin-bottom:10px;word-break:keep-all}
   .hero p{font-size:13.5px;opacity:.92;line-height:1.7;max-width:680px}
@@ -370,22 +364,22 @@ const html = `<!doctype html>
     .series:not(.is-hidden) .vol-panel[hidden]{display:block!important}
     .vol-print-label{display:block;font-size:13.5px;color:var(--text);font-weight:700;margin:14px 0 10px;padding-left:9px;border-left:3px solid var(--brand)}
     .category-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:avoid}
-    .watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    ${BRAND_PRINT_CSS}
     @page{size:A4;margin:14mm}
   }
   @media(max-width:560px){.hero h1{font-size:22px}.toolbar .search{min-width:140px}}
 </style>
 </head>
 <body>
-<div class="watermark" aria-hidden="true"></div>
+${watermarkHtml()}
 <nav class="toolbar">
-  <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
+  ${toolbarLeftHtml(LOGO, '')}
   <input type="search" class="search" id="search" placeholder="🔍 어법·제목 검색…">
   <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
-    <img class="hero-logo" src="${LOGO}" alt="공우정바른학원">
+    ${heroBrandHtml(LOGO)}
     <div class="eyebrow">공우정바른학원 · GWJ EDU</div>
     <h1>지문별 핵심 어법 포인트 모음</h1>
     <p>교과서 본문 · 부교재 지문 · 모의고사 지문의 분석교안에서 추출한 핵심 어법 포인트를 한곳에 모았습니다. 자료가 추가될 때마다 계속 누적됩니다.</p>
