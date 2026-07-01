@@ -1,4 +1,4 @@
-// 현일고1 1학기말 시험범위 · 지문별 주제문장(중심문장) 모음
+// 현일고1 1학기말 시험범위 · 지문별 주제 / 주제문장 모음 (2종)
 // node build-topic-hyunil-h1.js
 
 const fs = require('fs');
@@ -7,11 +7,11 @@ const { brandCss, BRAND_PRINT_CSS, heroBrandHtml, watermarkHtml, TOOLBAR_CSS, to
 
 const ROOT = __dirname;
 const CATALOG = path.join(ROOT, 'collections', '2026년-1학기말고사-현일고-부교재-분석자료.html');
-const OUT = path.join(ROOT, 'collections', '2026년-1학기말고사-현일고-주제문장-모음.html');
+const OUT_THEME = path.join(ROOT, 'collections', '2026년-1학기말고사-현일고-주제-모음.html');
+const OUT_SENTENCE = path.join(ROOT, 'collections', '2026년-1학기말고사-현일고-주제문장-모음.html');
 
 const LOGO = fs.readFileSync(path.join(ROOT, 'assets', 'logo-base64.txt'), 'utf8').trim();
 
-const TITLE = '2026년 1학기말고사 현일고1 · 지문별 주제문장 모음';
 const FILTER_OLYMPUS = /올림포스.*독해/i;
 
 const MOCK_SOURCES = [
@@ -181,6 +181,10 @@ function parseTopicAnalysis(localPath) {
     topicKo = stripHtml(tsm[2]).replace(/^→\s*/, '');
   }
 
+  let examTopic = '';
+  const tr = html.match(/제목·주제 선택[\s\S]*?주제:\s*([^<\n]+)/);
+  if (tr) examTopic = stripHtml(tr[1]);
+
   if (!topicEn) {
     const rows = html.match(/<tr>[\s\S]*?<\/tr>/g) || [];
     for (const row of rows) {
@@ -193,7 +197,7 @@ function parseTopicAnalysis(localPath) {
     }
   }
 
-  return { topic, expected, topicEn, topicKo };
+  return { topic, expected, topicEn, topicKo, examTopic };
 }
 
 function sortKey(code) {
@@ -201,10 +205,27 @@ function sortKey(code) {
   return m ? parseInt(m[1], 10) : 9999;
 }
 
-function passageCard(it, badge, searchBits) {
-  const hasTopic = it.topicEn || it.topic;
-  if (!hasTopic) return '';
+function passageCard(it, badge, searchBits, mode) {
+  const hasTheme = !!it.topic;
+  const hasSentence = !!(it.topicEn || it.topicKo);
+  if (mode === 'theme' && !hasTheme) return '';
+  if (mode === 'sentence' && !hasSentence) return '';
+  if (!hasTheme && !hasSentence) return '';
+
   const search = searchBits.join(' ').toLowerCase();
+  const themeBlock = hasTheme
+    ? `<div class="theme-box"><span class="theme-label">주제</span>${esc(it.topic)}</div>`
+    : '';
+  const sentenceBlock = hasSentence
+    ? `<div class="topic-sentence">
+          <div class="ts-label">▶ 주제문장 (Topic Sentence)</div>
+          ${it.topicEn ? `<div class="ts-en">${esc(it.topicEn)}</div>` : ''}
+          ${it.topicKo ? `<div class="ts-ko">${esc(it.topicKo)}</div>` : ''}
+        </div>`
+    : '';
+
+  let body = mode === 'theme' ? themeBlock : sentenceBlock;
+
   return `
       <div class="passage" data-search="${esc(search)}">
         <div class="passage-head">
@@ -215,117 +236,66 @@ function passageCard(it, badge, searchBits) {
           </div>
           <a class="passage-link" href="${esc(it.url)}" target="_blank" rel="noopener">분석교안 ↗</a>
         </div>
-        ${it.topic ? `<div class="theme-box"><span class="theme-label">주제</span>${esc(it.topic)}</div>` : ''}
-        <div class="topic-sentence">
-          <div class="ts-label">▶ 주제문장 (Topic Sentence)</div>
-          ${it.topicEn ? `<div class="ts-en">${esc(it.topicEn)}</div>` : ''}
-          ${it.topicKo ? `<div class="ts-ko">${esc(it.topicKo)}</div>` : ''}
-        </div>
+        ${body}
       </div>`;
 }
 
-// ── 올림포스 ──
-const olympusList = parseOlympusCatalog(CATALOG);
-const byLesson = new Map();
-let olympusCount = 0;
-
-for (const it of olympusList) {
-  const a = parseTopicAnalysis(it.localPath);
-  if (!a) {
-    console.warn('분석 없음:', it.localPath);
-    continue;
-  }
-  if (!a.topicEn && !a.topic) {
-    console.warn('주제문 없음:', it.localPath);
-    continue;
-  }
-  if (!byLesson.has(it.lesson)) byLesson.set(it.lesson, []);
-  byLesson.get(it.lesson).push({
-    ...it,
-    ...a,
-    sortKey: it.unitPath,
-  });
-  olympusCount++;
-}
-
-const lessonOrder = [...byLesson.keys()].sort((a, b) => {
-  const na = parseInt(a, 10) || 999;
-  const nb = parseInt(b, 10) || 999;
-  return na - nb || a.localeCompare(b, 'ko');
-});
-
-let sections = '';
-
-for (const lesson of lessonOrder) {
-  const items = byLesson.get(lesson).sort((a, b) =>
-    a.sortKey.localeCompare(b.sortKey, 'ko', { numeric: true }),
-  );
-  let cards = '';
-  for (const it of items) {
-    const unitLabel = it.unitPath.replace(/^\d+강\//, '') || it.code + '번';
-    cards += passageCard(it, unitLabel, [it.koTitle, it.expected, unitLabel, it.topic, it.topicEn, it.topicKo]);
-  }
-  sections += `
+function buildSections(allSeries, mode) {
+  let sections = '';
+  for (const { title, items, badgeFn } of allSeries) {
+    let cards = '';
+    for (const it of items) {
+      const badge = badgeFn(it);
+      cards += passageCard(
+        it,
+        badge,
+        [it.koTitle, it.expected, badge, it.topic, it.topicEn, it.topicKo, it.examTopic],
+        mode,
+      );
+    }
+    sections += `
     <section class="series">
       <div class="series-head">
-        <h2>올림포스 영어독해기본1 · ${esc(lesson)}</h2>
+        <h2>${esc(title)}</h2>
         <span class="series-count">지문 ${items.length}개</span>
       </div>
       ${cards}
     </section>`;
+  }
+  return sections;
 }
 
-// ── 모의고사 ──
-let mockCount = 0;
-
-for (const src of MOCK_SOURCES) {
-  const list = src.mode === 'main-link' ? parseMainLinkCollection(src.file) : parseLegacyCollection(src.file);
-  const items = [];
-  for (const it of list) {
-    const a = parseTopicAnalysis(it.localPath);
-    if (!a) {
-      console.warn(`[${src.label}] 분석 없음:`, it.localPath);
-      continue;
-    }
-    if (!a.topicEn && !a.topic) {
-      console.warn(`[${src.label}] 주제문 없음:`, it.localPath);
-      continue;
-    }
-    items.push({ ...it, ...a, sortKey: sortKey(it.code) });
-  }
-  items.sort((a, b) => a.sortKey - b.sortKey || a.code.localeCompare(b.code, 'ko', { numeric: true }));
-  mockCount += items.length;
-
-  let cards = '';
-  for (const it of items) {
-    cards += passageCard(it, it.code, [it.koTitle, it.expected, it.code, it.topic, it.topicEn, it.topicKo]);
-  }
-  sections += `
-    <section class="series">
-      <div class="series-head">
-        <h2>${esc(src.label)}</h2>
-        <span class="series-count">지문 ${items.length}개</span>
-      </div>
-      ${cards}
-    </section>`;
+function pageNavHtml(current) {
+  const pages = [
+    { id: 'theme', href: '2026년-1학기말고사-현일고-주제-모음.html', label: '📌 주제 모음' },
+    { id: 'sentence', href: '2026년-1학기말고사-현일고-주제문장-모음.html', label: '▶ 주제문장 모음' },
+  ];
+  const swap = pages
+    .filter((p) => p.id !== current)
+    .map((p) => `<a class="nav-link" href="${esc(p.href)}">${esc(p.label)}</a>`)
+    .join('');
+  const base = [
+    `<a class="nav-link" href="2026년-1학기말고사-현일고-부교재-분석자료.html">📋 시험범위</a>`,
+    `<a class="nav-link" href="2026년-1학기말고사-현일고-올림포스-한줄해석.html">📝 올림포스 한줄해석</a>`,
+    `<a class="nav-link" href="2026년-1학기말고사-현일고-모의고사-한줄해석.html">📝 모의고사 한줄해석</a>`,
+  ].join('');
+  return swap + base;
 }
 
-const totalPassages = olympusCount + mockCount;
-const today = new Date();
-const dateStr = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
+function buildHtml({ mode, title, heroLead, searchPlaceholder, outPath, navCurrent, totalPassages, olympusCount, mockCount, sections }) {
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
+  const hint =
+    mode === 'theme'
+      ? '📌 <strong>주제·요지·제목 고르기</strong>는 이 한글 주제를 우선 암기하세요. 주제문장 버전은 <a href="2026년-1학기말고사-현일고-주제문장-모음.html" style="color:var(--brand-dark);font-weight:700">▶ 주제문장 모음</a>에서 확인하세요.'
+      : '▶ <strong>빈칸·필자 주장·중심문장</strong> 대비용입니다. 시험 <strong>주제고르기</strong>는 <a href="2026년-1학기말고사-현일고-주제-모음.html" style="color:var(--brand-dark);font-weight:700">📌 주제 모음</a>을 함께 암기하세요.';
 
-const navLinks = [
-  `<a class="nav-link" href="2026년-1학기말고사-현일고-부교재-분석자료.html">📋 시험범위</a>`,
-  `<a class="nav-link" href="2026년-1학기말고사-현일고-올림포스-한줄해석.html">📝 올림포스 한줄해석</a>`,
-  `<a class="nav-link" href="2026년-1학기말고사-현일고-모의고사-한줄해석.html">📝 모의고사 한줄해석</a>`,
-].join('');
-
-const html = `<!doctype html>
+  const html = `<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(TITLE)} · 공우정바른학원</title>
+<title>${esc(title)} · 공우정바른학원</title>
 <style>
   :root{
     --brand:#6B5B95; --brand-dark:#4A3D6B; --brand-light:#E8E4F3; --brand-bg:#F4F2F8;
@@ -351,6 +321,8 @@ const html = `<!doctype html>
   .hero .stats{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
   .hero .stat b{font-size:22px;font-weight:800;display:block}
   .hero .stat span{font-size:11.5px;opacity:.85}
+  .hint{font-size:12.5px;color:var(--muted);background:var(--brand-bg);border:1px solid var(--brand-light);border-radius:10px;padding:10px 14px;margin-bottom:14px;line-height:1.65}
+  .hint a{color:var(--brand-dark)}
   .series{margin-bottom:30px}
   .series-head{display:flex;align-items:baseline;gap:12px;padding-bottom:10px;margin-bottom:14px;border-bottom:2px solid var(--brand-light)}
   .series-head h2{font-size:19px;color:var(--brand-dark);font-weight:800}
@@ -363,7 +335,7 @@ const html = `<!doctype html>
   .t-en{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:1px}
   .passage-link{font-size:11px;color:var(--brand-dark);text-decoration:none;padding:3px 9px;border:1px solid var(--brand-light);border-radius:6px;white-space:nowrap;margin-left:auto}
   .passage-link:hover{background:var(--brand-light)}
-  .theme-box{font-size:12.5px;line-height:1.65;color:#444;background:#f5f8ff;border:1px solid #dbe6ff;border-radius:8px;padding:8px 11px;margin-bottom:10px}
+  .theme-box{font-size:13.5px;line-height:1.7;color:#333;background:#f5f8ff;border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:8px;padding:11px 13px}
   .theme-label{font-weight:800;color:var(--brand-dark);margin-right:6px}
   .topic-sentence{background:#faf9fc;border:1.5px solid var(--brand-light);border-left:4px solid var(--brand);border-radius:8px;padding:12px 14px}
   .ts-label{font-size:11px;font-weight:800;color:var(--brand-dark);letter-spacing:.04em;margin-bottom:8px}
@@ -371,8 +343,9 @@ const html = `<!doctype html>
   .ts-ko{font-size:13px;line-height:1.7;color:var(--muted)}
   .footer{text-align:center;padding:30px 20px 10px;font-size:12px;color:var(--muted)}
   .no-result{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
+  .is-hidden{display:none!important}
   @media print{
-    .toolbar{display:none!important}
+    .toolbar,.hint{display:none!important}
     .is-hidden{display:none!important}
     body{background:#fff;padding:0}
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -387,22 +360,23 @@ const html = `<!doctype html>
 <body>
 ${watermarkHtml()}
 <nav class="toolbar">
-  ${toolbarLeftHtml(LOGO, `<div class="page-nav">${navLinks}</div>`)}
-  <input type="search" class="search" id="search" placeholder="🔍 제목·주제·주제문 검색…">
+  ${toolbarLeftHtml(LOGO, `<div class="page-nav">${pageNavHtml(navCurrent)}</div>`)}
+  <input type="search" class="search" id="search" placeholder="${esc(searchPlaceholder)}">
   <button class="print-btn" onclick="window.print()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
     ${heroBrandHtml(LOGO)}
     <div class="eyebrow">공우정바른학원 · GWJ EDU · 시험대비자료</div>
-    <h1>${esc(TITLE)}</h1>
-    <p>현일고1 1학기말 시험범위 <strong>올림포스 영어독해기본1(5·8·9강)</strong>과 <strong>2026 고1 모의고사(3월·6월)</strong> 지문의 <strong>주제문장(중심문장)</strong>과 한글 해설을 한눈에 모았습니다. 주제문 빈칸·제목·요지 문제 대비용으로 활용하세요.</p>
+    <h1>${esc(title)}</h1>
+    <p>${heroLead}</p>
     <div class="stats">
       <div class="stat"><b>${totalPassages}</b><span>지문</span></div>
       <div class="stat"><b>${olympusCount}</b><span>올림포스</span></div>
       <div class="stat"><b>${mockCount}</b><span>모의고사</span></div>
     </div>
   </div>
+  <div class="hint">${hint}</div>
   <div id="content">${sections}</div>
   <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
   <div class="footer">공우정바른학원 · GWJ EDU &nbsp;·&nbsp; 생성일 ${dateStr}</div>
@@ -429,10 +403,101 @@ ${watermarkHtml()}
 </script>
 </body>
 </html>`;
+  fs.writeFileSync(outPath, html, 'utf8');
+  return path.relative(ROOT, outPath);
+}
 
-fs.writeFileSync(OUT, html, 'utf8');
+// ── 데이터 수집 ──
+const olympusList = parseOlympusCatalog(CATALOG);
+const byLesson = new Map();
+let olympusCount = 0;
 
-console.log('생성 완료:', path.relative(ROOT, OUT));
+for (const it of olympusList) {
+  const a = parseTopicAnalysis(it.localPath);
+  if (!a) {
+    console.warn('분석 없음:', it.localPath);
+    continue;
+  }
+  if (!a.topicEn && !a.topic) {
+    console.warn('주제·주제문 없음:', it.localPath);
+    continue;
+  }
+  if (!byLesson.has(it.lesson)) byLesson.set(it.lesson, []);
+  byLesson.get(it.lesson).push({ ...it, ...a, sortKey: it.unitPath });
+  olympusCount++;
+}
+
+const lessonOrder = [...byLesson.keys()].sort((a, b) => {
+  const na = parseInt(a, 10) || 999;
+  const nb = parseInt(b, 10) || 999;
+  return na - nb || a.localeCompare(b, 'ko');
+});
+
+const allSeries = [];
+
+for (const lesson of lessonOrder) {
+  const items = byLesson.get(lesson).sort((a, b) => a.sortKey.localeCompare(b.sortKey, 'ko', { numeric: true }));
+  allSeries.push({
+    title: `올림포스 영어독해기본1 · ${lesson}`,
+    items,
+    badgeFn: (it) => it.unitPath.replace(/^\d+강\//, '') || it.code + '번',
+  });
+}
+
+let mockCount = 0;
+for (const src of MOCK_SOURCES) {
+  const list = src.mode === 'main-link' ? parseMainLinkCollection(src.file) : parseLegacyCollection(src.file);
+  const items = [];
+  for (const it of list) {
+    const a = parseTopicAnalysis(it.localPath);
+    if (!a) {
+      console.warn(`[${src.label}] 분석 없음:`, it.localPath);
+      continue;
+    }
+    if (!a.topicEn && !a.topic) {
+      console.warn(`[${src.label}] 주제·주제문 없음:`, it.localPath);
+      continue;
+    }
+    items.push({ ...it, ...a, sortKey: sortKey(it.code) });
+  }
+  items.sort((a, b) => a.sortKey - b.sortKey || a.code.localeCompare(b.code, 'ko', { numeric: true }));
+  mockCount += items.length;
+  allSeries.push({ title: src.label, items, badgeFn: (it) => it.code });
+}
+
+const totalPassages = olympusCount + mockCount;
+
+const outTheme = buildHtml({
+  mode: 'theme',
+  navCurrent: 'theme',
+  title: '2026년 1학기말고사 현일고1 · 지문별 주제 모음',
+  heroLead:
+    '현일고1 1학기말 시험범위 <strong>올림포스 영어독해기본1(5·8·9강)</strong>과 <strong>2026 고1 모의고사(3월·6월)</strong> 지문의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
+  searchPlaceholder: '🔍 제목·주제 검색…',
+  outPath: OUT_THEME,
+  totalPassages,
+  olympusCount,
+  mockCount,
+  sections: buildSections(allSeries, 'theme'),
+});
+
+const outSentence = buildHtml({
+  mode: 'sentence',
+  navCurrent: 'sentence',
+  title: '2026년 1학기말고사 현일고1 · 지문별 주제문장 모음',
+  heroLead:
+    '같은 시험범위 지문의 <strong>주제문장(중심문장)</strong> 영문과 한글 해설입니다. <strong>빈칸·필자 주장·구조 파악</strong> 대비용으로 활용하세요.',
+  searchPlaceholder: '🔍 제목·주제문 검색…',
+  outPath: OUT_SENTENCE,
+  totalPassages,
+  olympusCount,
+  mockCount,
+  sections: buildSections(allSeries, 'sentence'),
+});
+
+console.log('생성 완료:');
+console.log(' -', outTheme);
+console.log(' -', outSentence);
 console.log('총 지문:', totalPassages, `(올림포스 ${olympusCount} + 모의고사 ${mockCount})`);
 for (const lesson of lessonOrder) {
   console.log(`  - ${lesson}: ${byLesson.get(lesson).length}지문`);
