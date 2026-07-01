@@ -30,6 +30,16 @@ function l08MockPath(month, unitRaw) {
   return null;
 }
 
+function l09G2MockPath(month, unitRaw) {
+  const base = String(unitRaw).replace(/번$/, '');
+  const unitVariants = [base + '번', base];
+  for (const u of unitVariants) {
+    const alt = `study/L09/고2_2026_모의고사/${month}/${u}/analysis.html`;
+    if (fs.existsSync(path.join(ROOT, alt))) return alt;
+  }
+  return null;
+}
+
 function resolveLocalPath(localPath) {
   const decoded = decodeURIComponent(localPath).replace(/#.*$/, '');
 
@@ -56,6 +66,12 @@ function resolveLocalPath(localPath) {
     if (alt) return alt;
     const legacyAnalysis = `study/3월/${m[1]}/analysis.html`;
     if (fs.existsSync(path.join(ROOT, legacyAnalysis))) return legacyAnalysis;
+  }
+
+  m = decoded.match(/^study\/(\d+)번\/\1\/analysis\.html$/);
+  if (m) {
+    const alt = l09G2MockPath('3월', m[1]);
+    if (alt) return alt;
   }
 
   if (/\d+\.\//.test(decoded)) {
