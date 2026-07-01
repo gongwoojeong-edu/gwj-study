@@ -1,4 +1,4 @@
-// 학년(고1/고2) 필터 + 인쇄 UI — 6월 모의고사 등 자료 페이지 공용
+// 학년(고1/고2) 필터 + 인쇄 UI + 브랜드(로고·워터마크) — 자료 페이지 공용
 
 const GRADE_ORDER = ['고1', '고2', '고3'];
 
@@ -16,8 +16,34 @@ function gradeFilterHtml(grades, esc) {
   </div>`;
 }
 
-const LOGO_LOCKUP_CSS = `.toolbar .logo-lockup{height:88px;width:auto;display:block;border-radius:4px;flex-shrink:0}`;
-const TOOLBAR_CSS = `.toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:92px}`;
+const TOOLBAR_CSS = `.toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:56px}`;
+
+/** @deprecated use brandCss() — kept for scripts not yet migrated */
+const LOGO_LOCKUP_CSS = '';
+
+function brandCss(logoSrc) {
+  const u = String(logoSrc || '').replace(/"/g, '\\"');
+  return `
+  .toolbar-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;flex-wrap:wrap}
+  .brand-mark{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .brand-symbol{height:44px;width:44px;display:block;object-fit:contain;flex-shrink:0}
+  .brand-text{display:flex;flex-direction:column;line-height:1.25;gap:1px}
+  .brand-text strong{font-size:14px;font-weight:800;color:var(--brand-dark);letter-spacing:-.02em}
+  .brand-sub{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.06em}
+  .watermark{position:fixed;inset:0;z-index:0;pointer-events:none;background:url("${u}") center 40% no-repeat;background-size:min(240px,46vw) auto;opacity:.034}
+  .hero .hero-brand-symbol{height:38px;width:38px;display:block;margin-bottom:10px;filter:brightness(0) invert(1);opacity:.93}`;
+}
+
+const BRAND_PRINT_CSS = `
+    .watermark{opacity:.055;-webkit-print-color-adjust:exact;print-color-adjust:exact}`;
+
+function watermarkHtml() {
+  return '<div class="watermark" aria-hidden="true"></div>';
+}
+
+function heroBrandHtml(logoSrc) {
+  return `<img class="hero-brand-symbol" src="${logoSrc}" alt="공우정바른학원">`;
+}
 
 const SIXMO_VOCAB_PAGES = [
   { id: 'syn', href: '6월모의고사-유의어.html' },
@@ -32,9 +58,8 @@ function sixMoNavLabel(id) {
 }
 
 const PAGE_NAV_CSS = `
-  .toolbar-left{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
   .page-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .nav-link{padding:9px 16px;border:1px solid var(--brand-light);border-radius:8px;background:#faf9fc;color:var(--brand-dark);font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1.2}
+  .nav-link{padding:8px 14px;border:1px solid var(--brand-light);border-radius:8px;background:#faf9fc;color:var(--brand-dark);font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1.2}
   .nav-link:hover{background:var(--brand-light)}
   .nav-link.current{background:var(--brand);border-color:var(--brand);color:#fff;pointer-events:none}`;
 
@@ -44,8 +69,14 @@ function sixMoPageNavHtml(current, esc) {
   ).join('')}</div>`;
 }
 
-function toolbarLeftHtml(lockupSrc, pageNavHtml) {
-  return `<div class="toolbar-left"><img class="logo-lockup" src="${lockupSrc}" alt="공우정바른학원 GWJ EDU">${pageNavHtml}</div>`;
+function toolbarLeftHtml(logoSrc, pageNavHtml = '') {
+  return `<div class="toolbar-left">
+    <div class="brand-mark">
+      <img class="brand-symbol" src="${logoSrc}" alt="">
+      <span class="brand-text"><strong>공우정바른학원</strong><span class="brand-sub">GWJ EDU</span></span>
+    </div>
+    ${pageNavHtml}
+  </div>`;
 }
 
 const GRADE_FILTER_CSS = `
@@ -133,6 +164,10 @@ module.exports = {
   gradeFilterHtml,
   LOGO_LOCKUP_CSS,
   TOOLBAR_CSS,
+  brandCss,
+  BRAND_PRINT_CSS,
+  watermarkHtml,
+  heroBrandHtml,
   PAGE_NAV_CSS,
   sixMoPageNavHtml,
   toolbarLeftHtml,

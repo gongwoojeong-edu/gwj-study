@@ -3,20 +3,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const {
-  usedGradesFromList,
-  gradeFilterHtml,
-  GRADE_FILTER_CSS,
-  GRADE_PRINT_CSS,
-  GRADE_FILTER_SCRIPT,
-} = require('./assets/build-page-ui');
+const { usedGradesFromList, gradeFilterHtml, GRADE_FILTER_CSS, GRADE_PRINT_CSS, GRADE_FILTER_SCRIPT, brandCss, BRAND_PRINT_CSS, heroBrandHtml, watermarkHtml, toolbarLeftHtml, TOOLBAR_CSS } = require('./assets/build-page-ui');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'collections', '6월모의고사-어법포인트-모음.html');
 
 // 공우정 심볼/로고 (분석교안에서 추출한 base64 PNG)
 const LOGO = fs.readFileSync(path.join(ROOT, 'assets', 'logo-base64.txt'), 'utf8').trim();
-const LOCKUP = fs.readFileSync(path.join(ROOT, 'assets', 'logo-lockup-color.txt'), 'utf8').trim();
 
 const SOURCES = [
   { level: '고1', label: '(고1) 2026 6월 모의고사', file: 'collections/고1-2026년-6모고.html' },
@@ -167,23 +160,17 @@ const html = `<!doctype html>
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
-  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-  .toolbar-brand{display:flex;align-items:center;gap:10px}
-  .toolbar .logo-img{height:30px;width:auto;display:block}
-  .toolbar .logo-lockup{height:36px;width:auto;display:block;border-radius:3px}
-  .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px;letter-spacing:-.3px}
-  .brand-sub{font-size:11px;color:var(--muted)}
+  ${TOOLBAR_CSS}
+  ${brandCss(LOGO)}
   .toolbar .switch-link{font-size:12px;font-weight:700;color:var(--brand-dark);text-decoration:none;padding:6px 12px;border:1px solid var(--brand-light);border-radius:8px;background:var(--brand-bg)}
   .toolbar .switch-link:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
   .hero .badge-exp{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;margin-bottom:10px;letter-spacing:.04em}
-  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("${LOGO}") center center no-repeat;background-size:340px auto;opacity:.07}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:200px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
   .print-btn:hover{background:var(--brand-dark)}
   .container{max-width:980px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;padding:34px 30px;border-radius:18px;margin:22px 0 18px;box-shadow:0 6px 20px rgba(74,61,107,.22);position:relative;overflow:hidden}
-  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
   .hero .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.9;margin-bottom:8px}
   .hero h1{font-size:27px;font-weight:800;margin-bottom:10px;word-break:keep-all}
   .hero p{font-size:13.5px;opacity:.92;line-height:1.7;max-width:680px}
@@ -216,23 +203,23 @@ const html = `<!doctype html>
     body{background:#fff;padding:0}
     .hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .passage{break-inside:avoid;box-shadow:none}
-    .watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    ${BRAND_PRINT_CSS}
     @page{size:A4;margin:14mm}
   }
   @media(max-width:560px){.hero h1{font-size:22px}.toolbar .search{min-width:140px}}
 </style>
 </head>
 <body>
-<div class="watermark" aria-hidden="true"></div>
+${watermarkHtml()}
 <nav class="toolbar">
-  <img class="logo-lockup" src="${LOCKUP}" alt="공우정바른학원 GWJ EDU">
+  ${toolbarLeftHtml(LOGO, '')}
   <a class="switch-link" href="6월모의고사-어법포인트-확장판.html">📖 확장판 보기</a>
   <input type="search" class="search" id="search" placeholder="🔍 어법·제목 검색…">
   <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
 <div class="container">
   <div class="hero">
-    <img class="hero-logo" src="${LOGO}" alt="공우정바른학원">
+    ${heroBrandHtml(LOGO)}
     <div class="badge-exp">요약판 · 핵심 출제 우선순위</div>
     <div class="eyebrow">공우정바른학원 · GWJ EDU</div>
     <h1>2026 6월 모의고사 · 지문별 어법 포인트</h1>

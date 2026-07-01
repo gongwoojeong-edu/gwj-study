@@ -7643,10 +7643,8 @@ async function loadBrandAssets() {
     catch (e) { return ''; }
   };
   let logo = await fetchTxt('assets/logo-base64.txt');
-  let lockup = await fetchTxt('assets/logo-lockup-color.txt');
   if (!logo) logo = await fetchTxt('https://gongwoojeong-edu.github.io/gwj-study/assets/logo-base64.txt');
-  if (!lockup) lockup = await fetchTxt('https://gongwoojeong-edu.github.io/gwj-study/assets/logo-lockup-color.txt');
-  _gwjBrandAssets = { logo, lockup };
+  _gwjBrandAssets = { logo };
   return _gwjBrandAssets;
 }
 
@@ -7849,7 +7847,7 @@ function extractCollectionData(records, augMap) {
 // 어법·어휘·한줄해석 모음 페이지 HTML (정교 템플릿, 자체 완결형)
 function buildGrammarVocabHtml(title, items, sections, assets) {
   const sec = sections || { grammar: true, syn: true, ant: true, lt: true };
-  const A = assets || { logo: '', lockup: '' };
+  const A = assets || { logo: '' };
   const now = new Date();
   const dateStr = now.getFullYear() + '. ' + (now.getMonth() + 1) + '. ' + now.getDate() + '.';
   const LT_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
@@ -7969,9 +7967,11 @@ function buildGrammarVocabHtml(title, items, sections, assets) {
     (sec.ant ? '<a class="nav-link" href="#sec-ant">↔ 반의어</a>' : '') +
     (sec.lt ? '<a class="nav-link" href="#sec-lt">&gt; 한줄해석</a>' : '');
 
-  const lockupImg = A.lockup ? '<img class="logo-lockup" src="' + A.lockup + '" alt="공우정바른학원 GWJ EDU">' : '<span class="brand-mark">공우정바른학원</span>';
-  const heroLogo = A.logo ? '<img class="hero-logo" src="' + A.logo + '" alt="공우정바른학원">' : '';
-  const watermark = A.logo ? 'background:url("' + A.logo + '") center center no-repeat;background-size:340px auto;' : '';
+  const brandToolbar = A.logo
+    ? '<div class="brand-mark"><img class="brand-symbol" src="' + A.logo + '" alt=""><span class="brand-text"><strong>공우정바른학원</strong><span class="brand-sub">GWJ EDU</span></span></div>'
+    : '<span class="brand-mark-fallback">공우정바른학원</span>';
+  const heroLogo = A.logo ? '<img class="hero-brand-symbol" src="' + A.logo + '" alt="공우정바른학원">' : '';
+  const watermarkBg = A.logo ? 'background:url("' + A.logo + '") center 40% no-repeat;background-size:min(240px,46vw) auto;' : '';
 
   return `<!doctype html>
 <html lang="ko">
@@ -7983,21 +7983,25 @@ function buildGrammarVocabHtml(title, items, sections, assets) {
   :root{--brand:#6B5B95;--brand-dark:#4A3D6B;--brand-light:#E8E4F3;--brand-bg:#F4F2F8;--bg:#F7F5F0;--card:#fff;--border:#E3DFD5;--text:#2A2A2A;--muted:#6E6B65;--accent:#B5532A;}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 60px}
-  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:92px}
-  .toolbar .logo-lockup{height:88px;width:auto;display:block;border-radius:4px;flex-shrink:0}
-  .toolbar-left{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+  .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);min-height:56px}
+  .toolbar-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;flex-wrap:wrap}
+  .brand-mark{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .brand-symbol{height:44px;width:44px;display:block;object-fit:contain;flex-shrink:0}
+  .brand-text{display:flex;flex-direction:column;line-height:1.25;gap:1px}
+  .brand-text strong{font-size:14px;font-weight:800;color:var(--brand-dark);letter-spacing:-.02em}
+  .brand-sub{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.06em}
+  .brand-mark-fallback{font-weight:800;color:var(--brand-dark);font-size:15px}
   .page-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .nav-link{padding:9px 16px;border:1px solid var(--brand-light);border-radius:8px;background:#faf9fc;color:var(--brand-dark);font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1.2}
   .nav-link:hover{background:var(--brand-light)}
-  .brand-mark{font-weight:800;color:var(--brand-dark);font-size:15px}
-  .watermark{position:fixed;inset:0;z-index:5;pointer-events:none;${watermark}opacity:.07}
+  .watermark{position:fixed;inset:0;z-index:0;pointer-events:none;${watermarkBg}opacity:.034}
   .toolbar .search{margin-left:auto;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#faf9fc;min-width:170px}
   .toolbar .search:focus{outline:none;border-color:var(--brand);background:#fff}
   .print-btn{padding:8px 14px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
   .print-btn:hover{background:var(--brand-dark)}
   .container{max-width:1000px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   .hero{background:linear-gradient(135deg,var(--brand-dark),var(--accent));color:#fff;padding:32px 30px;border-radius:18px;margin:22px 0 16px;box-shadow:0 6px 20px rgba(74,61,107,.22);position:relative;overflow:hidden}
-  .hero .hero-logo{height:26px;width:auto;display:block;margin-bottom:12px;filter:brightness(0) invert(1);opacity:.95}
+  .hero .hero-brand-symbol{height:38px;width:38px;display:block;margin-bottom:10px;filter:brightness(0) invert(1);opacity:.93}
   .hero .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.9;margin-bottom:8px}
   .hero h1{font-size:26px;font-weight:800;margin-bottom:9px;word-break:keep-all}
   .hero p{font-size:13px;opacity:.92;line-height:1.7;max-width:720px}
@@ -8047,14 +8051,14 @@ function buildGrammarVocabHtml(title, items, sections, assets) {
   .empty{color:var(--muted);font-size:14px;padding:8px 2px}
   .no-result{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
   .footer{text-align:center;padding:28px 20px 10px;font-size:12px;color:var(--muted)}
-  @media print{.toolbar,.filters{display:none!important}.is-hidden{display:none!important}body{background:#fff;padding:0}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}.passage{break-inside:avoid;box-shadow:none}.chip,.vtable thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.watermark{opacity:.1;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:13mm}}
+  @media print{.toolbar,.filters{display:none!important}.is-hidden{display:none!important}body{background:#fff;padding:0}.hero{box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}.passage{break-inside:avoid;box-shadow:none}.chip,.vtable thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}.watermark{opacity:.055;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:13mm}}
   @media(max-width:560px){.hero h1{font-size:21px}.w-word,.w-mean{width:auto}}
 </style>
 </head>
 <body>
 <div class="watermark" aria-hidden="true"></div>
 <nav class="toolbar">
-  <div class="toolbar-left">${lockupImg}<div class="page-nav">${navHtml}</div></div>
+  <div class="toolbar-left">${brandToolbar}<div class="page-nav">${navHtml}</div></div>
   <input type="search" class="search" id="search" placeholder="🔍 단어·내용 검색…">
   <button class="print-btn" onclick="beforePrint()">🖨 인쇄 / PDF</button>
 </nav>
