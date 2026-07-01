@@ -19,14 +19,12 @@ const NAV = {
   sentenceHref: '2026년-1학기말고사-현일고2-주제문장-모음.html',
   extraLinks: [
     { href: '2026년-1학기말고사-현일고2-부교재-분석자료.html', label: '📋 시험범위' },
-    { href: '2026-고2-3월-모의고사.html', label: '📝 3월 모의고사' },
     { href: '고2-6모고.html', label: '📝 6월 모의고사' },
     { href: '현일고2-2026-1학기말-5월이투스.html', label: '📝 5월 이투스' },
   ],
 };
 
 const MOCK_SOURCES = [
-  { label: '2026 3월 모의고사', file: 'collections/2026-고2-3월-모의고사.html' },
   { label: '2026 6월 모의고사', file: 'collections/고2-6모고.html' },
   { label: '2026 5월 이투스 모의고사', file: 'collections/현일고2-2026-1학기말-5월이투스.html', dedupe: true },
 ];
@@ -87,7 +85,7 @@ const result = runTopicBuild({
   titleTheme: '2026년 1학기말고사 현일고2 · 지문별 주제 모음',
   titleSentence: '2026년 1학기말고사 현일고2 · 지문별 주제문장 모음',
   heroTheme:
-    '현일고2 1학기말 시험범위 <strong>해커스 수능독해 불변의법칙(1·2·제1회)</strong>과 <strong>2026 고2 모의고사(3·5·6월)</strong> 지문의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
+    '현일고2 1학기말 시험범위 <strong>해커스 수능독해 불변의법칙(1·2·제1회)</strong>과 <strong>2026 고2 모의고사(5·6월)</strong> 지문의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
   heroSentence:
     '같은 시험범위 지문의 <strong>주제문장(중심문장)</strong> 영문과 한글 해설입니다. <strong>빈칸·필자 주장·구조 파악</strong> 대비용으로 활용하세요.',
   searchTheme: '🔍 제목·주제 검색…',
