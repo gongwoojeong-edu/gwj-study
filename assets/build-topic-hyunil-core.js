@@ -529,6 +529,7 @@ function runTopicBuild({
 
 module.exports = {
   ROOT,
+  toGithubUrl,
   parseOlympusCatalog,
   parseMainLinkCollection,
   parseLegacyCollection,
