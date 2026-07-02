@@ -57,6 +57,10 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 }
 .tips-card { background: rgb(250, 250, 247); border: 1px dashed rgb(204, 204, 204); border-radius: 10px; padding: 16px 20px; font-size: 12px; color: var(--text-muted); line-height: 1.75; }
 .tips-card strong { color: var(--brand-dark); }
+.batch-preview { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.6; display: none; background: rgb(244, 242, 248); border: 1px solid rgb(214, 207, 233); color: var(--brand-dark); }
+.batch-preview code { background: rgb(255, 255, 255); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+.batch-option { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--text); }
+.batch-option input { margin-top: 3px; accent-color: var(--brand); }
 .library-view { max-width: 1080px; margin: 24px auto; padding: 0px 20px; }
 .library-toolbar { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .library-toolbar input, .library-toolbar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 12.5px; background: rgb(250, 250, 247); }
@@ -263,6 +267,21 @@ body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; trans
 body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
 body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
 body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+.line-translation-wrap { max-width: 720px; margin: 0px auto; padding: 16px 20px 40px; }
+.line-translation-note { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading { font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700; }
+.line-translation-list { list-style: none; padding: 0px; margin: 0px; display: flex; flex-direction: column; gap: 0px; }
+.line-translation-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; line-height: 1.55; font-size: 14px; padding: 5px 0px 5px 6px; border-left: 2px solid rgba(107, 91, 149, 0.18); background: transparent; }
+.line-translation-item + .line-translation-item { margin-top: 1px; }
+.line-translation-item:nth-child(2n) { background: rgba(107, 91, 149, 0.035); }
+.line-translation-num { flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55; }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
+.line-translation-passage { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.line-translation-passage:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; margin-bottom: 0px; padding-bottom: 0px; }
+.line-translation-passage h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12); }
+.line-translation-passage .passage-meta { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.line-translation-empty-line { color: rgb(153, 153, 153); font-size: 12px; margin: 2px 0px 0px 34px; }
 @media print {
   body { background: rgb(255, 255, 255); }
   body.edit-mode .page::before { display: none !important; }
@@ -276,7 +295,18 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .page:last-child { break-after: auto; }
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  #tab-line-translation.print-target .line-translation-wrap { max-width: none; padding: 0px; margin: 0px; }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage { margin-bottom: 8pt; padding-bottom: 6pt; break-inside: avoid-page; }
+  #tab-line-translation.print-target .line-translation-passage h3 { font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt; border-bottom-color: rgb(204, 204, 204); }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: rgb(85, 85, 85); }
+  #tab-line-translation.print-target .line-translation-item { grid-template-columns: 16pt 1fr; gap: 4pt; font-size: 9.5pt; line-height: 1.38; padding: 0.5pt 0px; border-left-width: medium; border-left-style: none; border-left-color: currentcolor; background: transparent !important; }
+  #tab-line-translation.print-target .line-translation-num { font-size: 9pt; color: rgb(51, 51, 51); font-weight: 600; }
+  #tab-line-translation.print-target .line-translation-empty-line { font-size: 8.5pt; margin-left: 16pt; }
   @page { size: a4; margin: 0px; }
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
 }</style>
 </head>
 <body>
