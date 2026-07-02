@@ -1,4 +1,5 @@
 // 인동고2 1학기말 시험범위 · 지문별 주제 / 주제문장 모음 (2종)
+// 범위: NE능률 오선영 교과서 2·4과 + 수특라이트 25 + 2026 6월 모의고사
 // node build-topic-indong-h2.js
 
 const fs = require('fs');
@@ -13,17 +14,37 @@ const {
   toGithubUrl,
 } = require('./assets/build-topic-hyunil-core');
 
-const CATALOG = path.join(ROOT, 'collections', '인동고2-1학기말_부교재분석자료.html');
+const CATALOG = path.join(ROOT, 'collections', '인동고2-1학기말_시험범위.html');
 const OUT_THEME = path.join(ROOT, 'collections', '2026년-1학기말고사-인동고2-주제-모음.html');
 const OUT_SENTENCE = path.join(ROOT, 'collections', '2026년-1학기말고사-인동고2-주제문장-모음.html');
 
 const NAV = {
   themeHref: '2026년-1학기말고사-인동고2-주제-모음.html',
   sentenceHref: '2026년-1학기말고사-인동고2-주제문장-모음.html',
-  extraLinks: [{ href: '인동고2-1학기말_부교재분석자료.html', label: '📋 시험범위' }],
+  extraLinks: [
+    { href: '인동고2-1학기말_시험범위.html', label: '📋 시험범위' },
+    { href: '고2-6모고.html', label: '📝 6월 모의고사' },
+  ],
 };
 
-// 시험범위: EBS 수능특강 라이트 영어독해연습 25지문
+const TEXTBOOK_BASE = 'study/L09/NE능률_오선영_영어I';
+
+// NE능률(오선영) 영어I — 2·4과 본문
+const TEXTBOOK_UNITS = [
+  {
+    lesson: '2과',
+    code: '본문',
+    title: 'Wake Up Your Lazy Brain!',
+    subtitle: 'The Power of Good Habits',
+  },
+  {
+    lesson: '4과',
+    code: '본문',
+    title: 'Seeing the Extraordinary in the Ordinary',
+    subtitle: 'Spark Your Creativity',
+  },
+];
+
 const SUTSPEC_UNITS = [
   '강10-Ex1',
   '강10-Ex2',
@@ -52,19 +73,26 @@ const SUTSPEC_UNITS = [
   '강9-Ex4',
 ];
 
-const LESSON_ORDER = ['2강', '3강', '4강', '8강', '9강', '10강'];
+const SUTSPEC_LESSON_ORDER = ['2강', '3강', '4강', '8강', '9강', '10강'];
+
+const MOCK_SOURCES = [{ label: '2026 6월 모의고사', file: 'collections/고2-6모고.html' }];
+
+function textbookPath(unit) {
+  return `${TEXTBOOK_BASE}/${unit.lesson}/${unit.code}/analysis.html`;
+}
 
 function resolveSutspecPath(unitLabel) {
   const base = 'study/L09/고2_2026_수특라이트';
+  // EBS 표기 강3-Ex1 → 공우정신텍스 저장 경로 3강/Ex1 (또는 구형 3강/1번)
   const m = unitLabel.match(/^강(\d+)-Ex(\d+)/);
   if (!m) return null;
   const lesson = `${m[1]}강`;
   const ex = `Ex${m[2]}`;
+  const num = `${m[2]}번`;
   const candidates = [
     `${base}/${lesson}/${ex}/analysis.html`,
-    `${base}/${lesson}/${ex.toLowerCase()}/analysis.html`,
-    `${base}/${lesson}/강${m[1]}-${ex}/analysis.html`,
-    `${base}/${lesson}/${m[1]}강_${ex}/analysis.html`,
+    `${base}/${lesson}/${num}/analysis.html`,
+    `${base}/${lesson}/${m[1]}강-${num}/analysis.html`,
   ];
   for (const p of candidates) {
     if (fs.existsSync(path.join(ROOT, p))) return p;
@@ -84,7 +112,42 @@ function titleFromAnalysis(localPath, fallback) {
   return fallback;
 }
 
+function catalogItemHtml({ localPath, code, title, links = ['analysis'] }) {
+  const url = toGithubUrl(localPath);
+  const linkHtml = links
+    .map((kind) => {
+      if (kind === 'structure') {
+        const structPath = localPath.replace(/analysis\.html$/, 'structure.html');
+        return `<a href="${toGithubUrl(structPath)}#structure" target="_blank">🗂 구조도</a>`;
+      }
+      return `<a href="${url}#analysis" target="_blank">📄 분석교안</a>`;
+    })
+    .join('\n            ');
+  return `<div class="item">
+          <a href="${url}#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">${code}</code>
+              <strong class="item-title">${title}</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            ${linkHtml}
+          </div>
+        </div>`;
+}
+
 function writeCatalog() {
+  let textbookBody = '';
+  for (const unit of TEXTBOOK_UNITS) {
+    const localPath = textbookPath(unit);
+    const displayTitle = unit.subtitle ? `${unit.title} · ${unit.subtitle}` : unit.title;
+    textbookBody += `<div class="chapter"><h3 class="chapter-title">📖 ${unit.lesson} ${unit.code}</h3><div class="items">${catalogItemHtml({
+      localPath,
+      code: unit.code,
+      title: displayTitle,
+    })}</div></div>`;
+  }
+
   const byLesson = new Map();
   for (const unit of SUTSPEC_UNITS) {
     const lessonM = unit.match(/^강(\d+)-/);
@@ -93,35 +156,41 @@ function writeCatalog() {
     byLesson.get(lesson).push(unit);
   }
 
-  let body = '';
-  for (const lesson of LESSON_ORDER.filter((l) => byLesson.has(l))) {
-    body += `<div class="book"><h2 class="book-title">📚 ${lesson}</h2>`;
+  let sutspecBody = '';
+  for (const lesson of SUTSPEC_LESSON_ORDER.filter((l) => byLesson.has(l))) {
+    sutspecBody += `<div class="book"><h2 class="book-title">📚 ${lesson}</h2>`;
     for (const unit of byLesson.get(lesson)) {
       const localPath = resolveSutspecPath(unit);
       if (!localPath) continue;
-      const url = toGithubUrl(localPath);
       const title = titleFromAnalysis(localPath, unit);
-      body += `<div class="chapter"><h3 class="chapter-title">📖 ${unit}</h3><div class="items"><div class="item">
-          <a href="${url}#analysis" target="_blank" class="item-main-link">
-            <div class="item-meta">
-              <code class="item-code">${unit.replace(/^강\d+-/, '')}</code>
-              <strong class="item-title">${title}</strong>
-            </div>
-          </a>
-          <div class="item-links">
-            <a href="${url}#analysis" target="_blank">📄 분석교안</a>
-          </div>
-        </div></div></div>`;
+      sutspecBody += `<div class="chapter"><h3 class="chapter-title">📖 ${unit}</h3><div class="items">${catalogItemHtml({
+        localPath,
+        code: unit.replace(/^강\d+-/, ''),
+        title,
+      })}</div></div>`;
     }
-    body += '</div>';
+    sutspecBody += '</div>';
   }
+
+  const mockItems = parseMainLinkCollection('collections/고2-6모고.html');
+  let mockBody = '';
+  for (const it of mockItems) {
+    mockBody += `<div class="chapter"><h3 class="chapter-title">📖 ${it.code}번</h3><div class="items">${catalogItemHtml({
+      localPath: it.localPath,
+      code: it.code,
+      title: it.title || `${it.code}번`,
+      links: ['analysis', 'structure'],
+    })}</div></div>`;
+  }
+
+  const totalCount = TEXTBOOK_UNITS.length + SUTSPEC_UNITS.length + mockItems.length;
 
   const html = `<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>인동고2 1학기말_부교재분석자료</title>
+<title>인동고2 1학기말 시험범위</title>
 <style>
   :root { --brand:#6B5B95; --brand-dark:#4A3D6B; --brand-light:#E8E4F3; --bg:#F7F5F0; --border:#e8e4f3; --text:#2a2438; --text-soft:#6c6480; --text-muted:#999; }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -130,14 +199,20 @@ function writeCatalog() {
   .header { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; padding:36px 28px; border-radius:18px; text-align:center; margin-bottom:24px; }
   h1 { font-size:28px; margin-bottom:8px; }
   .subtitle { font-size:14px; opacity:.92; }
+  .intro { background:#fff; border-left:4px solid var(--brand); padding:14px 18px; border-radius:10px; margin-bottom:18px; font-size:14px; color:var(--text-soft); }
+  .level-section { background:#fff; border-radius:16px; padding:22px 24px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+  .level-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding-bottom:14px; margin-bottom:18px; border-bottom:2px solid var(--brand-light); }
+  .level-badge { background:linear-gradient(135deg,var(--brand),var(--brand-dark)); color:#fff; padding:6px 12px; border-radius:8px; font-size:14px; font-weight:700; }
+  .level-name { font-size:18px; font-weight:700; color:var(--brand-dark); }
+  .level-count { margin-left:auto; font-size:12px; color:var(--text-muted); background:var(--brand-light); padding:4px 10px; border-radius:12px; }
   .book-title { font-size:19px; margin:18px 0 10px; color:var(--brand-dark); }
   .chapter-title { font-size:15px; margin:10px 0 8px; color:var(--text-soft); }
-  .item { background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
+  .item { background:#faf9fc; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
   .item-main-link { text-decoration:none; color:inherit; display:block; }
   .item-code { background:var(--brand); color:#fff; padding:2px 8px; border-radius:5px; font-size:11px; margin-right:8px; }
   .item-title { font-size:14px; font-weight:600; }
   .item-links { margin-top:8px; font-size:12px; }
-  .item-links a { color:var(--brand-dark); margin-right:10px; }
+  .item-links a { color:var(--brand-dark); margin-right:10px; text-decoration:none; }
   .footer { text-align:center; padding:24px 0 8px; font-size:12px; color:var(--text-muted); }
 </style>
 </head>
@@ -145,10 +220,38 @@ function writeCatalog() {
 <div class="container">
   <div class="header">
     <div class="brand">공우정바른학원 · GWJ EDU</div>
-    <h1>인동고2 1학기말_부교재분석자료</h1>
-    <div class="subtitle">${SUTSPEC_UNITS.length}개 지문 · EBS 수능특강 라이트 영어독해연습</div>
+    <h1>인동고2 1학기말 시험범위</h1>
+    <div class="subtitle">${totalCount}개 지문 · 교과서 2·4과 + 수특라이트 + 6월 모의고사</div>
   </div>
-  ${body}
+  <div class="intro">인동고2 1학기말 시험범위입니다. <strong>NE능률(오선영) 영어I</strong> 교과서 2·4과, <strong>EBS 수능특강 라이트</strong> 25지문, <strong>2026년 6월 고2 모의고사</strong> 독해·어법·어휘 지문(18~45번)을 포함합니다.</div>
+
+  <div class="level-section">
+    <div class="level-header">
+      <span class="level-badge">교과서</span>
+      <span class="level-name">NE능률(오선영) 영어I</span>
+      <span class="level-count">${TEXTBOOK_UNITS.length}지문</span>
+    </div>
+    ${textbookBody}
+  </div>
+
+  <div class="level-section">
+    <div class="level-header">
+      <span class="level-badge">부교재</span>
+      <span class="level-name">EBS 수능특강 라이트 영어독해연습</span>
+      <span class="level-count">${SUTSPEC_UNITS.length}지문</span>
+    </div>
+    ${sutspecBody}
+  </div>
+
+  <div class="level-section">
+    <div class="level-header">
+      <span class="level-badge">모의고사</span>
+      <span class="level-name">2026년 6월 고2 전국연합학력평가</span>
+      <span class="level-count">${mockItems.length}지문</span>
+    </div>
+    <div class="book"><h2 class="book-title">📚 6월</h2>${mockBody}</div>
+  </div>
+
   <div class="footer">Powered by GWJ AI 영어 분석기</div>
 </div>
 </body>
@@ -157,19 +260,45 @@ function writeCatalog() {
   console.log('목차 생성:', path.relative(ROOT, CATALOG));
 }
 
-function collectIndongH2Series() {
-  writeCatalog();
-  const catalogItems = parseMainLinkCollection('collections/인동고2-1학기말_부교재분석자료.html');
+function collectTextbookSeries() {
+  const items = [];
+  for (const unit of TEXTBOOK_UNITS) {
+    const localPath = textbookPath(unit);
+    const it = {
+      localPath,
+      code: `${unit.lesson} ${unit.code}`,
+      title: unit.title,
+      url: toGithubUrl(localPath),
+    };
+    const a = parseTopicAnalysis(localPath);
+    if (!a) {
+      console.warn('분석 없음(교과서):', localPath);
+      continue;
+    }
+    if (!a.topicEn && !a.topic) {
+      console.warn('주제·주제문 없음(교과서):', localPath);
+      continue;
+    }
+    items.push({ ...it, ...a, sortKey: sortKey(unit.lesson) });
+  }
+  if (!items.length) return [];
+  return [{ title: 'NE능률(오선영) · 2·4과', items, badgeFn: (it) => it.code }];
+}
+
+function collectSutspecSeries() {
+  const catalogItems = parseMainLinkCollection('collections/인동고2-1학기말_시험범위.html').filter((it) =>
+    /수특라이트|고2_2026_수특/.test(it.localPath),
+  );
   const byLesson = new Map();
 
   for (const it of catalogItems) {
     const a = parseTopicAnalysis(it.localPath);
     if (!a) {
-      console.warn('분석 없음:', it.localPath);
+      console.warn('분석 없음(수특):', it.localPath);
       continue;
     }
     if (!a.topicEn && !a.topic) {
-      console.warn('주제·주제문 없음:', it.localPath);
+      console.warn('주제·주제문 없음(수특):', it.localPath);
       continue;
     }
     const lessonM = it.localPath.match(/\/(\d+강)\//);
@@ -178,16 +307,30 @@ function collectIndongH2Series() {
     byLesson.get(lesson).push({ ...it, ...a, sortKey: sortKey(it.code) });
   }
 
-  const allSeries = [];
-  for (const lesson of LESSON_ORDER.filter((l) => byLesson.has(l))) {
+  const series = [];
+  for (const lesson of SUTSPEC_LESSON_ORDER.filter((l) => byLesson.has(l))) {
     const items = byLesson
       .get(lesson)
       .sort((a, b) => a.sortKey - b.sortKey || a.code.localeCompare(b.code, 'ko', { numeric: true }));
-    allSeries.push({
+    series.push({
       title: `수능특강 라이트 · ${lesson}`,
       items,
       badgeFn: (it) => it.code,
     });
+  }
+  return series;
+}
+
+function collectIndongH2Series() {
+  writeCatalog();
+  const allSeries = [...collectTextbookSeries(), ...collectSutspecSeries()];
+
+  for (const src of MOCK_SOURCES) {
+    const list = parseMainLinkCollection(src.file);
+    const items = enrichItems(list, src.label);
+    if (items.length) {
+      allSeries.push({ title: src.label, items, badgeFn: (it) => it.code });
+    }
   }
 
   return allSeries;
@@ -201,12 +344,12 @@ const result = runTopicBuild({
   titleTheme: '2026년 1학기말고사 인동고2 · 지문별 주제 모음',
   titleSentence: '2026년 1학기말고사 인동고2 · 지문별 주제문장 모음',
   heroTheme:
-    '인동고2 1학기말 시험범위 <strong>EBS 수능특강 라이트 영어독해연습(25지문)</strong>의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
+    '인동고2 1학기말 시험범위 <strong>NE능률(오선영) 교과서 2·4과</strong>, <strong>EBS 수능특강 라이트(25지문)</strong>, <strong>2026 고2 6월 모의고사</strong> 지문의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
   heroSentence:
     '같은 시험범위 지문의 <strong>주제문장(중심문장)</strong> 영문과 한글 해설입니다. <strong>빈칸·필자 주장·구조 파악</strong> 대비용으로 활용하세요.',
   searchTheme: '🔍 제목·주제 검색…',
   searchSentence: '🔍 제목·주제문 검색…',
-  primaryLabel: '수특라이트',
+  primaryLabel: '교과서·수특',
   secondaryLabel: '모의고사',
   allSeries,
 });
@@ -214,7 +357,8 @@ const result = runTopicBuild({
 console.log('생성 완료:');
 console.log(' -', result.outThemeRel);
 console.log(' -', result.outSentenceRel);
-console.log('총 지문:', result.totalPassages, `(수특라이트 ${result.primaryCount})`);
+console.log(' -', path.relative(ROOT, CATALOG));
+console.log('총 지문:', result.totalPassages, `(교과서·수특 ${result.primaryCount} + 모의 ${result.secondaryCount})`);
 for (const s of allSeries) {
   console.log(`  - ${s.title}: ${s.items.length}지문`);
 }
