@@ -191,10 +191,8 @@ function parseLegacyCollection(htmlPath) {
   return out;
 }
 
-function parseTopicAnalysis(localPath) {
-  const full = path.join(ROOT, localPath);
-  if (!fs.existsSync(full)) return null;
-  const html = fs.readFileSync(full, 'utf8');
+function parseTopicAnalysisHtml(html) {
+  if (!html) return null;
 
   let topic = '';
   const tm = html.match(/<tr><th>주제<\/th>\s*<td>([\s\S]*?)<\/td>/);
@@ -230,7 +228,157 @@ function parseTopicAnalysis(localPath) {
     }
   }
 
+  if (!topic && !topicEn) return null;
   return { topic, expected, topicEn, topicKo, examTopic };
+}
+
+function parseTopicAnalysis(localPath) {
+  const full = path.join(ROOT, localPath);
+  if (!fs.existsSync(full)) return null;
+  return parseTopicAnalysisHtml(fs.readFileSync(full, 'utf8'));
+}
+
+function parseTopicFromRecordData(d) {
+  if (!d) return null;
+  const topic = d.topic_ko || '';
+  const expected = d.expected_title || '';
+  const topicEn = d.topic_sentence_en || d.topic_en || '';
+  const topicKo = d.topic_sentence_ko || '';
+  if (!topic && !topicEn) return null;
+  return { topic, expected, topicEn, topicKo, examTopic: '' };
+}
+
+function findLatestBackup(searchRoot = ROOT) {
+  const roots = [searchRoot];
+  const downloads = path.join(process.env.USERPROFILE || '', 'Downloads');
+  if (downloads && fs.existsSync(downloads)) roots.push(downloads);
+
+  let best = null;
+  for (const root of roots) {
+    let files = [];
+    try {
+      files = fs.readdirSync(root).filter((f) => /^gwj_backup.*\.json$/i.test(f));
+    } catch {
+      continue;
+    }
+    for (const f of files) {
+      const full = path.join(root, f);
+      const mtime = fs.statSync(full).mtimeMs;
+      if (!best || mtime > best.mtime) best = { full, mtime };
+    }
+  }
+  return best ? best.full : null;
+}
+
+function loadBackupRecords(backupPath) {
+  const p = backupPath || process.env.GWJ_BACKUP || findLatestBackup();
+  if (!p || !fs.existsSync(p)) return { records: [], path: null };
+  try {
+    const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
+    return { records: raw.records || [], path: p };
+  } catch {
+    return { records: [], path: p };
+  }
+}
+
+function parseSutspecUnitLabel(unitLabel) {
+  const m = String(unitLabel).match(/^강(\d+)-Ex(\d+)/);
+  if (!m) return null;
+  return {
+    lesson: `${m[1]}강`,
+    ex: `Ex${m[2]}`,
+    exNum: m[2],
+    num: `${m[2]}번`,
+  };
+}
+
+function isSutspecSeriesName(name) {
+  return /(수특|수능특강.*라이트)/i.test(name || '');
+}
+
+function matchSutspecRecord(records, unitLabel) {
+  const p = parseSutspecUnitLabel(unitLabel);
+  if (!p) return null;
+  const variants = new Set([p.ex, p.num, p.exNum, `${p.exNum}`, `Ex${p.exNum}`, `${p.exNum}번`]);
+  if (/Ex5·6|Ex5-6|5·6/.test(unitLabel)) {
+    variants.add('Ex5·6');
+    variants.add('Ex5-6');
+    variants.add('5·6');
+    variants.add('Ex6');
+    variants.add('6번');
+  }
+  const matches = records.filter((r) => {
+    const d = r.data || {};
+    if (!isSutspecSeriesName(d.series_title)) return false;
+    const vol = (d.volume_title || d.lesson || '').replace(/\s/g, '');
+    if (vol !== p.lesson) return false;
+    const unit = String(d.unit_title || d.item_code || '').trim();
+    return [...variants].some((v) => unit === v || unit.replace(/\s/g, '') === v || unit.includes(v));
+  });
+  return matches[0] || null;
+}
+
+function sutspecUnitLabelFromPath(localPath) {
+  const m = localPath.match(/\/(\d+)강\/(Ex\d+|\d+번)\/analysis\.html$/);
+  if (!m) return null;
+  const exNum = m[2].replace(/\D/g, '');
+  return `강${m[1]}-Ex${exNum}`;
+}
+
+function fetchUrlText(url) {
+  const https = require('https');
+  return new Promise((resolve) => {
+    https
+      .get(url, (res) => {
+        if (res.statusCode !== 200) {
+          res.resume();
+          resolve('');
+          return;
+        }
+        const chunks = [];
+        res.on('data', (c) => chunks.push(c));
+        res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      })
+      .on('error', () => resolve(''));
+  });
+}
+
+async function resolveTopicAnalysis(localPath, { backupRecords = [] } = {}) {
+  const local = parseTopicAnalysis(localPath);
+  if (local && (local.topic || local.topicEn)) return local;
+
+  const remoteHtml = await fetchUrlText(toGithubUrl(localPath));
+  const remote = parseTopicAnalysisHtml(remoteHtml);
+  if (remote && (remote.topic || remote.topicEn)) return remote;
+
+  const unitLabel = sutspecUnitLabelFromPath(localPath);
+  if (unitLabel && backupRecords.length) {
+    const rec = matchSutspecRecord(backupRecords, unitLabel);
+    const fromBackup = parseTopicFromRecordData(rec?.data);
+    if (fromBackup) return fromBackup;
+  }
+
+  return local;
+}
+
+function writeMinimalAnalysisHtml(d, outPath) {
+  const title = d.expected_title || d.title_ko || 'Analysis';
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>${esc(title)}</title></head>
+<body>
+<table>
+  <tr><th>주제</th><td>${esc(d.topic_ko || '')}</td></tr>
+  <tr><th>예상 제목</th><td>${esc(d.expected_title || '')}</td></tr>
+</table>
+<div class="topic-sentence-box">
+  <div class="en">${esc(d.topic_sentence_en || d.topic_en || '')}</div>
+  <div class="ko">${esc(d.topic_sentence_ko || '')}</div>
+</div>
+</body>
+</html>`;
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, html, 'utf8');
 }
 
 function sortKey(code) {
@@ -534,6 +682,15 @@ module.exports = {
   parseMainLinkCollection,
   parseLegacyCollection,
   parseTopicAnalysis,
+  parseTopicAnalysisHtml,
+  parseTopicFromRecordData,
+  findLatestBackup,
+  loadBackupRecords,
+  parseSutspecUnitLabel,
+  matchSutspecRecord,
+  sutspecUnitLabelFromPath,
+  resolveTopicAnalysis,
+  writeMinimalAnalysisHtml,
   enrichItems,
   sortKey,
   buildSections,

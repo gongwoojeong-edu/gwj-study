@@ -8,6 +8,8 @@ const {
   ROOT,
   parseMainLinkCollection,
   parseTopicAnalysis,
+  resolveTopicAnalysis,
+  loadBackupRecords,
   enrichItems,
   sortKey,
   runTopicBuild,
@@ -15,6 +17,7 @@ const {
 } = require('./assets/build-topic-hyunil-core');
 
 const CATALOG = path.join(ROOT, 'collections', '인동고2-1학기말_시험범위.html');
+const SUTSPEC_CATALOG = path.join(ROOT, 'collections', '인동고2-1학기말_부교재분석자료.html');
 const OUT_THEME = path.join(ROOT, 'collections', '2026년-1학기말고사-인동고2-주제-모음.html');
 const OUT_SENTENCE = path.join(ROOT, 'collections', '2026년-1학기말고사-인동고2-주제문장-모음.html');
 
@@ -23,13 +26,13 @@ const NAV = {
   sentenceHref: '2026년-1학기말고사-인동고2-주제문장-모음.html',
   extraLinks: [
     { href: '인동고2-1학기말_시험범위.html', label: '📋 시험범위' },
+    { href: '인동고2-1학기말_부교재분석자료.html', label: '📚 수특라이트' },
     { href: '고2-6모고.html', label: '📝 6월 모의고사' },
   ],
 };
 
 const TEXTBOOK_BASE = 'study/L09/NE능률_오선영_영어I';
 
-// NE능률(오선영) 영어I — 2·4과 본문
 const TEXTBOOK_UNITS = [
   {
     lesson: '2과',
@@ -83,7 +86,6 @@ function textbookPath(unit) {
 
 function resolveSutspecPath(unitLabel) {
   const base = 'study/L09/고2_2026_수특라이트';
-  // EBS 표기 강3-Ex1 → 공우정신텍스 저장 경로 3강/Ex1 (또는 구형 3강/1번)
   const m = unitLabel.match(/^강(\d+)-Ex(\d+)/);
   if (!m) return null;
   const lesson = `${m[1]}강`;
@@ -100,8 +102,8 @@ function resolveSutspecPath(unitLabel) {
   return candidates[0];
 }
 
-function titleFromAnalysis(localPath, fallback) {
-  const a = parseTopicAnalysis(localPath);
+function titleFromAnalysis(localPath, fallback, backupRecords) {
+  const a = parseTopicAnalysis(localPath) || null;
   if (a?.topic) return a.topic.split(/[.。]/)[0].slice(0, 40);
   const full = path.join(ROOT, localPath);
   if (fs.existsSync(full)) {
@@ -260,7 +262,7 @@ function writeCatalog() {
   console.log('목차 생성:', path.relative(ROOT, CATALOG));
 }
 
-function collectTextbookSeries() {
+async function collectTextbookSeries(backupRecords) {
   const items = [];
   for (const unit of TEXTBOOK_UNITS) {
     const localPath = textbookPath(unit);
@@ -270,7 +272,7 @@ function collectTextbookSeries() {
       title: unit.title,
       url: toGithubUrl(localPath),
     };
-    const a = parseTopicAnalysis(localPath);
+    const a = await resolveTopicAnalysis(localPath, { backupRecords });
     if (!a) {
       console.warn('분석 없음(교과서):', localPath);
       continue;
@@ -285,26 +287,29 @@ function collectTextbookSeries() {
   return [{ title: 'NE능률(오선영) · 2·4과', items, badgeFn: (it) => it.code }];
 }
 
-function collectSutspecSeries() {
-  const catalogItems = parseMainLinkCollection('collections/인동고2-1학기말_시험범위.html').filter((it) =>
-    /수특라이트|고2_2026_수특/.test(it.localPath),
-  );
+async function collectSutspecSeries(backupRecords) {
+  const catalogItems = parseMainLinkCollection(path.relative(ROOT, SUTSPEC_CATALOG));
   const byLesson = new Map();
 
   for (const it of catalogItems) {
-    const a = parseTopicAnalysis(it.localPath);
+    const a = await resolveTopicAnalysis(it.localPath, { backupRecords });
     if (!a) {
       console.warn('분석 없음(수특):', it.localPath);
       continue;
     }
     if (!a.topicEn && !a.topic) {
-      console.warn('주제·주제문 없음(수특):', it.localPath);
+      console.warn('주제·주제문 없음(수특):', it.localPath, it.title || it.code);
       continue;
     }
     const lessonM = it.localPath.match(/\/(\d+강)\//);
     const lesson = lessonM ? lessonM[1] : '기타';
     if (!byLesson.has(lesson)) byLesson.set(lesson, []);
-    byLesson.get(lesson).push({ ...it, ...a, sortKey: sortKey(it.code) });
+    byLesson.get(lesson).push({
+      ...it,
+      ...a,
+      title: it.title && it.title !== it.code ? it.title : a.expected || it.title,
+      sortKey: sortKey(it.code),
+    });
   }
 
   const series = [];
@@ -321,9 +326,19 @@ function collectSutspecSeries() {
   return series;
 }
 
-function collectIndongH2Series() {
+async function collectIndongH2Series() {
   writeCatalog();
-  const allSeries = [...collectTextbookSeries(), ...collectSutspecSeries()];
+  const { records: backupRecords, path: backupPath } = loadBackupRecords();
+  if (backupPath) {
+    console.log('백업 로드:', path.relative(ROOT, backupPath), `(${backupRecords.length}건)`);
+  } else {
+    console.warn('백업 JSON 없음 — analysis.html 또는 GitHub Pages만 사용합니다.');
+  }
+
+  const allSeries = [
+    ...(await collectTextbookSeries(backupRecords)),
+    ...(await collectSutspecSeries(backupRecords)),
+  ];
 
   for (const src of MOCK_SOURCES) {
     const list = parseMainLinkCollection(src.file);
@@ -336,32 +351,34 @@ function collectIndongH2Series() {
   return allSeries;
 }
 
-const allSeries = collectIndongH2Series();
-const result = runTopicBuild({
-  nav: NAV,
-  outTheme: OUT_THEME,
-  outSentence: OUT_SENTENCE,
-  titleTheme: '2026년 1학기말고사 인동고2 · 지문별 주제 모음',
-  titleSentence: '2026년 1학기말고사 인동고2 · 지문별 주제문장 모음',
-  heroTheme:
-    '인동고2 1학기말 시험범위 <strong>NE능률(오선영) 교과서 2·4과</strong>, <strong>EBS 수능특강 라이트(25지문)</strong>, <strong>2026 고2 6월 모의고사</strong> 지문의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
-  heroSentence:
-    '같은 시험범위 지문의 <strong>주제문장(중심문장)</strong> 영문과 한글 해설입니다. <strong>빈칸·필자 주장·구조 파악</strong> 대비용으로 활용하세요.',
-  searchTheme: '🔍 제목·주제 검색…',
-  searchSentence: '🔍 제목·주제문 검색…',
-  primaryLabel: '교과서·수특',
-  secondaryLabel: '모의고사',
-  allSeries,
-});
+(async () => {
+  const allSeries = await collectIndongH2Series();
+  const result = runTopicBuild({
+    nav: NAV,
+    outTheme: OUT_THEME,
+    outSentence: OUT_SENTENCE,
+    titleTheme: '2026년 1학기말고사 인동고2 · 지문별 주제 모음',
+    titleSentence: '2026년 1학기말고사 인동고2 · 지문별 주제문장 모음',
+    heroTheme:
+      '인동고2 1학기말 시험범위 <strong>NE능률(오선영) 교과서 2·4과</strong>, <strong>EBS 수능특강 라이트(25지문)</strong>, <strong>2026 고2 6월 모의고사</strong> 지문의 <strong>주제(요지)</strong>를 한글로 정리했습니다. <strong>주제·요지·제목 고르기</strong> 대비용으로 암기하세요.',
+    heroSentence:
+      '같은 시험범위 지문의 <strong>주제문장(중심문장)</strong> 영문과 한글 해설입니다. <strong>빈칸·필자 주장·구조 파악</strong> 대비용으로 활용하세요.',
+    searchTheme: '🔍 제목·주제 검색…',
+    searchSentence: '🔍 제목·주제문 검색…',
+    primaryLabel: '교과서·수특',
+    secondaryLabel: '모의고사',
+    allSeries,
+  });
 
-console.log('생성 완료:');
-console.log(' -', result.outThemeRel);
-console.log(' -', result.outSentenceRel);
-console.log(' -', path.relative(ROOT, CATALOG));
-console.log('총 지문:', result.totalPassages, `(교과서·수특 ${result.primaryCount} + 모의 ${result.secondaryCount})`);
-for (const s of allSeries) {
-  console.log(`  - ${s.title}: ${s.items.length}지문`);
-}
-if (result.totalPassages === 0) {
-  console.warn('※ 분석교안(analysis.html)이 아직 없어 지문이 0개입니다. Syntax Studio로 생성 후 다시 빌드하세요.');
-}
+  console.log('생성 완료:');
+  console.log(' -', result.outThemeRel);
+  console.log(' -', result.outSentenceRel);
+  console.log(' -', path.relative(ROOT, CATALOG));
+  console.log('총 지문:', result.totalPassages, `(교과서·수특 ${result.primaryCount} + 모의 ${result.secondaryCount})`);
+  for (const s of allSeries) {
+    console.log(`  - ${s.title}: ${s.items.length}지문`);
+  }
+  if (result.primaryCount === 0) {
+    console.warn('※ 수특/교과서 주제가 0개입니다. Syntax Studio → 📦 백업 내보내기 → node sync-sutspec-analysis-from-backup.js → node build-topic-indong-h2.js');
+  }
+})();
