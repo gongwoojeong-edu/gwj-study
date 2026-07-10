@@ -5701,16 +5701,38 @@ function normalizeShelfKey(s) {
   return String(s || '').replace(/\s+/g, '').toLowerCase();
 }
 
+/** 교과서/M1/중1 접두만 다르고 출판사명이 같으면 동일 시리즈로 간주 */
+function extractSeriesCore(s) {
+  let t = String(s || '').trim();
+  t = t.replace(/^\([^)]*\)\s*/, '');
+  t = t.replace(/^교과서\s*/i, '');
+  t = t.replace(/^(?:M\d|중\d|고\d|예비고\d|L\d{2})\s*/i, '');
+  return t.replace(/\s+/g, '').toLowerCase();
+}
+
+function seriesShelfEquivalent(a, b) {
+  if (!a || !b) return true;
+  if (normalizeShelfKey(a) === normalizeShelfKey(b)) return true;
+  const ca = extractSeriesCore(a);
+  const cb = extractSeriesCore(b);
+  return ca.length > 0 && ca === cb;
+}
+
+function volumeShelfEquivalent(a, b) {
+  if (!a || !b) return true;
+  return normalizeShelfKey(a) === normalizeShelfKey(b);
+}
+
 /** 카드 표시 vs 전송 경로 불일치 여부 */
 function getLearnerPathMismatch(rec, sendMeta) {
   const card = getCardShelfMeta(rec);
   const issues = [];
   if (card.series && sendMeta.series_title &&
-      normalizeShelfKey(card.series) !== normalizeShelfKey(sendMeta.series_title)) {
+      !seriesShelfEquivalent(card.series, sendMeta.series_title)) {
     issues.push({ field: '시리즈', card: card.series, send: sendMeta.series_title });
   }
   if (card.volume && sendMeta.volume_title &&
-      normalizeShelfKey(card.volume) !== normalizeShelfKey(sendMeta.volume_title)) {
+      !volumeShelfEquivalent(card.volume, sendMeta.volume_title)) {
     issues.push({ field: '권/교재', card: card.volume, send: sendMeta.volume_title });
   }
   return issues;
@@ -5916,6 +5938,13 @@ function inferLearnerMeta(rec) {
   let newItemCode = stored.new_item_code || '';
   if (!newItemCode) {
     newItemCode = unit_title ? (unit_title + '-1') : (itemCode || '');
+  }
+
+  // 구문랩 시리즈명: 교과서 천재이상기 → M1 천재이상기 (책장 폴더명과 일치)
+  if (/^교과서\s/i.test(series_title)) {
+    const mMap = { L04: 'M1', L05: 'M2', L06: 'M3' };
+    const core = series_title.replace(/^교과서\s*/i, '').trim();
+    if (mMap[level] && core) series_title = mMap[level] + ' ' + core;
   }
 
   return {
