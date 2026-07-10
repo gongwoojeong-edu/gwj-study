@@ -5675,6 +5675,116 @@ function saveLastSendMeta(meta) {
   try { localStorage.setItem(LAST_SEND_META_KEY, JSON.stringify(meta)); } catch (e) {}
 }
 
+/** 학습기 저장 경로 문자열 (레벨 › 시리즈 › 권 › 유닛) */
+function formatLearnerPath(meta) {
+  if (!meta) return '';
+  const parts = [
+    meta.level || '',
+    meta.series_title || '',
+    meta.volume_title || '',
+    meta.unit_title || ''
+  ].filter(Boolean);
+  return parts.join(' › ');
+}
+
+/** 카드 배지에 보이는 책장 라벨 (series / volume / unit) */
+function getCardShelfMeta(rec) {
+  const d = rec.data || {};
+  return {
+    series: (d.series_title || d.textbook || '').trim(),
+    volume: (d.volume_title || d.lesson || '').trim(),
+    unit: (d.unit_title || d.item_code || '').trim()
+  };
+}
+
+function normalizeShelfKey(s) {
+  return String(s || '').replace(/\s+/g, '').toLowerCase();
+}
+
+/** 카드 표시 vs 전송 경로 불일치 여부 */
+function getLearnerPathMismatch(rec, sendMeta) {
+  const card = getCardShelfMeta(rec);
+  const issues = [];
+  if (card.series && sendMeta.series_title &&
+      normalizeShelfKey(card.series) !== normalizeShelfKey(sendMeta.series_title)) {
+    issues.push({ field: '시리즈', card: card.series, send: sendMeta.series_title });
+  }
+  if (card.volume && sendMeta.volume_title &&
+      normalizeShelfKey(card.volume) !== normalizeShelfKey(sendMeta.volume_title)) {
+    issues.push({ field: '권/교재', card: card.volume, send: sendMeta.volume_title });
+  }
+  return issues;
+}
+
+function learnerMismatchWarningHtml(rec, sendMeta, opts) {
+  opts = opts || {};
+  const issues = getLearnerPathMismatch(rec, sendMeta);
+  if (!issues.length) return '';
+  const card = getCardShelfMeta(rec);
+  const cardPath = [card.series, card.volume, card.unit].filter(Boolean).join(' › ') || '(카드 정보 없음)';
+  const sendPath = formatLearnerPath(sendMeta);
+  const rows = issues.map(i =>
+    '<li><strong>' + escapeHtml(i.field) + '</strong>: 카드 「' + escapeHtml(i.card) +
+    '」 ≠ 전송 「' + escapeHtml(i.send) + '」</li>'
+  ).join('');
+  const confirmId = opts.confirmId || '';
+  const confirmHtml = confirmId
+    ? '<label style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12px;cursor:pointer;">' +
+        '<input type="checkbox" id="' + confirmId + '" style="margin-top:2px;">' +
+        '<span>카드 표시와 전송 경로가 <strong>다름</strong>을 확인했습니다. 이 경로로 보냅니다.</span>' +
+      '</label>'
+    : '';
+  return '<div style="background:#fff3e0;border:1px solid #ffb74d;border-radius:8px;padding:12px;font-size:12px;line-height:1.65;margin-bottom:12px;">' +
+    '⚠️ <strong>경로 불일치</strong> — Syntax Studio 카드와 구문랩 저장 위치가 다릅니다.<br>' +
+    '🏷 카드: <code style="background:#fff;padding:2px 6px;border-radius:4px;">' + escapeHtml(cardPath) + '</code><br>' +
+    '📤 전송: <code style="background:#fff;padding:2px 6px;border-radius:4px;">' + escapeHtml(sendPath) + '</code>' +
+    '<ul style="margin:8px 0 0 18px;padding:0;">' + rows + '</ul>' +
+    confirmHtml +
+  '</div>';
+}
+
+function syncCardMetaFromLearner(rec, meta) {
+  if (!rec.data) rec.data = {};
+  if (meta.series_title) rec.data.series_title = meta.series_title;
+  if (meta.volume_title) rec.data.volume_title = meta.volume_title;
+  if (meta.unit_title) rec.data.unit_title = meta.unit_title;
+  if (meta.level) rec.data.level = meta.level;
+}
+
+/** 일괄 전송 공통 위치 + 자료별 유닛 자동 병합 */
+function mergeBulkLearnerMeta(rec, common) {
+  const inferred = inferLearnerMeta({
+    ...rec,
+    learnerMeta: {
+      level: common.level,
+      series_title: common.series_title,
+      volume_title: common.volume_title
+    }
+  });
+  return {
+    level: common.level,
+    series_title: common.series_title,
+    volume_title: common.volume_title,
+    unit_title: inferred.unit_title,
+    unit_no: inferred.unit_no,
+    passage_no: inferred.passage_no || inferred.unit_no || 1,
+    new_item_code: inferred.item_code
+  };
+}
+
+/** 카드/툴팁용 — 전송된 학습기 위치 HTML */
+function learnerPathBadgeHtml(rec) {
+  if (!rec.learnerSentAt) return '';
+  const meta = rec.learnerMeta || inferLearnerMeta(rec);
+  const path = formatLearnerPath(meta);
+  const title = '학습기 위치: ' + path + (rec.learnerSentAt ? '\n전송: ' + new Date(rec.learnerSentAt).toLocaleString('ko-KR') : '');
+  let html = ' · <span style="color:#1565c0;font-weight:600;font-size:11px;" title="' + escapeAttr(title) + '">📍 ' + escapeHtml(path || '위치 미확인') + '</span>';
+  if (rec.learnerUrl) {
+    html += ' · <a href="' + escapeAttr(rec.learnerUrl) + '" target="_blank" rel="noopener" style="color:#2d7a3f;font-weight:600;text-decoration:none;font-size:11px;" title="학습기에서 열기">🎓 학습기</a>';
+  }
+  return html;
+}
+
 /**
  * 기존 자료에서 러버블 계층 값을 자동 추론
  * @param {object} rec - 책장 자료
@@ -5689,40 +5799,39 @@ function inferLearnerMeta(rec) {
   const stored = rec.learnerMeta || {};
   const lastUsed = getLastSendMeta();
 
-  // 1) level: 학년별 매핑
-  //   L01=초저, L02=초고, L03=예비중1, L04=중1, L05=중2, L06=중3
-  //   L07=예비고1, L08=고1+, L09=고2, L10=고3
-  let level = stored.level || '';
+  // 1) level: 저장값 → data.level → 학년 키워드 추론
+  let level = stored.level || (d.level || '').trim();
   if (!level) {
     const src = textbook + ' ' + lesson + ' ' + (d.title_ko || '') + ' ' + (d.expected_title || '');
     if (/고\s*3|고3|수능/.test(src)) level = 'L10';
     else if (/고\s*2|고2/.test(src)) level = 'L09';
     else if (/예비\s*고\s*1|예비고1|예고1/.test(src)) level = 'L07';
     else if (/고\s*1|고등\s*1|고1/.test(src)) level = 'L08';
-    else if (/중\s*3|중3/.test(src)) level = 'L06';
-    else if (/중\s*2|중2/.test(src)) level = 'L05';
-    else if (/중\s*1|중1/.test(src)) level = 'L04';
+    else if (/중\s*3|중3|M3\b/.test(src)) level = 'L06';
+    else if (/중\s*2|중2|M2\b/.test(src)) level = 'L05';
+    else if (/중\s*1|중1|M1\b/.test(src)) level = 'L04';
     else if (/예비\s*중\s*1|예비중/.test(src)) level = 'L03';
     else if (/초[5-6]|초\s*5|초\s*6|초고/.test(src)) level = 'L02';
     else if (/초[1-4]|초\s*[1-4]|초저/.test(src)) level = 'L01';
-    else level = lastUsed.level || 'L08'; // 기본값: L08 (주 타겟)
+    else level = lastUsed.level || 'L08';
   }
 
-  // 2) series_title - 학년 prefix 포함 (예: "고1 모의고사", "고1 올림포스")
-  let series_title = stored.series_title || '';
+  // 2) series_title — 카드(data) · 저장값 우선
+  let series_title = stored.series_title || (d.series_title || '').trim();
+  if (!series_title && /교과서/.test(textbook)) {
+    series_title = textbook.replace(/^\([^)]*\)\s*/, '').trim();
+  }
   if (!series_title) {
-    // 학년 prefix 추출
     let gradePrefix = '';
     const src = textbook + ' ' + lesson;
     if (/고\s*1|고1/.test(src)) gradePrefix = '고1 ';
     else if (/고\s*2|고2/.test(src)) gradePrefix = '고2 ';
     else if (/고\s*3|고3/.test(src)) gradePrefix = '고3 ';
     else if (/예비\s*고\s*1|예비고/.test(src)) gradePrefix = '예비고1 ';
-    else if (/중\s*3|중3/.test(src)) gradePrefix = '중3 ';
-    else if (/중\s*2|중2/.test(src)) gradePrefix = '중2 ';
-    else if (/중\s*1|중1/.test(src)) gradePrefix = '중1 ';
+    else if (/중\s*3|중3|M3\b/.test(src)) gradePrefix = '중3 ';
+    else if (/중\s*2|중2|M2\b/.test(src)) gradePrefix = '중2 ';
+    else if (/중\s*1|중1|M1\b/.test(src)) gradePrefix = '중1 ';
 
-    // 시리즈 베이스 이름
     let seriesBase = '';
     if (/모의고사|모고/.test(textbook)) seriesBase = '모의고사';
     else if (/올림포스.*기본\s*1|기본1/.test(textbook)) seriesBase = '올림포스 영어독해기본1';
@@ -5731,41 +5840,43 @@ function inferLearnerMeta(rec) {
     else if (/수능완성/.test(textbook)) seriesBase = '수능완성';
     else if (/수능특강/.test(textbook)) seriesBase = '수능특강';
     else if (/자이스토리/.test(textbook)) seriesBase = '자이스토리';
+    else if (/교과서/.test(textbook)) seriesBase = textbook.replace(/^\([^)]*\)\s*/, '').trim();
+    else if (/^(M\d|중\d)\s*/.test(textbook)) {
+      // M3 천재이재영 — series_title/data.series_title 없을 때만 (교과서명과 혼동 주의)
+      seriesBase = textbook.replace(/^M(\d)\s*/, '중$1 ').replace(/^중(\d)\s*/, '중$1 ').trim();
+    }
 
     if (seriesBase) {
-      series_title = gradePrefix + seriesBase;
+      series_title = (/^중\d|^고\d|^예비/.test(seriesBase) ? seriesBase : gradePrefix + seriesBase);
     } else {
       series_title = lastUsed.series_title || textbook || '';
     }
   }
 
-  // 3) volume_title 추론 규칙
-  //   모의고사: "YYYY년 M월" (예: "2026년 3월")
-  //   교재: textbook 그대로 (예: "올림포스 독해의 기본 1")
-  let volume_title = stored.volume_title || '';
+  // 3) volume_title — data.volume_title · N과(lesson) 우선
+  let volume_title = stored.volume_title || (d.volume_title || '').trim();
   if (!volume_title) {
-    const ymMatch = (textbook + ' ' + lesson).match(/(\d{4})\s*년?\s*(\d{1,2})\s*월/);
-    if (series_title === '모의고사' && ymMatch) {
-      // 모의고사 패턴: "2026년 3월"
-      volume_title = ymMatch[1] + '년 ' + ymMatch[2] + '월';
-    } else if (ymMatch) {
-      // 연월이 있는 다른 경우도 같은 포맷
-      volume_title = ymMatch[1] + '년 ' + ymMatch[2] + '월';
-    } else if (textbook) {
-      // 교재의 경우 textbook 그대로 사용
-      // 예: "올림포스 독해의 기본 1", "수능특강 영어"
-      volume_title = textbook;
-    } else if (lesson) {
-      volume_title = lesson;
+    const chapMatch = lesson.match(/^(\d+\s*과)/);
+    if (chapMatch) {
+      volume_title = chapMatch[1].replace(/\s/g, '');
     } else {
-      volume_title = lastUsed.volume_title || '';
+      const ymMatch = (textbook + ' ' + lesson).match(/(\d{4})\s*년?\s*(\d{1,2})\s*월/);
+      if (/모의고사|모고/.test(series_title) && ymMatch) {
+        volume_title = ymMatch[1] + '년 ' + ymMatch[2] + '월';
+      } else if (ymMatch) {
+        volume_title = ymMatch[1] + '년 ' + ymMatch[2] + '월';
+      } else if (textbook && !/^(M\d|중\d)\s/.test(textbook)) {
+        volume_title = textbook;
+      } else if (lesson) {
+        volume_title = lesson;
+      } else {
+        volume_title = lastUsed.volume_title || '';
+      }
     }
   }
 
-  // 4) unit_title 명명 규칙 (간결)
-  //   모의고사: "18번" (Series에 학년, Volume에 연월 있으니 번호만)
-  //   교재: "3강-1" (강 번호 + 항목)
-  let unit_title = stored.unit_title || '';
+  // 4) unit_title — data.unit_title 우선
+  let unit_title = stored.unit_title || (d.unit_title || '').trim();
   if (!unit_title) {
     const numMatch = itemCode.match(/(\d+)(?:\s*번)?$/);
     const itemNum = numMatch ? numMatch[1] : '';
@@ -6888,7 +6999,7 @@ function updateSelectionBar() {
     '<button class="action-btn" onclick="selectAllVisible()" style="font-size:12px;">✓ 전체선택</button>' +
     '<button class="action-btn" onclick="clearAllSelection()" style="font-size:12px;background:#fee;">해제</button>' +
     '<button class="action-btn" onclick="bulkPublishSelected()" style="font-size:12px;background:linear-gradient(135deg,#e3f2fd,#fff);border-color:#1976d2;color:#0d47a1;font-weight:600;" title="선택한 자료들을 한꺼번에 웹공개 (GitHub Pages에 배포만)">🌐 일괄 웹공개</button>' +
-    '<button class="action-btn" onclick="bulkSendToLearner()" style="font-size:12px;background:linear-gradient(135deg,#e8f5e9,#fff);border-color:#4caf50;color:#2d7a3f;font-weight:600;" title="선택한 자료들을 한꺼번에 공우정에듀 학습기로 전송">📚 일괄 학습기 전송</button>' +
+    '<button class="action-btn" onclick="bulkSendToLearner()" style="font-size:12px;background:linear-gradient(135deg,#e8f5e9,#fff);border-color:#4caf50;color:#2d7a3f;font-weight:600;" title="선택한 자료의 학습기 저장 위치(레벨·시리즈·교재)를 지정한 뒤 일괄 전송">📚 일괄 학습기 전송</button>' +
     '<button class="action-btn" onclick="openGrammarVocabBuilder()" style="margin-left:auto;background:linear-gradient(135deg,#fff3e0,#fff);border-color:#fb8c00;color:#e65100;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 자료의 주요어법·유의어·반의어·한줄해석을 골라 URL 모음 생성">📚 어법어휘한줄해석 모음 만들기</button>' +
     '<button class="action-btn" onclick="quickCreateCollection()" style="background:var(--brand,#6B5B95);color:#fff;font-weight:600;font-size:13px;padding:10px 18px;" title="선택한 자료들로 공지용 묶음 목차 + 복사용 텍스트 생성">📝 선택 목차 만들기</button>';
   if (document.getElementById('tab-line-translation')?.classList.contains('active') ||
@@ -7088,7 +7199,10 @@ async function generateAudioForRecordById(id) {
 
   if (!confirm(msg)) return;
 
-  showProgressBar(1 + sentences.length, 1 + sentences.length);
+  showProgressBar(1 + sentences.length, 1 + sentences.length, {
+    title: '🔊 TTS 생성 중...',
+    initialDetail: '준비 중... (지문 1 + 문장 ' + sentences.length + '개)'
+  });
   let currentStep = 0;
   const totalSteps = 1 + sentences.length;
 
@@ -7189,6 +7303,7 @@ async function sendToLearnerSilent(rec) {
   rec.learnerSentAt = new Date().toISOString();
   rec.learnerCode = j.code || '';
   rec.learnerUrl = j.learn_url || '';
+  syncCardMetaFromLearner(rec, meta);
   try {
     await window.storage.set(STORAGE_PREFIX + rec.id, JSON.stringify(rec));
   } catch (e) { /* ignore */ }
@@ -7196,7 +7311,7 @@ async function sendToLearnerSilent(rec) {
   return j;
 }
 
-// 🆕 선택한 자료들 일괄 학습기 전송
+// 🆕 선택한 자료들 일괄 학습기 전송 — 먼저 저장 위치(책장) 선택
 async function bulkSendToLearner() {
   if (selectedRecIds.size === 0) {
     showToast('⚠️ 먼저 자료를 선택해주세요', 'error');
@@ -7209,53 +7324,66 @@ async function bulkSendToLearner() {
     return;
   }
 
-  const selected = library.filter(r => selectedRecIds.has(r.id));
-  const alreadySent = selected.filter(r => r.learnerSentAt);
-  const notSent = selected.filter(r => !r.learnerSentAt);
+  const selected = library.filter(r => selectedRecIds.has(r.id) && r.kind !== 'collection');
+  if (selected.length === 0) {
+    showToast('⚠️ 전송 가능한 자료가 없습니다 (모음집은 개별 전송 불가)', 'error');
+    return;
+  }
 
-  // 확인 메시지
-  let msg = '선택한 ' + selected.length + '개 자료를 학습기로 전송하시겠습니까?\n\n';
-  if (notSent.length > 0) msg += '🆕 새로 전송: ' + notSent.length + '개\n';
-  if (alreadySent.length > 0) msg += '🔄 재전송(덮어쓰기): ' + alreadySent.length + '개\n';
-  msg += '\n예상 소요 시간: 약 ' + Math.ceil(selected.length * 3) + '초';
+  openBulkSendPreviewModal(selected);
+}
 
-  if (!confirm(msg)) return;
-
-  showProgressBar(selected.length, selected.length);
+async function runBulkSendToLearner(selected, commonMeta) {
+  showProgressBar(selected.length, selected.length, {
+    title: '📚 구문랩 학습기 전송 중...',
+    initialDetail: '준비 중... (' + selected.length + '개 전송)'
+  });
 
   try {
     let doneCount = 0;
     const failed = [];
+    const succeeded = [];
 
-    // 순차 처리 (학습기는 동시성 없이 안전하게)
     for (const rec of selected) {
       const title = rec.data.title_ko || rec.data.item_code || '자료';
-      updateProgressBar(doneCount, selected.length, '전송 중: ' + title);
+      const meta = mergeBulkLearnerMeta(rec, commonMeta);
+      rec.learnerMeta = meta;
+      syncCardMetaFromLearner(rec, meta);
       try {
-        await sendToLearnerSilent(rec);
+        await window.storage.set(STORAGE_PREFIX + rec.id, JSON.stringify(rec));
+      } catch (e) { /* ignore */ }
+
+      updateProgressBar(doneCount, selected.length, '전송 중: ' + title + '\n📍 ' + formatLearnerPath(meta));
+      try {
+        const j = await sendToLearnerSilent(rec);
+        succeeded.push({ rec, meta, j });
       } catch (e) {
         console.warn('❌ 학습기 전송 실패:', title, e.message);
-        failed.push({ rec, title, error: e.message });
+        failed.push({ rec, title, error: e.message, meta });
       }
       doneCount++;
     }
 
     hideProgressBar();
 
+    addSeriesPreset(commonMeta.series_title);
+    saveLastSendMeta({
+      level: commonMeta.level,
+      series_title: commonMeta.series_title,
+      volume_title: commonMeta.volume_title
+    });
+
     const successCount = selected.length - failed.length;
     if (failed.length === 0) {
       showToast('✅ ' + successCount + '개 자료 학습기 전송 완료!', 'success');
+      showBulkLearnerSuccessModal(succeeded, commonMeta);
     } else {
       showToast('⚠️ ' + successCount + '개 성공, ' + failed.length + '개 실패', 'info');
-      const failedTitles = failed.map(f => '• ' + f.title + ' (' + f.error + ')').join('\n');
-      setTimeout(() => {
-        alert('⚠️ ' + failed.length + '개 자료 전송 실패:\n\n' + failedTitles);
-      }, 600);
+      showBulkLearnerSuccessModal(succeeded, commonMeta, failed);
     }
 
     clearAllSelection();
     renderLibrary();
-
   } catch (e) {
     hideProgressBar();
     console.error('일괄 학습기 전송 실패:', e);
@@ -7293,7 +7421,9 @@ async function bulkPublishSelected() {
   if (!confirm(msg)) return;
 
   // 진행 바 표시
-  showProgressBar(selected.length, selected.length);
+  showProgressBar(selected.length, selected.length, {
+    title: '🌐 웹공개 배포 중...'
+  });
 
   try {
     updateProgressBar(0, selected.length, '웹공개 시작...');
@@ -8335,7 +8465,9 @@ function openGrammarVocabBuilder() {
   if (existing) existing.remove();
 
   const count = selectedRecIds.size;
-  const defaultTitle = '어법어휘한줄해석 모음';
+  const sampleRec = library.find(r => selectedRecIds.has(r.id));
+  const cardMeta = sampleRec ? getCardShelfMeta(sampleRec) : { series: '', volume: '', unit: '' };
+  const defaultTitle = [cardMeta.series, cardMeta.volume, '어법어휘한줄해석 모음'].filter(Boolean).join(' ') || '어법어휘한줄해석 모음';
   const modal = document.createElement('div');
   modal.id = 'gv-builder-modal';
   modal.className = 'modal-overlay';
@@ -8519,15 +8651,27 @@ async function createGrammarVocabCollection(opts) {
 }
 
 // 진행 상황 바 UI
-function showProgressBar(totalCount, deployCount) {
+function showProgressBar(totalCount, deployCount, opts) {
+  opts = opts || {};
+  const title = opts.title || '🚀 공유용 목차 생성 중...';
+  let initialDetail = opts.initialDetail;
+  if (!initialDetail) {
+    if (typeof deployCount === 'number' && deployCount > 0 && deployCount < totalCount) {
+      initialDetail = '준비 중... (' + totalCount + '개 선택, ' + deployCount + '개 배포 필요)';
+    } else if (totalCount > 0) {
+      initialDetail = '준비 중... (' + totalCount + '개)';
+    } else {
+      initialDetail = '준비 중...';
+    }
+  }
   let bar = document.getElementById('progress-bar');
   if (bar) bar.remove();
   bar = document.createElement('div');
   bar.id = 'progress-bar';
   bar.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid var(--brand,#6B5B95);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.2);padding:24px 32px;z-index:10000;min-width:320px;text-align:center;';
   bar.innerHTML =
-    '<div style="font-size:18px;font-weight:700;color:var(--brand-dark,#4A3D6B);margin-bottom:12px;">🚀 공유용 목차 생성 중...</div>' +
-    '<div id="progress-detail" style="font-size:13px;color:#666;margin-bottom:14px;">준비 중... (' + totalCount + '개 선택, ' + deployCount + '개 배포 필요)</div>' +
+    '<div id="progress-title" style="font-size:18px;font-weight:700;color:var(--brand-dark,#4A3D6B);margin-bottom:12px;">' + title + '</div>' +
+    '<div id="progress-detail" style="font-size:13px;color:#666;margin-bottom:14px;white-space:pre-line;">' + initialDetail + '</div>' +
     '<div style="background:#f0edf5;border-radius:8px;height:12px;overflow:hidden;">' +
       '<div id="progress-fill" style="background:linear-gradient(90deg,var(--brand),#8b7bb5);height:100%;width:0%;transition:width 0.3s;"></div>' +
     '</div>' +
@@ -9039,7 +9183,7 @@ function openSendPreviewModal(rec) {
       '<h3 style="color: var(--brand-dark, #4A3D6B);">📤 학습기로 전송</h3>' +
 
       '<div style="background: #f4f2f8; border: 1px solid #d6cfe9; padding: 12px; border-radius: 8px; font-size: 12px; line-height: 1.6; margin-bottom: 14px;">' +
-        '🎯 <strong>러버블 학습기 계층 구조로 전송됩니다.</strong><br>' +
+        '🎯 <strong>구문랩 학습기</strong> 계층 구조로 전송됩니다.<br>' +
         '📍 <strong>레벨 › 시리즈 › 권/교재 › 유닛(문항)</strong><br>' +
         '💡 분석교안/구조도는 <strong>유닛(문항) 단위</strong>로 저장됩니다.<br>' +
         '📌 학생 학습 화면에서는 본문이 자동으로 문장별 분리됩니다.<br>' +
@@ -9119,10 +9263,17 @@ function openSendPreviewModal(rec) {
       '</details>' +
 
       // ═══ 최종 경로 미리보기 ═══
-      '<div style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border-left: 4px solid #4caf50; padding: 12px; border-radius: 4px; font-size: 12px; line-height: 1.7; margin-bottom: 14px;">' +
-        '📍 <strong>최종 저장 경로 미리보기</strong><br>' +
+      '<div style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border-left: 4px solid #4caf50; padding: 12px; border-radius: 4px; font-size: 12px; line-height: 1.7; margin-bottom: 10px;">' +
+        '📍 <strong>구문랩 저장 경로</strong> (전송 시 실제로 들어가는 위치)<br>' +
         '<div id="send-path-preview" style="font-family: monospace; font-size: 12px; margin-top: 4px; color: #1b5e20;"></div>' +
       '</div>' +
+      '<div style="background:#f5f5f5;border:1px solid #ddd;padding:10px;border-radius:6px;font-size:12px;margin-bottom:10px;">' +
+        '🏷 <strong>Syntax Studio 카드 표시</strong>: ' +
+        '<code style="background:#fff;padding:2px 6px;border-radius:4px;">' +
+          escapeHtml([getCardShelfMeta(rec).series, getCardShelfMeta(rec).volume, getCardShelfMeta(rec).unit].filter(Boolean).join(' › ') || '(없음)') +
+        '</code>' +
+      '</div>' +
+      '<div id="send-mismatch-warning"></div>' +
 
       '<div class="modal-actions" style="margin-top: 14px; display:flex; gap:8px; flex-wrap:wrap;">' +
         '<button class="modal-close-btn" onclick="closeSendPreviewModal()">취소</button>' +
@@ -9133,7 +9284,7 @@ function openSendPreviewModal(rec) {
 
   document.body.appendChild(modal);
 
-  // 경로 미리보기 실시간 갱신
+  // 경로 미리보기 + 불일치 경고 실시간 갱신
   const updatePreview = () => {
     const lv = document.getElementById('send-level')?.value || '';
     const st = document.getElementById('send-series-title')?.value || '';
@@ -9147,6 +9298,12 @@ function openSendPreviewModal(rec) {
         '📚 ' + escapeHtml(st || '??') + ' › ' +
         '📖 ' + escapeHtml(vt || '??') + ' › ' +
         '🏷 ' + escapeHtml(ut || '??') + (un ? ' (#' + escapeHtml(un) + ')' : '');
+    }
+    const warnEl = document.getElementById('send-mismatch-warning');
+    if (warnEl) {
+      warnEl.innerHTML = learnerMismatchWarningHtml(rec, {
+        level: lv, series_title: st, volume_title: vt, unit_title: ut
+      }, { confirmId: 'send-mismatch-confirm' });
     }
   };
 
@@ -9218,6 +9375,218 @@ function closeSendPreviewModal() {
   if (modal) modal.remove();
 }
 
+// ── 일괄 학습기 전송: 책장(학습기) 위치 선택 ──
+function openBulkSendPreviewModal(selected) {
+  const existing = document.getElementById('bulk-send-preview-modal');
+  if (existing) existing.remove();
+
+  const sample = selected[0];
+  const lastUsed = getLastSendMeta();
+  const sampleMeta = inferLearnerMeta(sample);
+  const defaultLevel = lastUsed.level || sampleMeta.level || 'L08';
+  const defaultSeries = lastUsed.series_title || sampleMeta.series_title || '';
+  const defaultVolume = lastUsed.volume_title || sampleMeta.volume_title || '';
+
+  const seriesPresets = getSeriesPresets();
+  const levelOptionsHtml = LEVEL_OPTIONS.map(opt =>
+    '<option value="' + opt.value + '"' + (opt.value === defaultLevel ? ' selected' : '') + '>' +
+    escapeHtml(opt.label) + '</option>'
+  ).join('');
+  const seriesDatalistHtml = seriesPresets.map(s =>
+    '<option value="' + escapeAttr(s) + '">'
+  ).join('');
+
+  const alreadySent = selected.filter(r => r.learnerSentAt).length;
+
+  const modal = document.createElement('div');
+  modal.id = 'bulk-send-preview-modal';
+  modal.className = 'modal-overlay';
+  modal.style.display = 'flex';
+  modal.dataset.selectedIds = selected.map(r => r.id).join(',');
+
+  modal.innerHTML =
+    '<div class="modal" style="max-width: 680px; max-height: 90vh; overflow: auto;">' +
+      '<h3 style="color: var(--brand-dark, #4A3D6B);">📚 일괄 학습기 전송 · 저장 위치 선택</h3>' +
+      '<div style="background:#f4f2f8;border:1px solid #d6cfe9;padding:12px;border-radius:8px;font-size:12px;line-height:1.65;margin-bottom:14px;">' +
+        '🎯 <strong>구문랩 학습기</strong>에서 자료가 보이는 위치를 먼저 정합니다.<br>' +
+        '📍 <strong>레벨 › 시리즈 › 권/교재</strong>는 아래에서 공통 지정, <strong>유닛(문항)</strong>은 각 자료마다 자동 설정됩니다.<br>' +
+        '💡 학습기에서: 해당 <strong>레벨 탭</strong> → <strong>시리즈</strong> → <strong>권/교재</strong> → <strong>유닛</strong> 순으로 찾으세요.' +
+      '</div>' +
+      '<div style="font-size:12px;color:#666;margin-bottom:10px;">선택 <strong>' + selected.length + '개</strong>' +
+        (alreadySent ? ' (재전송 ' + alreadySent + '개 포함)' : '') +
+        ' · 예상 약 ' + Math.ceil(selected.length * 3) + '초</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1.3fr;gap:10px;margin-bottom:10px;">' +
+        '<div><label style="display:block;font-size:11px;color:#666;margin-bottom:4px;font-weight:600;">🌊 레벨</label>' +
+          '<select id="bulk-send-level" style="width:100%;padding:8px;font-size:13px;border:1px solid #ccc;border-radius:6px;">' +
+            levelOptionsHtml +
+          '</select></div>' +
+        '<div><label style="display:block;font-size:11px;color:#666;margin-bottom:4px;font-weight:600;">📁 시리즈 (series_title) ⭐</label>' +
+          '<input type="text" id="bulk-send-series" list="bulk-series-presets" value="' + escapeAttr(defaultSeries) + '" ' +
+            'placeholder="예: 고1 공통영어2, 고1 올림포스 영어독해기본1" ' +
+            'style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brand,#6B5B95);border-radius:6px;background:#fffbea;">' +
+          '<datalist id="bulk-series-presets">' + seriesDatalistHtml + '</datalist></div>' +
+      '</div>' +
+      '<div style="margin-bottom:12px;">' +
+        '<label style="display:block;font-size:11px;color:#666;margin-bottom:4px;font-weight:600;">📖 권/교재 (volume_title) ⭐</label>' +
+        '<input type="text" id="bulk-send-volume" value="' + escapeAttr(defaultVolume) + '" ' +
+          'placeholder="예: YBM박준언M2, 5강, 2026년 3월" ' +
+          'style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brand,#6B5B95);border-radius:6px;background:#fffbea;">' +
+      '</div>' +
+      '<div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-left:4px solid #4caf50;padding:12px;border-radius:4px;font-size:12px;margin-bottom:12px;">' +
+        '📍 <strong>공통 저장 경로</strong> (구문랩에 실제로 들어가는 위치)<br>' +
+        '<div id="bulk-send-path-preview" style="font-family:monospace;font-size:12px;margin-top:4px;color:#1b5e20;"></div>' +
+      '</div>' +
+      '<div id="bulk-send-mismatch-warning"></div>' +
+      '<details open style="margin-bottom:12px;">' +
+        '<summary style="cursor:pointer;font-size:12px;font-weight:700;color:#555;padding:4px 0;">▾ 자료별 유닛 미리보기 (' + selected.length + '개)</summary>' +
+        '<div id="bulk-send-item-list" style="max-height:220px;overflow:auto;margin-top:8px;border:1px solid #eee;border-radius:8px;"></div>' +
+      '</details>' +
+      '<div class="modal-actions" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button class="modal-close-btn" onclick="closeBulkSendPreviewModal()">취소</button>' +
+        '<button class="action-btn" onclick="confirmBulkSendToLearner()" style="background:var(--brand,#6B5B95);color:#fff;font-weight:600;margin-left:auto;">📤 ' + selected.length + '개 전송</button>' +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(modal);
+
+  const updateBulkPreview = () => {
+    const common = readBulkSendCommonMeta();
+    const pathEl = document.getElementById('bulk-send-path-preview');
+    if (pathEl) {
+      pathEl.textContent = formatLearnerPath({ ...common, unit_title: '(자료별 자동)' });
+    }
+    const listEl = document.getElementById('bulk-send-item-list');
+    if (listEl) {
+      listEl.innerHTML = selected.map(rec => {
+        const meta = mergeBulkLearnerMeta(rec, common);
+        const title = rec.data.title_ko || rec.data.item_code || '제목 없음';
+        const card = getCardShelfMeta(rec);
+        const mm = getLearnerPathMismatch(rec, { ...common, unit_title: meta.unit_title });
+        const mmTag = mm.length
+          ? ' <span style="color:#e65100;font-weight:700;" title="카드와 전송 경로 불일치">⚠</span>'
+          : '';
+        return '<div style="padding:8px 10px;border-bottom:1px solid #f0f0f0;font-size:12px;line-height:1.5;">' +
+          '<div style="font-weight:700;color:#333;">' + escapeHtml(title) + mmTag + '</div>' +
+          '<div style="color:#888;font-size:11px;">🏷 카드: ' + escapeHtml([card.series, card.volume].filter(Boolean).join(' › ') || '-') + '</div>' +
+          '<div style="font-family:monospace;color:#1565c0;font-size:11px;margin-top:2px;">📤 ' + escapeHtml(meta.unit_title || '?') + '</div>' +
+          '</div>';
+      }).join('');
+    }
+    const warnEl = document.getElementById('bulk-send-mismatch-warning');
+    if (warnEl) {
+      const mismatched = selected.filter(rec => getLearnerPathMismatch(rec, {
+        ...common, unit_title: mergeBulkLearnerMeta(rec, common).unit_title
+      }).length > 0);
+      if (mismatched.length) {
+        warnEl.innerHTML =
+          '<div style="background:#fff3e0;border:1px solid #ffb74d;border-radius:8px;padding:12px;font-size:12px;line-height:1.65;margin-bottom:12px;">' +
+          '⚠️ <strong>' + mismatched.length + '개</strong> 자료의 카드 표시와 전송 시리즈/권이 다릅니다. ' +
+          '아래 목록의 ⚠ 표시를 확인하세요.<br>' +
+          '<label style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;cursor:pointer;">' +
+            '<input type="checkbox" id="bulk-send-mismatch-confirm" style="margin-top:2px;">' +
+            '<span>경로 불일치를 확인했으며, 위 <strong>공통 저장 경로</strong>로 전송합니다.</span>' +
+          '</label></div>';
+      } else {
+        warnEl.innerHTML = '';
+      }
+    }
+  };
+
+  ['bulk-send-level', 'bulk-send-series', 'bulk-send-volume'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateBulkPreview);
+  });
+  updateBulkPreview();
+}
+
+function readBulkSendCommonMeta() {
+  return {
+    level: (document.getElementById('bulk-send-level')?.value || 'L08').trim(),
+    series_title: (document.getElementById('bulk-send-series')?.value || '').trim(),
+    volume_title: (document.getElementById('bulk-send-volume')?.value || '').trim()
+  };
+}
+
+function closeBulkSendPreviewModal() {
+  const modal = document.getElementById('bulk-send-preview-modal');
+  if (modal) modal.remove();
+}
+
+async function confirmBulkSendToLearner() {
+  const modal = document.getElementById('bulk-send-preview-modal');
+  if (!modal) return;
+
+  const common = readBulkSendCommonMeta();
+  if (!common.series_title) {
+    showToast('⚠️ 시리즈(series_title)를 입력해주세요', 'error');
+    return;
+  }
+  if (!common.volume_title) {
+    showToast('⚠️ 권/교재(volume_title)를 입력해주세요', 'error');
+    return;
+  }
+
+  const ids = (modal.dataset.selectedIds || '').split(',').filter(Boolean);
+  const selected = library.filter(r => ids.includes(r.id));
+  const hasMismatch = selected.some(rec => getLearnerPathMismatch(rec, {
+    ...common, unit_title: mergeBulkLearnerMeta(rec, common).unit_title
+  }).length > 0);
+  if (hasMismatch && !document.getElementById('bulk-send-mismatch-confirm')?.checked) {
+    showToast('⚠️ 카드와 전송 경로가 다른 자료가 있습니다. 확인 체크 후 전송해주세요', 'error');
+    return;
+  }
+
+  closeBulkSendPreviewModal();
+  await runBulkSendToLearner(selected, common);
+}
+
+function showBulkLearnerSuccessModal(succeeded, commonMeta, failed) {
+  const existing = document.getElementById('bulk-learner-success-modal');
+  if (existing) existing.remove();
+
+  const basePath = formatLearnerPath({ ...commonMeta, unit_title: '' }).replace(/ › $/, '');
+  const rows = succeeded.map(({ rec, meta, j }) => {
+    const title = rec.data.title_ko || rec.data.item_code || '자료';
+    const url = j?.learn_url || rec.learnerUrl || '';
+    return '<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;">' + escapeHtml(title) +
+      '</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-family:monospace;font-size:11px;">' +
+      escapeHtml(meta.unit_title || '') +
+      '</td><td style="padding:6px 8px;border-bottom:1px solid #eee;">' +
+      (url ? '<a href="' + escapeAttr(url) + '" target="_blank" rel="noopener" style="color:#2d7a3f;">열기</a>' : '-') +
+      '</td></tr>';
+  }).join('');
+
+  const failHtml = (failed && failed.length)
+    ? '<div style="margin-top:12px;font-size:12px;color:#c62828;">실패 ' + failed.length + '개: ' +
+      failed.map(f => escapeHtml(f.title)).join(', ') + '</div>'
+    : '';
+
+  const modal = document.createElement('div');
+  modal.id = 'bulk-learner-success-modal';
+  modal.className = 'modal-overlay';
+  modal.style.display = 'flex';
+  modal.innerHTML =
+    '<div class="modal" style="max-width:720px;max-height:90vh;overflow:auto;">' +
+      '<h3 style="color:#2d7a3f;">📚 일괄 학습기 전송 완료</h3>' +
+      '<div style="background:#e8f5e9;border:1px solid #4caf50;padding:12px;border-radius:8px;font-size:12px;line-height:1.65;margin:12px 0;">' +
+        '📍 학습기에서 찾는 경로:<br>' +
+        '<strong style="font-family:monospace;">' + escapeHtml(basePath) + ' › [유닛]</strong><br>' +
+        '→ 구문랩 학습기에서 위 <strong>레벨 탭</strong>을 연 뒤 시리즈·교재를 따라가면 각 유닛이 보입니다.' +
+      '</div>' +
+      '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
+        '<thead><tr style="background:#f5f5f5;text-align:left;">' +
+          '<th style="padding:6px 8px;">제목</th><th style="padding:6px 8px;">유닛</th><th style="padding:6px 8px;">링크</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>' +
+      failHtml +
+      '<div class="modal-actions" style="margin-top:16px;display:flex;gap:8px;">' +
+        (succeeded[0]?.j?.learn_url || succeeded[0]?.rec?.learnerUrl
+          ? '<button class="action-btn" onclick="window.open(\'' + escapeJs(succeeded[0].j?.learn_url || succeeded[0].rec.learnerUrl) + '\',\'_blank\')">🌐 첫 자료 열기</button>'
+          : '') +
+        '<button class="modal-close-btn" onclick="document.getElementById(\'bulk-learner-success-modal\').remove();" style="margin-left:auto;">닫기</button>' +
+      '</div></div>';
+  document.body.appendChild(modal);
+}
+
 // 속성 이스케이프 (큰따옴표 처리)
 function escapeAttr(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -9264,11 +9633,19 @@ async function confirmAndSendToLearner(id) {
     return;
   }
 
+  const sendMetaPreview = { level, series_title, volume_title, unit_title };
+  const mismatch = getLearnerPathMismatch(rec, sendMetaPreview);
+  if (mismatch.length && !document.getElementById('send-mismatch-confirm')?.checked) {
+    showToast('⚠️ 카드 표시와 전송 경로가 다릅니다. 확인 체크 후 전송해주세요', 'error');
+    return;
+  }
+
   // rec에 메타 저장 (다음 전송 시 재사용)
   rec.learnerMeta = {
     level, series_title, volume_title, unit_title,
     unit_no, passage_no, new_item_code: item_code
   };
+  syncCardMetaFromLearner(rec, rec.learnerMeta);
   try {
     await window.storage.set(STORAGE_PREFIX + rec.id, JSON.stringify(rec));
   } catch (e) { console.warn('learnerMeta 저장 실패:', e); }
@@ -10562,7 +10939,9 @@ async function migrateLibraryToRubelStructure() {
 
   if (!confirm(msg)) return;
 
-  showProgressBar(needMigration.length, needMigration.length);
+  showProgressBar(needMigration.length, needMigration.length, {
+    title: '📦 새 구조로 마이그레이션 중...'
+  });
   let done = 0;
   let failed = 0;
 
@@ -10637,7 +11016,9 @@ async function redeployAllPublished() {
 
   if (!confirm(msg)) return;
 
-  showProgressBar(published.length, published.length);
+  showProgressBar(published.length, published.length, {
+    title: '🔄 전체 재배포 중...'
+  });
 
   try {
     updateProgressBar(0, published.length, '재배포 시작...');
@@ -10748,7 +11129,9 @@ async function cleanupGithubOrphans() {
     if (!confirm(msg)) return;
 
     // 5) 실제 삭제
-    showProgressBar(orphans.length, orphans.length);
+    showProgressBar(orphans.length, orphans.length, {
+      title: '🧹 GitHub 청소 중...'
+    });
     let doneCount = 0;
     let failedCount = 0;
 
@@ -11204,7 +11587,7 @@ function renderLibrary() {
       </div>
       <div class="card-title">${escapeHtml(r.data.title_ko || r.data.expected_title || r.data.topic_ko || '제목 없음')}</div>
       <div class="card-preview">${escapeHtml(extractFirstSentence(r.data.passage || ''))}</div>
-      <div class="card-date">📅 ${formatDate(r.createdAt)}${r.githubUrl ? ' · <a href="' + escapeAttr(r.githubUrl) + '" target="_blank" style="color:#2d7a3f;font-weight:600;text-decoration:none;" title="공개 페이지 열기">🌐 공개중</a>' : ''}${r.passageAudioUrl ? ' · <span style="color:#ad1457;font-weight:600;" title="오디오 생성됨: ' + (r.sentenceAudios ? r.sentenceAudios.filter(a => a.audio_url).length : 0) + '문장">🎙️ 오디오</span>' : ''}${r.learnerSentAt ? ' · <span style="color:#1b5e20;font-weight:600;" title="학습기 전송됨: ' + new Date(r.learnerSentAt).toLocaleString('ko-KR') + '">📚 전송됨</span>' : ''}</div>
+      <div class="card-date">📅 ${formatDate(r.createdAt)}${r.githubUrl ? ' · <a href="' + escapeAttr(r.githubUrl) + '" target="_blank" style="color:#2d7a3f;font-weight:600;text-decoration:none;" title="공개 페이지 열기">🌐 공개중</a>' : ''}${r.passageAudioUrl ? ' · <span style="color:#ad1457;font-weight:600;" title="오디오 생성됨: ' + (r.sentenceAudios ? r.sentenceAudios.filter(a => a.audio_url).length : 0) + '문장">🎙️ 오디오</span>' : ''}${r.learnerSentAt ? ' · <span style="color:#1b5e20;font-weight:600;" title="학습기 전송됨: ' + new Date(r.learnerSentAt).toLocaleString('ko-KR') + '">📚 전송됨</span>' + learnerPathBadgeHtml(r) : ''}</div>
       <div class="card-footer">
         <button class="card-btn card-btn-icon" onclick="openRecordById('${r.id}')" title="📖 열람 - 분석교안/구조도 보기">📖</button>
         <button class="card-btn card-btn-icon" onclick="editRecord('${r.id}')" title="✏️ 편집 - 자료 수정">✏️</button>
