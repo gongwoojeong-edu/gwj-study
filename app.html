@@ -5773,6 +5773,79 @@ function syncCardMetaFromLearner(rec, meta) {
   if (meta.level) rec.data.level = meta.level;
 }
 
+/** 전송 payload용 시리즈명 — 구문랩 DB 폴더명(M3 …)과 일치 */
+function normalizeSendSeriesTitle(meta) {
+  let st = (meta.series_title || '').trim();
+  const level = (meta.level || 'L08').trim();
+  if (/^교과서\s/i.test(st)) {
+    const mMap = { L04: 'M1', L05: 'M2', L06: 'M3' };
+    const core = st.replace(/^교과서\s*/i, '').trim();
+    if (mMap[level] && core) st = mMap[level] + ' ' + core;
+  }
+  return st;
+}
+
+function normalizeSendVolumeTitle(vt) {
+  return (vt || '').trim().replace(/\s+/g, '');
+}
+
+/** import-claude-handout POST body — series_no/volume_no 기본 1 금지(오배송 원인) */
+function buildLearnerImportBody(meta, rec, htmlExtras) {
+  htmlExtras = htmlExtras || {};
+  const series_title = normalizeSendSeriesTitle(meta);
+  const volume_title = normalizeSendVolumeTitle(meta.volume_title);
+  const body = {
+    level: meta.level || 'L08',
+    series_title,
+    volume_title,
+    unit_title: meta.unit_title || '',
+    passage_no: meta.passage_no || meta.unit_no || 1,
+    item_code: meta.new_item_code || meta.item_code || undefined,
+    title_ko: rec.data.title_ko || '',
+    expected_title: rec.data.expected_title || '',
+    topic_ko: rec.data.topic_ko || '',
+    topic_en: rec.data.topic_en || '',
+    passage: rec.data.passage || '',
+    passage_audio_url: rec.passageAudioUrl || '',
+    sentences: (rec.data.sentences || []).map((s, idx) => {
+      const audioEntry = (rec.sentenceAudios || []).find(a => a.number === s.number) ||
+                         (rec.sentenceAudios || [])[idx];
+      return {
+        number: s.number,
+        en: s.sentence_en || (s.sentence_html || '').replace(/<[^>]+>/g, ''),
+        ko: s.translation || '',
+        pattern_name: s.pattern_name || '',
+        analysis: s.analysis || [],
+        audio_url: audioEntry ? audioEntry.audio_url : ''
+      };
+    }),
+    vocabulary: rec.data.vocabulary || [],
+    analysis_html: htmlExtras.analysis_html || '',
+    structure_html: htmlExtras.structure_html || '',
+    external_url: rec.githubUrl || ''
+  };
+  if (meta.unit_no !== undefined && meta.unit_no !== null && meta.unit_no !== '' && !isNaN(meta.unit_no)) {
+    body.unit_no = Number(meta.unit_no);
+  }
+  // series_no / volume_no 는 meta에 명시된 경우만 (1 고정 시 S1/V1 오매칭)
+  if (meta.series_no !== undefined && meta.series_no !== null && meta.series_no !== '' && !isNaN(meta.series_no)) {
+    body.series_no = Number(meta.series_no);
+  }
+  if (meta.volume_no !== undefined && meta.volume_no !== null && meta.volume_no !== '' && !isNaN(meta.volume_no)) {
+    body.volume_no = Number(meta.volume_no);
+  }
+  return body;
+}
+
+function formatLearnerSendPathFromBody(body) {
+  return formatLearnerPath({
+    level: body.level,
+    series_title: body.series_title,
+    volume_title: body.volume_title,
+    unit_title: body.unit_title
+  });
+}
+
 /** 일괄 전송 공통 위치 + 자료별 유닛 자동 병합 */
 function mergeBulkLearnerMeta(rec, common) {
   const inferred = inferLearnerMeta({
@@ -5785,8 +5858,8 @@ function mergeBulkLearnerMeta(rec, common) {
   });
   return {
     level: common.level,
-    series_title: common.series_title,
-    volume_title: common.volume_title,
+    series_title: normalizeSendSeriesTitle({ level: common.level, series_title: common.series_title }),
+    volume_title: normalizeSendVolumeTitle(common.volume_title),
     unit_title: inferred.unit_title,
     unit_no: inferred.unit_no,
     passage_no: inferred.passage_no || inferred.unit_no || 1,
@@ -7285,39 +7358,13 @@ async function sendToLearnerSilent(rec) {
   try { analysisHtml = renderAnalysisToString(rec.data); } catch (e) { analysisHtml = ''; }
   try { structureHtml = renderStructureToString(rec.data); } catch (e) { structureHtml = ''; }
 
-  const body = {
-    level: meta.level || 'L08',
-    series_title: meta.series_title || '',
-    series_no: 1,
-    volume_title: meta.volume_title || '',
-    volume_no: 1,
-    unit_title: meta.unit_title || '',
-    passage_no: meta.passage_no || meta.unit_no || 1,
-    item_code: meta.new_item_code || meta.item_code || undefined,
-    title_ko: rec.data.title_ko || '',
-    expected_title: rec.data.expected_title || '',
-    topic_ko: rec.data.topic_ko || '',
-    topic_en: rec.data.topic_en || '',
-    passage: rec.data.passage || '',
-    passage_audio_url: rec.passageAudioUrl || '',
-    sentences: (rec.data.sentences || []).map((s, idx) => {
-      const audioEntry = (rec.sentenceAudios || []).find(a => a.number === s.number) ||
-                         (rec.sentenceAudios || [])[idx];
-      return {
-        number: s.number,
-        en: s.sentence_en || (s.sentence_html || '').replace(/<[^>]+>/g, ''),
-        ko: s.translation || '',
-        pattern_name: s.pattern_name || '',
-        analysis: s.analysis || [],
-        audio_url: audioEntry ? audioEntry.audio_url : ''
-      };
-    }),
-    vocabulary: rec.data.vocabulary || [],
+  const metaForSend = { ...meta, series_title: normalizeSendSeriesTitle(meta), volume_title: normalizeSendVolumeTitle(meta.volume_title) };
+  const body = buildLearnerImportBody(metaForSend, rec, {
     analysis_html: wrapWithStyles(analysisHtml),
-    structure_html: wrapWithStyles(structureHtml),
-    external_url: rec.githubUrl || ''
-  };
-  if (meta.unit_no !== undefined && !isNaN(meta.unit_no)) body.unit_no = meta.unit_no;
+    structure_html: wrapWithStyles(structureHtml)
+  });
+
+  console.info('📤 학습기 전송:', formatLearnerSendPathFromBody(body), body);
 
   const res = await fetch(LEARNER_API_URL, {
     method: 'POST',
@@ -7332,7 +7379,8 @@ async function sendToLearnerSilent(rec) {
   rec.learnerSentAt = new Date().toISOString();
   rec.learnerCode = j.code || '';
   rec.learnerUrl = j.learn_url || '';
-  syncCardMetaFromLearner(rec, meta);
+  syncCardMetaFromLearner(rec, metaForSend);
+  rec._lastLearnerSendPath = formatLearnerSendPathFromBody(body);
   try {
     await window.storage.set(STORAGE_PREFIX + rec.id, JSON.stringify(rec));
   } catch (e) { /* ignore */ }
@@ -9745,46 +9793,16 @@ ${allStyles}
   showToast('📤 학습기로 전송 중...', 'info');
 
   try {
-    const body = {
-      // 🆕 러버블 5단계 계층 구조
-      level: level,
-      series_title: series_title,
-      series_no: 1,
-      volume_title: volume_title,
-      volume_no: 1,
-      unit_title: unit_title,
-      passage_no: passage_no || 1,
-      item_code: item_code || undefined,
-      // 지문 내용
-      title_ko: title_ko || rec.data.title_ko || '',
-      expected_title: rec.data.expected_title || '',
-      topic_ko: rec.data.topic_ko || '',
-      topic_en: rec.data.topic_en || '',
-      passage: rec.data.passage || '',
-      passage_audio_url: rec.passageAudioUrl || '',
-      // 🆕 문장별 데이터 (학습기 문장별 학습용)
-      sentences: (rec.data.sentences || []).map((s, idx) => {
-        const audioEntry = (rec.sentenceAudios || []).find(a => a.number === s.number) ||
-                           (rec.sentenceAudios || [])[idx];
-        return {
-          number: s.number,
-          en: s.sentence_en || (s.sentence_html || '').replace(/<[^>]+>/g, ''),
-          ko: s.translation || '',
-          pattern_name: s.pattern_name || '',
-          analysis: s.analysis || [],
-          audio_url: audioEntry ? audioEntry.audio_url : ''
-        };
-      }),
-      vocabulary: rec.data.vocabulary || [],
-      analysis_html: analysisHtmlWithStyles,
-      structure_html: structureHtmlWithStyles,
-      // 확장 필드
-      external_url: rec.githubUrl || ''
+    const sendMeta = {
+      level, series_title, volume_title, unit_title,
+      unit_no, passage_no, new_item_code: item_code
     };
-    // unit_no는 숫자일 때만 포함
-    if (unit_no !== undefined && !isNaN(unit_no)) {
-      body.unit_no = unit_no;
-    }
+    const body = buildLearnerImportBody(sendMeta, rec, {
+      analysis_html: analysisHtmlWithStyles,
+      structure_html: structureHtmlWithStyles
+    });
+
+    console.info('📤 학습기 전송:', formatLearnerSendPathFromBody(body), body);
 
     const res = await fetch(LEARNER_API_URL, {
       method: 'POST',
@@ -9808,6 +9826,8 @@ ${allStyles}
       rec.learnerSentAt = new Date().toISOString();
       rec.learnerCode = j.code || '';
       rec.learnerUrl = j.learn_url || '';
+      rec._lastLearnerSendPath = formatLearnerSendPathFromBody(body);
+      syncCardMetaFromLearner(rec, { level, series_title: body.series_title, volume_title: body.volume_title, unit_title, unit_no });
       try {
         await window.storage.set(STORAGE_PREFIX + rec.id, JSON.stringify(rec));
       } catch (saveErr) { console.warn('학습기 메타 저장 실패:', saveErr); }
@@ -9816,7 +9836,7 @@ ${allStyles}
       renderLibrary();
 
       // 성공 - 커스텀 모달로 코드/URL 표시
-      showLearnerSuccessModal(j.code, j.learn_url);
+      showLearnerSuccessModal(j.code, j.learn_url, formatLearnerSendPathFromBody(body));
     } else {
       showToast('❌ 전송 실패: ' + (j.error || '알 수 없는 오류 (HTTP ' + res.status + ')'), 'error');
     }
@@ -9827,10 +9847,18 @@ ${allStyles}
 }
 
 // 전송 성공 모달 (코드/URL 표시 + 복사)
-function showLearnerSuccessModal(code, learnUrl) {
+function showLearnerSuccessModal(code, learnUrl, sendPath) {
   // 기존 모달 있으면 제거
   const existing = document.getElementById('learner-success-modal');
   if (existing) existing.remove();
+
+  const pathBlock = sendPath
+    ? '<div style="margin-bottom:10px;">' +
+        '<div style="font-size:11px;color:#555;margin-bottom:4px;">📍 구문랩 책장에서 찾을 경로</div>' +
+        '<div style="font-family:monospace;font-size:13px;font-weight:700;color:#1565c0;">' + escapeHtml(sendPath) + '</div>' +
+        '<div style="font-size:11px;color:#888;margin-top:4px;">lab.gwj-edu.com → 책장 → 위 레벨·시리즈·권·유닛 순</div>' +
+      '</div>'
+    : '';
 
   const modal = document.createElement('div');
   modal.id = 'learner-success-modal';
@@ -9840,6 +9868,7 @@ function showLearnerSuccessModal(code, learnUrl) {
     '<div class="modal" style="max-width: 480px;">' +
       '<h3 style="color: #2d7a3f;">📚 학습기 전송 완료!</h3>' +
       '<div style="background: #e8f5e9; border: 1px solid #4caf50; padding: 14px; border-radius: 8px; margin: 14px 0;">' +
+        pathBlock +
         '<div style="margin-bottom: 10px;">' +
           '<div style="font-size: 11px; color: #555; margin-bottom: 4px;">지문 코드</div>' +
           '<div style="font-family: monospace; font-size: 16px; font-weight: 700; color: #1b5e20; letter-spacing: 0.5px;">' + escapeHtml(code || '-') + '</div>' +
@@ -10595,10 +10624,8 @@ async function createRecordFromPassage(passage, meta, opts) {
 
   const learnerMeta = {
     level: meta.level,
-    series_title: meta.series_title,
-    series_no: 1,
-    volume_title: meta.volume_title,
-    volume_no: 1,
+    series_title: normalizeSendSeriesTitle({ level: meta.level, series_title: meta.series_title }),
+    volume_title: normalizeSendVolumeTitle(meta.volume_title),
     unit_title,
     unit_no: unit_no || undefined,
     passage_no: unit_no || 1,
