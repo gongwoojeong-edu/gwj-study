@@ -1109,6 +1109,10 @@ Our club arrived at the Free Animals sanctuary. ...
       </select>
       <button class="action-btn" onclick="exportBackup()">📦 백업 내보내기</button>
       <button class="action-btn" onclick="document.getElementById(&#39;import-file&#39;).click()">📥 복원</button>
+      <button class="action-btn" onclick="repairFidelityScan()" style="background:linear-gradient(135deg,#fff8e1,#fff);border-color:#f9a825;color:#f57f17;font-weight:700;" title="전 레코드 원문 무결성 점검 → 손상 CSV (읽기만)">① 손상점검</button>
+      <button class="action-btn" onclick="repairFidelityDryRun()" style="background:linear-gradient(135deg,#e3f2fd,#fff);border-color:#1976d2;color:#0d47a1;font-weight:700;" title="백업 + reconcile dry-run CSV (미적용)">② dry-run복구</button>
+      <button class="action-btn" onclick="repairFidelityApply()" style="background:linear-gradient(135deg,#e8f5e9,#fff);border-color:#2e7d32;color:#1b5e20;font-weight:700;" title="문장 원문 1차 복구 적용 (AI 0원)">② apply복구</button>
+      <button class="action-btn" onclick="repairFillEmptyAnalysis()" style="background:linear-gradient(135deg,#fce4ec,#fff);border-color:#c2185b;color:#880e4f;font-weight:700;" title="분석 빈 문장만 선별 AI (전체 재생성 금지)">③ 빈분석AI</button>
       <button class="action-btn" onclick="migrateLibraryToRubelStructure()" style="background: linear-gradient(135deg, #f3e5f5, #fff); border-color: #6B5B95; color: #4A3D6B; font-weight:700;" title="기존 자료를 새 러버블 5계층 구조(Level/Series/Volume/Unit)로 자동 변환">🔄 새 구조로 마이그레이션</button>
       <button class="action-btn" onclick="regenerateCatalog()" style="background: linear-gradient(135deg, #e3f2fd, #fff); border-color: #1976d2; color: #0d47a1;" title="공개된 모든 자료의 전체 목차(index.html)를 재생성 - 학원 대표 URL">📚 전체 목차 갱신</button>
       <button class="action-btn" onclick="redeployAllPublished()" style="background: linear-gradient(135deg, #e8f5e9, #fff); border-color: #2d7a3f; color: #1b5e20;" title="공개된 모든 자료를 최신 포맷으로 재업로드 (구조도/분석교안 분리 반영)">🔄 전체 재배포</button>
@@ -10268,7 +10272,362 @@ function validatePassageSentenceFidelity(passage, sentences) {
   return { ok: true, expectedCount: expected.length, actualCount: list.length };
 }
 
-/** @deprecated — assembleLockedAnalysis 사용 */
+/** 문장 객체의 영문 평문 */
+function sentencePlainText(s) {
+  if (!s || typeof s !== 'object') return '';
+  return String(s.sentence_en || stripHtmlToPlain(s.sentence_html || '')).trim();
+}
+
+/**
+ * 기존 분석을 원문 문장에 매칭해 복구 (AI 0원).
+ * - 원문 문장 전부 전부 살림
+ * - 매칭되는 분석·해석·pattern 유지
+ * - 누락 문장은 빈 analysis로 자리만 확보
+ * - 원문에 없는 조각은 버림
+ */
+function reconcileAnalysisSentences(originals, aiSentences) {
+  const pool = (Array.isArray(aiSentences) ? aiSentences : []).map((s) => ({
+    s,
+    used: false,
+    plain: sentencePlainText(s),
+    key: compactAlpha(sentencePlainText(s))
+  }));
+
+  return originals.map((en, i) => {
+    const want = compactAlpha(en);
+    let best = null;
+
+    // 1) 완전 일치
+    best = pool.find((p) => !p.used && p.key && p.key === want) || null;
+
+    // 2) 포함(옛 문장이 원문 조각이거나, 합쳐진 덩어리에서 부분 매칭)
+    if (!best) {
+      let bestLen = 0;
+      for (const p of pool) {
+        if (p.used || !p.key) continue;
+        if (want.includes(p.key) && p.key.length >= 12 && p.key.length > bestLen) {
+          best = p;
+          bestLen = p.key.length;
+        }
+      }
+    }
+    if (!best) {
+      let bestLen = 0;
+      for (const p of pool) {
+        if (p.used || !p.key) continue;
+        if (p.key.includes(want) && want.length >= 12 && want.length > bestLen) {
+          best = p;
+          bestLen = want.length;
+        }
+      }
+    }
+
+    if (best) best.used = true;
+    const src = best ? best.s : {};
+    const highlights = Array.isArray(src.highlights) ? src.highlights : [];
+    let sentence_html;
+    if (highlights.length) {
+      sentence_html = applyHighlightsToPlain(en, highlights, 'span');
+    } else if (
+      src.sentence_html &&
+      compactAlpha(stripHtmlToPlain(src.sentence_html)) === want
+    ) {
+      sentence_html = src.sentence_html;
+    } else {
+      sentence_html = applyHighlightsToPlain(en, [], 'span');
+    }
+
+    const analysis = Array.isArray(src.analysis) ? src.analysis : [];
+    return {
+      number: src.number || sentenceCircleNumber(i),
+      pattern_name: src.pattern_name || '',
+      sentence_en: en,
+      sentence_html,
+      highlights,
+      analysis,
+      translation: src.translation || '',
+      _emptyAnalysis: analysis.length === 0
+    };
+  });
+}
+
+/** passage_html 평문이 원문과 다르면 원문으로 교체 (강조만 포기) */
+function ensurePassageHtmlFidelity(passage, passageHtml) {
+  const plain = stripHtmlToPlain(passageHtml || '');
+  if (compactAlpha(plain) === compactAlpha(passage)) return passageHtml || applyHighlightsToPlain(passage, [], 'strong');
+  return applyHighlightsToPlain(passage, [], 'strong');
+}
+
+/**
+ * 레코드 손상 진단 (읽기 전용)
+ */
+function diagnoseRecordFidelity(rec) {
+  const d = rec && rec.data ? rec.data : {};
+  const passage = d.passage || '';
+  const sentences = Array.isArray(d.sentences) ? d.sentences : [];
+  const originals = splitEnglishSentences(passage);
+  const gate = passage
+    ? validatePassageSentenceFidelity(passage, sentences)
+    : { ok: false, message: 'passage 없음', expectedCount: 0, actualCount: sentences.length };
+
+  const joinedSaved = compactAlpha(sentences.map(sentencePlainText).join(' '));
+  const missing = originals.filter((o) => {
+    const k = compactAlpha(o);
+    return k && !joinedSaved.includes(k);
+  });
+  const invented = sentences
+    .map(sentencePlainText)
+    .filter((p) => {
+      const k = compactAlpha(p);
+      return k && !compactAlpha(passage).includes(k);
+    });
+
+  const title = d.title_ko || d.expected_title || d.topic_en || rec.title || '';
+  return {
+    id: rec.id || '',
+    title,
+    textbook: d.textbook || d.series_title || '',
+    lesson: d.lesson || d.unit_title || '',
+    expectedCount: originals.length,
+    actualCount: sentences.length,
+    ok: !!gate.ok,
+    message: gate.message || '',
+    missing,
+    invented,
+    emptyAnalysisCount: sentences.filter((s) => !Array.isArray(s.analysis) || s.analysis.length === 0).length
+  };
+}
+
+function csvEscape(v) {
+  const s = String(v == null ? '' : v);
+  if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function downloadTextFile(filename, text, mime) {
+  const blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function analysisRecordsOnly() {
+  return library.filter((r) => r && r.kind !== 'collection' && r.data && r.data.passage);
+}
+
+/** ① 전 레코드 점검 → 손상 CSV (읽기만) */
+function repairFidelityScan() {
+  const rows = [['id', 'title', 'textbook', 'lesson', 'expected_n', 'saved_n', 'ok', 'missing', 'invented', 'empty_analysis', 'message']];
+  let damaged = 0;
+  const reports = [];
+  for (const rec of analysisRecordsOnly()) {
+    const diag = diagnoseRecordFidelity(rec);
+    reports.push(diag);
+    if (!diag.ok) damaged++;
+    rows.push([
+      diag.id,
+      diag.title,
+      diag.textbook,
+      diag.lesson,
+      diag.expectedCount,
+      diag.actualCount,
+      diag.ok ? 'Y' : 'N',
+      diag.missing.map((m) => m.slice(0, 80)).join(' | '),
+      diag.invented.map((m) => m.slice(0, 80)).join(' | '),
+      diag.emptyAnalysisCount,
+      diag.message
+    ]);
+  }
+  const csv = rows.map((r) => r.map(csvEscape).join(',')).join('\n');
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  downloadTextFile('gwj_fidelity_damage_' + stamp + '.csv', '\uFEFF' + csv, 'text/csv;charset=utf-8');
+  window._lastFidelityReport = reports;
+  showToast('① 점검 완료: 총 ' + reports.length + '건 / 손상 ' + damaged + '건 → CSV 저장', damaged ? 'info' : 'success');
+  return { total: reports.length, damaged, reports };
+}
+
+function buildReconcilePreview(rec) {
+  const passage = rec.data.passage || '';
+  const originals = splitEnglishSentences(passage);
+  const before = diagnoseRecordFidelity(rec);
+  const nextSentences = reconcileAnalysisSentences(originals, rec.data.sentences || []);
+  const afterGate = validatePassageSentenceFidelity(passage, nextSentences);
+  const emptyAfter = nextSentences.filter((s) => !s.analysis || !s.analysis.length).length;
+  return {
+    id: rec.id,
+    title: before.title,
+    beforeOk: before.ok,
+    afterOk: afterGate.ok,
+    expectedCount: originals.length,
+    beforeCount: before.actualCount,
+    afterCount: nextSentences.length,
+    emptyAfter,
+    missingBefore: before.missing.length,
+    inventedBefore: before.invented.length,
+    nextSentences,
+    nextPassageHtml: ensurePassageHtmlFidelity(passage, rec.data.passage_html)
+  };
+}
+
+/** ② dry-run — 백업 후 CSV만 (저장소 변경 없음) */
+function repairFidelityDryRun() {
+  if (library.length === 0) { showToast('책장이 비어있습니다.', 'info'); return null; }
+  exportBackup();
+  const rows = [['id', 'title', 'before_ok', 'after_ok', 'expected_n', 'before_n', 'after_n', 'missing_before', 'invented_before', 'empty_after']];
+  const previews = [];
+  let wouldFix = 0;
+  for (const rec of analysisRecordsOnly()) {
+    const p = buildReconcilePreview(rec);
+    previews.push(p);
+    if (!p.beforeOk && p.afterOk) wouldFix++;
+    rows.push([p.id, p.title, p.beforeOk ? 'Y' : 'N', p.afterOk ? 'Y' : 'N', p.expectedCount, p.beforeCount, p.afterCount, p.missingBefore, p.inventedBefore, p.emptyAfter]);
+  }
+  const csv = rows.map((r) => r.map(csvEscape).join(',')).join('\n');
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  downloadTextFile('gwj_fidelity_dryrun_' + stamp + '.csv', '\uFEFF' + csv, 'text/csv;charset=utf-8');
+  window._lastFidelityDryRun = previews;
+  showToast('② dry-run 완료 + 백업 다운로드. 복구 예정 ' + wouldFix + '건 (미적용)', 'info');
+  return { wouldFix, previews };
+}
+
+/** ② apply — dry-run 결과 또는 즉시 재계산 후 저장 */
+async function repairFidelityApply() {
+  if (!confirm('② 문장 원문 1차 복구를 적용할까요?\n\n· AI 호출 없음\n· 기존 분석은 매칭되는 문장에 유지\n· 누락 문장은 빈 분석으로 추가\n\n※ 먼저 dry-run과 백업을 권장합니다.')) return null;
+
+  exportBackup();
+  let fixed = 0, stillBad = 0, skipped = 0;
+  const applied = [];
+  for (const rec of analysisRecordsOnly()) {
+    const before = diagnoseRecordFidelity(rec);
+    if (before.ok) { skipped++; continue; }
+    const p = buildReconcilePreview(rec);
+    rec.data.sentences = p.nextSentences;
+    rec.data.passage_html = p.nextPassageHtml;
+    rec.data.passage = rec.data.passage; // 원문 유지
+    // 게이트 재확인
+    const gate = validatePassageSentenceFidelity(rec.data.passage, rec.data.sentences);
+    if (!gate.ok) {
+      stillBad++;
+      applied.push({ id: rec.id, ok: false, message: gate.message });
+      continue;
+    }
+    const saved = await saveRecord(rec);
+    if (saved) { fixed++; applied.push({ id: rec.id, ok: true, emptyAfter: p.emptyAfter }); }
+    else { stillBad++; applied.push({ id: rec.id, ok: false, message: 'save failed' }); }
+  }
+  window._lastFidelityApply = applied;
+  showToast('② apply 완료: 복구 ' + fixed + ' / 실패 ' + stillBad + ' / 이미정상 ' + skipped, stillBad ? 'info' : 'success');
+  renderLibrary();
+  return { fixed, stillBad, skipped, applied };
+}
+
+/**
+ * 문장 1개만 분석 (전체 레코드 재생성 금지)
+ */
+async function callClaudeSentenceOnly(sentenceEn, ctx) {
+  ctx = ctx || {};
+  const prompt = `당신은 고등학생용 영어 구문분석 강사입니다. 아래 **한 문장만** 분석하세요.
+원문 재작성 금지. JSON 하나만 출력.
+
+[문장]
+${sentenceEn}
+
+[맥락]
+교재: ${ctx.textbook || ''}
+주제힌트: ${ctx.topic_en || ctx.title_ko || ''}
+
+스키마:
+{
+  "pattern_name": "구문 유형 이름",
+  "highlights": [{"phrase":"원문 부분문자열","class":"hl-blue"}],
+  "analysis": [{"component":"성분","phrase":"어구","explanation":"40자 이내"}],
+  "translation": "직독·의역 (슬래시)"
+}
+highlights.phrase는 문장에 글자 그대로 있는 것만.`;
+
+  const isArtifactEnv = (typeof window.storage === 'object' &&
+                         window.storage !== null &&
+                         !window._gwjPolyfillUsed);
+  const userApiKey = await getStoredApiKey();
+  const headers = { 'Content-Type': 'application/json' };
+  const fetchBody = {
+    model: 'claude-sonnet-4-5',
+    max_tokens: 2000,
+    messages: [{ role: 'user', content: prompt }]
+  };
+  if (!isArtifactEnv) {
+    if (!userApiKey) throw new Error('API 키가 필요합니다.');
+    headers['x-api-key'] = userApiKey;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  }
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST', headers, body: JSON.stringify(fetchBody)
+  });
+  if (!response.ok) throw new Error('API 실패 HTTP ' + response.status);
+  const data = await response.json();
+  let text = (data.content || []).map((b) => b.type === 'text' ? b.text : '').join('').trim();
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) text = text.slice(firstBrace, lastBrace + 1);
+  return JSON.parse(text);
+}
+
+/** ③ 빈 분석 문장만 선별 AI (전체 재생성 금지) */
+async function repairFillEmptyAnalysis() {
+  const targets = [];
+  for (const rec of analysisRecordsOnly()) {
+    const sents = rec.data.sentences || [];
+    sents.forEach((s, idx) => {
+      if (!Array.isArray(s.analysis) || s.analysis.length === 0) {
+        targets.push({ rec, idx, en: s.sentence_en || sentencePlainText(s) });
+      }
+    });
+  }
+  if (targets.length === 0) {
+    showToast('③ 빈 분석 문장 없음', 'success');
+    return { filled: 0 };
+  }
+  if (!confirm('③ 빈 분석 문장 ' + targets.length + '개만 AI 재호출할까요?\n\n레코드 전체 재생성은 하지 않습니다.')) return null;
+
+  exportBackup();
+  let filled = 0, failed = 0;
+  setStatus('loading', '③ 빈 분석 보강 중... 0/' + targets.length);
+  for (let i = 0; i < targets.length; i++) {
+    const t = targets[i];
+    setStatus('loading', '③ 빈 분석 보강 중... ' + (i + 1) + '/' + targets.length);
+    try {
+      const one = await callClaudeSentenceOnly(t.en, t.rec.data);
+      const s = t.rec.data.sentences[t.idx];
+      s.pattern_name = one.pattern_name || s.pattern_name || '';
+      s.analysis = Array.isArray(one.analysis) ? one.analysis : [];
+      s.translation = one.translation || s.translation || '';
+      if (Array.isArray(one.highlights) && one.highlights.length) {
+        s.highlights = one.highlights;
+        s.sentence_html = applyHighlightsToPlain(s.sentence_en || t.en, s.highlights, 'span');
+      }
+      s._emptyAnalysis = !(s.analysis && s.analysis.length);
+      filled++;
+      // 문장마다 저장 (중단 대비)
+      await saveRecord(t.rec);
+    } catch (e) {
+      console.warn('empty analysis fill failed', t.rec.id, t.idx, e);
+      failed++;
+    }
+  }
+  // 최종 게이트 스캔
+  const scan = repairFidelityScan();
+  setStatus('success', '③ 완료: 채움 ' + filled + ' / 실패 ' + failed + ' · 잔여손상 ' + (scan.damaged || 0));
+  showToast('③ 빈 분석 AI 완료: ' + filled + '채움 / ' + failed + '실패', failed ? 'info' : 'success');
+  renderLibrary();
+  return { filled, failed };
+}
+
+/** @deprecated — assembleLockedAnalysis 사용 (신규 생성용). 복구는 reconcile 경로. */
 function lockAnalysisToOriginalPassage(passage, data, titleOpts) {
   const locked = assembleLockedAnalysis(passage, data, titleOpts);
   Object.keys(data).forEach((k) => { delete data[k]; });
