@@ -9989,6 +9989,191 @@ function setStatus(type, message) {
 }
 
 // ============================================================
+// 원문 보존 문장 분리 + 무결성 검증 (결정적 — AI 재작성 금지)
+// ============================================================
+const SENTENCE_CIRCLE_NUMS = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
+
+/** HTML → 평문 (태그·엔티티 제거) */
+function stripHtmlToPlain(html) {
+  return String(html || '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\u2019/g, "'")
+    .replace(/\u201C|\u201D/g, '"');
+}
+
+/** 무결성 비교용 정규화 (공백만 통일, 내용은 유지) */
+function normalizeForFidelity(text) {
+  return String(text || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
+/** 공백 완전 제거 — 글자 누락/추가 감지 */
+function compactAlpha(text) {
+  return normalizeForFidelity(text).replace(/\s+/g, '');
+}
+
+/**
+ * 결정적 문장 분리.
+ * 규칙: 마침표/물음표/느낌표 + 공백(또는 줄바꿈)
+ *       + 날짜/제목처럼 종결부호 없는 줄은 줄바꿈으로 분리
+ * 못 나누면 통째로 반환 (버리지 않음)
+ */
+function splitPassageIntoSentences(text) {
+  const raw = String(text || '').replace(/\r\n/g, '\n').trim();
+  if (!raw) return [];
+
+  // 이미 ➊~⑳ / ①~⑳ 로 표기된 경우는 그 경계를 우선
+  const circled = /[\u278A-\u2793\u2460-\u2473]/;
+  if (circled.test(raw)) {
+    const first = raw.search(circled);
+    const body = first > 0 ? raw.slice(first) : raw;
+    const parts = body
+      .split(/(?=[\u278A-\u2793\u2460-\u2473])/)
+      .map((s) => s.replace(/^[\u278A-\u2793\u2460-\u2473]\s*/, '').replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+    if (parts.length > 0) return parts;
+  }
+
+  // 종결부호(.!?) + 공백/줄바꿈, 또는 종결부호 없는 줄 끝에서 다음 대문자 줄
+  const parts = raw
+    .split(/(?<=[.!?])(?:[ \t\f\v]+|\n+)|(?<![.!?])\n+(?=[A-Z"'(\[{0-9\u201C])/)
+    .map((s) => s.replace(/[ \t\f\v]+/g, ' ').replace(/\n+/g, ' ').trim())
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    const one = raw.replace(/\s+/g, ' ').trim();
+    return one ? [one] : [];
+  }
+  return parts;
+}
+
+function sentenceCircleNumber(index) {
+  return SENTENCE_CIRCLE_NUMS[index] || String(index + 1);
+}
+
+/**
+ * AI 응답 sentences를 원문 분리 결과로 강제 재정렬.
+ * 하이라이트 HTML은 평문이 원문과 일치할 때만 채택.
+ */
+function reconcileAnalysisSentences(originals, aiSentences) {
+  const ai = Array.isArray(aiSentences) ? aiSentences : [];
+  return originals.map((en, i) => {
+    const src = ai[i] && typeof ai[i] === 'object' ? ai[i] : {};
+    const aiPlain = normalizeForFidelity(
+      src.sentence_en || stripHtmlToPlain(src.sentence_html || '')
+    );
+    const want = normalizeForFidelity(en);
+    const htmlOk = compactAlpha(aiPlain) === compactAlpha(want) && !!src.sentence_html;
+    return {
+      number: src.number || sentenceCircleNumber(i),
+      pattern_name: src.pattern_name || '',
+      sentence_en: en,
+      sentence_html: htmlOk ? src.sentence_html : en.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+      analysis: Array.isArray(src.analysis) ? src.analysis : [],
+      translation: src.translation || ''
+    };
+  });
+}
+
+/**
+ * 결과 문장들을 이어붙인 글자가 원문과 다르면 거부.
+ * @returns {{ ok: boolean, message?: string, expectedCount?: number, actualCount?: number }}
+ */
+function validatePassageSentenceFidelity(passage, sentences) {
+  const list = Array.isArray(sentences) ? sentences : [];
+  const expected = splitPassageIntoSentences(passage);
+  if (expected.length === 0) {
+    return { ok: false, message: '원문에서 문장을 분리할 수 없습니다.' };
+  }
+  if (list.length !== expected.length) {
+    return {
+      ok: false,
+      expectedCount: expected.length,
+      actualCount: list.length,
+      message: '문장 수 불일치: 원문 ' + expected.length + '개 vs 결과 ' + list.length + '개'
+    };
+  }
+  const joined = list.map((s) =>
+    s.sentence_en || stripHtmlToPlain(s.sentence_html || '')
+  ).join(' ');
+  const o = compactAlpha(passage);
+  const j = compactAlpha(joined);
+  if (o !== j) {
+    // 어느 쪽이 빠졌는지 짧게 힌트
+    let missingHint = '';
+    for (const exp of expected) {
+      if (!compactAlpha(joined).includes(compactAlpha(exp).slice(0, Math.min(24, compactAlpha(exp).length)))) {
+        missingHint = ' 누락 추정: "' + exp.slice(0, 40) + (exp.length > 40 ? '…' : '') + '"';
+        break;
+      }
+    }
+    return {
+      ok: false,
+      expectedCount: expected.length,
+      actualCount: list.length,
+      message: '원문 글자 불일치 (공백 제외 ' + o.length + ' vs ' + j.length + ').' + missingHint
+    };
+  }
+  // 개별 문장 일치
+  for (let i = 0; i < expected.length; i++) {
+    const got = compactAlpha(list[i].sentence_en || stripHtmlToPlain(list[i].sentence_html || ''));
+    if (got !== compactAlpha(expected[i])) {
+      return {
+        ok: false,
+        expectedCount: expected.length,
+        actualCount: list.length,
+        message: (i + 1) + '번 문장이 원문과 다름: 기대 "' + expected[i].slice(0, 40) + '…" / 실제 "' +
+          String(list[i].sentence_en || stripHtmlToPlain(list[i].sentence_html || '')).slice(0, 40) + '…"'
+      };
+    }
+  }
+  return { ok: true, expectedCount: expected.length, actualCount: list.length };
+}
+
+/** passage_html 평문이 원문과 다르면 원문으로 교체 */
+function ensurePassageHtmlFidelity(passage, passageHtml) {
+  const plain = stripHtmlToPlain(passageHtml || '');
+  if (compactAlpha(plain) === compactAlpha(passage)) return passageHtml;
+  return String(passage || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+}
+
+/**
+ * AI 응답에 원문 강제 적용 + 검증. 실패 시 throw (조용한 누락 금지).
+ */
+function lockAnalysisToOriginalPassage(passage, data) {
+  const originals = splitPassageIntoSentences(passage);
+  if (!originals.length) throw new Error('원문 문장 분리 실패 — 저장하지 않습니다.');
+
+  data.passage = passage;
+  data.sentences = reconcileAnalysisSentences(originals, data.sentences);
+  data.passage_html = ensurePassageHtmlFidelity(passage, data.passage_html);
+
+  const gate = validatePassageSentenceFidelity(passage, data.sentences);
+  if (!gate.ok) {
+    throw new Error(
+      '⛔ 원문 무결성 검증 실패 — 저장 거부\n\n' +
+      gate.message + '\n\n' +
+      '원인: AI가 문장을 누락·변형했을 수 있습니다. 다시 생성해 주세요.'
+    );
+  }
+  return data;
+}
+
+// ============================================================
 // Claude API 호출 (분석 생성)
 // ============================================================
 // 전역: 마지막 원본 응답 저장 (디버깅용)
@@ -9996,6 +10181,13 @@ let lastRawResponse = '';
 
 async function callClaude(passage, textbook, lesson, customTitle) {
   const titleHint = customTitle ? `\n지정된 제목: ${customTitle} (이 제목을 topic_en의 힌트로 사용)` : '';
+  const originals = splitPassageIntoSentences(passage);
+  if (!originals.length) {
+    throw new Error('지문에서 문장을 분리할 수 없습니다. 원문을 확인해 주세요.');
+  }
+  const sentenceCatalog = originals
+    .map((en, i) => (i + 1) + '. [' + sentenceCircleNumber(i) + '] ' + en)
+    .join('\n');
 
   const prompt = `당신은 대한민국 고등학생용 영어 구문분석 교안을 작성하는 전문 영어 강사입니다.
 
@@ -10018,10 +10210,14 @@ async function callClaude(passage, textbook, lesson, customTitle) {
 7. 영어 단어·표현·고유명사를 한국어 설명에 섞을 때도 작은따옴표로만 감쌀 것.
    - 올바름: "'break the ice'는 어색한 분위기를 깨다"
    - 틀림: "\\"break the ice\\"는 어색한 분위기를 깨다"
+8. ⛔ 원문 재작성 절대 금지. 문장 목록을 새로 만들지 말 것. 아래에 **이미 분리된 문장**만 분석할 것.
 ═══════════════════════════════════════════════════════════════
 
-[지문]
+[원문 지문 — 보존용. 다시 쓰거나 요약하지 말 것]
 ${passage}
+
+[이미 코드로 분리된 문장 목록 — 총 ${originals.length}개. 이 순서·이 텍스트를 그대로 사용]
+${sentenceCatalog}
 
 [교재 정보]
 교재명: ${textbook}
@@ -10036,8 +10232,8 @@ ${passage}
   "expected_title": "예상 제목 (영문, 부제 포함 가능)",
   "text_type": "글의 유형 (예: 서사문 (narrative) — 시간 순서 / 인물의 심리 변화 중심)",
   "mood_change": "심경 변화 (예: 불신·긴장 (hardly dared believe) → 기쁨·안도 (almost cried with joy))",
-  "passage_html": "원문 지문 (핵심 표현을 <strong>태그로 감싸서 bold 처리)",
-  "topic_sentence_en": "중심문장 영문 원문",
+  "passage_html": "원문 지문 전체 (글자 누락 없이 그대로. 핵심만 <strong>으로 감싸도 됨)",
+  "topic_sentence_en": "중심문장 영문 원문 (위 목록 중 하나, 글자 그대로)",
   "topic_sentence_ko": "중심문장 한글 해석 및 의미",
   "keywords": ["키워드1", "키워드2", "키워드3", "키워드4", "키워드5", "키워드6"],
   "mood_keyword": "심경 변화 핵심 키워드 (예: 불신 → 기쁨 (심경 변화))",
@@ -10045,7 +10241,7 @@ ${passage}
     {
       "number": "①",
       "pattern_name": "구문 유형 이름 (예: 배경 묘사 (과거완료+진행))",
-      "sentence_html": "문장 원문 (하이라이트는 <span class='hl-red'>단어</span> 형식, 반드시 작은따옴표)",
+      "sentence_html": "위 목록 N번 문장 원문 그대로 + 하이라이트만 추가 (<span class='hl-red'>단어</span>)",
       "analysis": [
         {"component": "성분/품사", "phrase": "어구", "explanation": "설명"}
       ],
@@ -10083,21 +10279,22 @@ ${passage}
 }
 
 중요 지침:
-1. sentences는 4-6개의 의미 단위로 분할. (8개 이상이면 응답이 잘릴 위험)
-2. structure_steps와 diagram_nodes는 반드시 6단계, ④가 pivot, ⑥이 conclusion.
-3. 하이라이트 클래스: hl-blue(주요 구문), hl-red(부정/불신), hl-teal(시간/until), hl-amber(분사/양보), hl-purple(감정/결론).
-4. vocabulary는 8-10개. **각 항목 note 필드에 유의어·반의어를 반드시 포함** (아래 형식).
+1. ⛔ sentences는 **정확히 ${originals.length}개**. 의미 단위로 재분할·합치기·생략·재작성 금지. 위 목록 1~${originals.length}번을 그대로 분석만 할 것.
+2. 각 sentence_html에서 태그를 제거한 평문은 목록의 해당 문장과 글자 하나까지 일치해야 함.
+3. passage_html의 평문(태그 제거)도 원문 지문과 글자가 일치해야 함 (하이라이트만 추가).
+4. structure_steps와 diagram_nodes는 반드시 6단계, ④가 pivot, ⑥이 conclusion.
+5. 하이라이트 클래스: hl-blue(주요 구문), hl-red(부정/불신), hl-teal(시간/until), hl-amber(분사/양보), hl-purple(감정/결론).
+6. vocabulary는 8-10개. **각 항목 note 필드에 유의어·반의어를 반드시 포함** (아래 형식).
    - note 형식: \`유의어: eng1(한글), eng2(한글) | 반의어: eng1(한글), eng2(한글)\`
    - 예: \`유의어: request(요청), appeal(간청) | 반의어: reject(거절), deny(부인)\`
    - 유의어는 2~4개, 반의어는 1~3개 (없으면 해당 라벨만 생략, 억지 금지)
    - 추가 설명이 있으면 \`| 비고: ...\` 로 이어 붙임
-5. transformations.grammar_points는 **지문에서 출제 가능한 주요 어법 4개 이상** 필수 (수능 어법·구문 유형 중심).
-6. diagram_nodes keyword_short는 22자 이내.
-7. 모든 HTML 속성에 작은따옴표만 사용. 큰따옴표 금지.
-8. JSON 응답만 출력. 다른 텍스트 금지.
-9. ⚠️ 응답 길이 관리: 각 HTML 필드(detail_*_html, passage_html 등)는 핵심만 간결하게. 불필요한 반복, 중복 설명 금지. 전체 응답이 잘리지 않도록 주의.
-10. analysis 배열의 explanation은 1문장으로 간결하게 (40자 이내 권장).
-11. background는 2문장 이내로 제한.`;
+7. transformations.grammar_points는 **지문에서 출제 가능한 주요 어법 4개 이상** 필수 (수능 어법·구문 유형 중심).
+8. diagram_nodes keyword_short는 22자 이내.
+9. 모든 HTML 속성에 작은따옴표만 사용. 큰따옴표 금지.
+10. JSON 응답만 출력. 다른 텍스트 금지.
+11. ⚠️ 응답 길이 관리: analysis explanation은 1문장(40자 이내). detail_*_html·background는 간결하게.
+12. background는 2문장 이내로 제한.`;
 
   // API 키 확인 (외부 환경에서는 필수)
   const isArtifactEnv = (typeof window.storage === 'object' &&
@@ -10108,7 +10305,7 @@ ${passage}
   const headers = { "Content-Type": "application/json" };
   const fetchBody = {
     model: "claude-sonnet-4-5",
-    max_tokens: 16000,
+    max_tokens: 24000,
     messages: [{ role: "user", content: prompt }]
   };
 
@@ -10602,12 +10799,16 @@ async function createRecordFromPassage(passage, meta, opts) {
   const itemCode = unit_no ? String(unit_no) : (unit_title || 'ANALYSIS');
 
   const data = await callClaude(passage, textbook, lesson, customTitle);
+  // 원문 강제 잠금 + 문장 무결성 검증 (누락·변형 시 저장 거부)
+  lockAnalysisToOriginalPassage(passage, data);
   if (customTitle) data.expected_title = customTitle;
 
   if (opts.onProgress) opts.onProgress('어휘 유의어·반의어 보강 중...');
   await enrichAnalysisVocabulary(data, (bi, total) => {
     if (opts.onProgress) opts.onProgress('어휘 보강 중... (' + (bi + 1) + '/' + total + ')');
   });
+  // 어휘 보강 후에도 문장/원문이 오염되지 않았는지 재검증
+  lockAnalysisToOriginalPassage(passage, data);
 
   const fullData = {
     ...data,
@@ -12410,7 +12611,17 @@ function validateJson() {
       return false;
     }
 
-    status.textContent = `✓ JSON 유효 (${Object.keys(parsed).length}개 필드)`;
+    // 원문 ↔ 문장 목록 무결성 게이트 (조용한 누락 금지)
+    try {
+      lockAnalysisToOriginalPassage(parsed.passage, parsed);
+    } catch (gateErr) {
+      status.textContent = '⛔ ' + (gateErr.message || String(gateErr)).split('\n')[0];
+      status.className = 'info error';
+      textarea.classList.add('invalid');
+      return false;
+    }
+
+    status.textContent = `✓ JSON 유효 (${Object.keys(parsed).length}개 필드, 문장 ${parsed.sentences.length}개 원문일치)`;
     status.className = 'info ok';
     textarea.classList.remove('invalid');
     return parsed;
