@@ -1033,7 +1033,7 @@ body.edit-mode .page::before {
       </div>
 
       <div class="input-field">
-        <label>📝 지문 제목 (선택, 미입력 시 AI 자동 생성)</label>
+        <label>📝 지문 제목 (선택 — 입력·또는 본문 `N번` 다음 줄. 둘 다 없으면 AI 생성)</label>
         <input type="text" id="in-custom-title" placeholder="예: Wartime Armistice — Joy and Relief">
       </div>
 
@@ -1041,18 +1041,28 @@ body.edit-mode .page::before {
         <label>✍️ 영어 지문 (원문)</label>
         <textarea class="passage-area" id="in-passage" placeholder="영어 지문을 여기에 붙여넣어 주세요...
 
-예시: Outside, in the streets of Rome, crowds had quickly gathered and were shouting...
+형식 (제목은 코드가 분리 — AI 추측 금지):
+2번
+동물 보호소 봉사
+July 29, Monday
+Our club arrived at the Free Animals sanctuary. ...
 
-여러 지문 일괄 처리 시:
+또는:
+[6강 3번] 한글제목
+(영문 본문...)
+
+여러 지문:
 ---
 18번
-(첫 번째 지문...)
+첫 제목
+(첫 지문...)
 ---
 19번
-(두 번째 지문...)" oninput="previewBatchPassages()"></textarea>
+둘째 제목
+(둘째 지문...)" oninput="previewBatchPassages()"></textarea>
         <label class="batch-option">
           <input type="checkbox" id="in-batch-mode" onchange="previewBatchPassages()">
-          <span><strong>여러 지문 일괄 처리</strong> — <code>[6강 3번] 한글제목</code> + 영문, <code>---</code> 구분선, 또는 <code>18번</code> 형식</span>
+          <span><strong>여러 지문 일괄 처리</strong> — <code>N번</code> 다음 줄=제목, <code>[6강 3번] 제목</code>, 또는 <code>---</code> 구분</span>
         </label>
         <div class="batch-preview" id="batch-preview"></div>
       </div>
@@ -9990,6 +10000,7 @@ function setStatus(type, message) {
 
 // ============================================================
 // 원문 보존 문장 분리 + 무결성 검증 (결정적 — AI 재작성 금지)
+// 분리기: gwj-syntax/src/lib/splitEnglishSentences.ts 차용 (아무것도 안 버림)
 // ============================================================
 const SENTENCE_CIRCLE_NUMS = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
 
@@ -10025,75 +10036,193 @@ function compactAlpha(text) {
 }
 
 /**
- * 결정적 문장 분리.
- * 규칙: 마침표/물음표/느낌표 + 공백(또는 줄바꿈)
- *       + 날짜/제목처럼 종결부호 없는 줄은 줄바꿈으로 분리
- * 못 나누면 통째로 반환 (버리지 않음)
+ * gwj-syntax splitEnglishSentences — 결정적 분리, 꼬리 버리지 않음.
+ * .!? 뒤가 끝/공백일 때만 끊고, 1조각+줄바꿈이면 줄 단위 fallback.
  */
-function splitPassageIntoSentences(text) {
-  const raw = String(text || '').replace(/\r\n/g, '\n').trim();
-  if (!raw) return [];
+function splitEnglishSentences(text) {
+  const trimmed = String(text || '').trim();
+  if (!trimmed) return [];
 
-  // 이미 ➊~⑳ / ①~⑳ 로 표기된 경우는 그 경계를 우선
-  const circled = /[\u278A-\u2793\u2460-\u2473]/;
-  if (circled.test(raw)) {
-    const first = raw.search(circled);
-    const body = first > 0 ? raw.slice(first) : raw;
-    const parts = body
-      .split(/(?=[\u278A-\u2793\u2460-\u2473])/)
-      .map((s) => s.replace(/^[\u278A-\u2793\u2460-\u2473]\s*/, '').replace(/\s+/g, ' ').trim())
+  const parts = [];
+  let buf = '';
+
+  for (let i = 0; i < trimmed.length; i++) {
+    const ch = trimmed[i];
+    buf += ch;
+    if (ch === '.' || ch === '!' || ch === '?') {
+      const rest = trimmed.slice(i + 1);
+      if (rest.length === 0 || /^\s/.test(rest)) {
+        const s = buf.trim();
+        if (s) parts.push(s);
+        buf = '';
+      }
+    }
+  }
+  const tail = buf.trim();
+  if (tail) parts.push(tail);
+
+  if (parts.length <= 1 && trimmed.includes('\n')) {
+    const lines = trimmed
+      .split(/\n+/)
+      .map((s) => s.trim())
       .filter(Boolean);
-    if (parts.length > 0) return parts;
+    if (lines.length > 1) return lines;
   }
 
-  // 종결부호(.!?) + 공백/줄바꿈, 또는 종결부호 없는 줄 끝에서 다음 대문자 줄
-  const parts = raw
-    .split(/(?<=[.!?])(?:[ \t\f\v]+|\n+)|(?<![.!?])\n+(?=[A-Z"'(\[{0-9\u201C])/)
-    .map((s) => s.replace(/[ \t\f\v]+/g, ' ').replace(/\n+/g, ' ').trim())
-    .filter(Boolean);
+  return parts.length > 0 ? parts : [trimmed];
+}
 
-  if (parts.length === 0) {
-    const one = raw.replace(/\s+/g, ' ').trim();
-    return one ? [one] : [];
-  }
-  return parts;
+/** @deprecated use splitEnglishSentences — 호환 별칭 */
+function splitPassageIntoSentences(text) {
+  return splitEnglishSentences(text);
 }
 
 function sentenceCircleNumber(index) {
   return SENTENCE_CIRCLE_NUMS[index] || String(index + 1);
 }
 
+function escapeXmlText(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 /**
- * AI 응답 sentences를 원문 분리 결과로 강제 재정렬.
- * 하이라이트 HTML은 평문이 원문과 일치할 때만 채택.
+ * 평문에 강조 표현만 코드로 삽입. 원문에 없는 phrase는 무시.
+ * @param {string} plain
+ * @param {Array<{phrase?:string,class?:string}|string>} highlights
+ * @param {'span'|'strong'} mode
  */
-function reconcileAnalysisSentences(originals, aiSentences) {
-  const ai = Array.isArray(aiSentences) ? aiSentences : [];
-  return originals.map((en, i) => {
-    const src = ai[i] && typeof ai[i] === 'object' ? ai[i] : {};
-    const aiPlain = normalizeForFidelity(
-      src.sentence_en || stripHtmlToPlain(src.sentence_html || '')
+function applyHighlightsToPlain(plain, highlights, mode) {
+  const src = String(plain || '');
+  if (!src) return '';
+  const items = (Array.isArray(highlights) ? highlights : [])
+    .map((h) => {
+      if (typeof h === 'string') return { phrase: h, cls: mode === 'strong' ? null : 'hl-blue' };
+      if (h && typeof h === 'object' && h.phrase) {
+        return { phrase: String(h.phrase), cls: h.class || h.cls || 'hl-blue' };
+      }
+      return null;
+    })
+    .filter((h) => h && h.phrase && src.includes(h.phrase))
+    .sort((a, b) => b.phrase.length - a.phrase.length);
+
+  if (items.length === 0) {
+    return escapeXmlText(src).replace(/\n/g, '<br>');
+  }
+
+  // 긴 구부터 비겹침 구간 선택
+  const ranges = [];
+  for (const it of items) {
+    let from = 0;
+    while (from < src.length) {
+      const idx = src.indexOf(it.phrase, from);
+      if (idx < 0) break;
+      const end = idx + it.phrase.length;
+      const overlap = ranges.some((r) => !(end <= r.start || idx >= r.end));
+      if (!overlap) ranges.push({ start: idx, end, cls: it.cls, phrase: it.phrase });
+      from = end;
+    }
+  }
+  ranges.sort((a, b) => a.start - b.start);
+
+  let out = '';
+  let cursor = 0;
+  for (const r of ranges) {
+    if (r.start > cursor) out += escapeXmlText(src.slice(cursor, r.start));
+    const body = escapeXmlText(src.slice(r.start, r.end));
+    if (mode === 'strong') out += '<strong>' + body + '</strong>';
+    else out += '<span class=\'' + String(r.cls || 'hl-blue').replace(/'/g, '') + '\'>' + body + '</span>';
+    cursor = r.end;
+  }
+  if (cursor < src.length) out += escapeXmlText(src.slice(cursor));
+  return out.replace(/\n/g, '<br>');
+}
+
+/**
+ * AI 분석·강조만 병합. sentence_html / passage_html 은 원문 기반으로 코드 생성.
+ * 문장 수 불일치 → throw (저장 거부).
+ */
+function assembleLockedAnalysis(passage, aiData, titleOpts) {
+  titleOpts = titleOpts || {};
+  const originals = splitEnglishSentences(passage);
+  if (!originals.length) {
+    throw new Error('원문 문장 분리 실패 — 저장하지 않습니다.');
+  }
+
+  const ai = aiData && typeof aiData === 'object' ? aiData : {};
+  const aiSents = Array.isArray(ai.sentences) ? ai.sentences : [];
+
+  if (aiSents.length !== originals.length) {
+    throw new Error(
+      '⛔ 원문 무결성 검증 실패 — 저장 거부\n\n' +
+      '문장 수 불일치: 원문 ' + originals.length + '개 vs AI 분석 ' + aiSents.length + '개\n\n' +
+      'AI가 문장을 누락·합쳤을 수 있습니다. 다시 생성해 주세요.'
     );
-    const want = normalizeForFidelity(en);
-    const htmlOk = compactAlpha(aiPlain) === compactAlpha(want) && !!src.sentence_html;
+  }
+
+  const sentences = originals.map((en, i) => {
+    const src = aiSents[i] && typeof aiSents[i] === 'object' ? aiSents[i] : {};
+    const highlights = Array.isArray(src.highlights) ? src.highlights : [];
+    // sentence_html은 AI가 만들지 않음 — 원문 + highlights만 코드 적용
     return {
       number: src.number || sentenceCircleNumber(i),
       pattern_name: src.pattern_name || '',
       sentence_en: en,
-      sentence_html: htmlOk ? src.sentence_html : en.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+      sentence_html: applyHighlightsToPlain(en, highlights, 'span'),
+      highlights,
       analysis: Array.isArray(src.analysis) ? src.analysis : [],
       translation: src.translation || ''
     };
   });
+
+  const gate = validatePassageSentenceFidelity(passage, sentences);
+  if (!gate.ok) {
+    throw new Error(
+      '⛔ 원문 무결성 검증 실패 — 저장 거부\n\n' +
+      gate.message + '\n\n' +
+      '원인: 문장 평문이 원문과 다릅니다. 다시 생성해 주세요.'
+    );
+  }
+
+  const data = { ...ai };
+  data.passage = passage;
+  data.sentences = sentences;
+  const passageHighlights = Array.isArray(ai.passage_highlights) ? ai.passage_highlights : [];
+  data.passage_highlights = passageHighlights;
+  data.passage_html = applyHighlightsToPlain(passage, passageHighlights, 'strong');
+  // topic_sentence_en: 인덱스가 있으면 원문에서, 아니면 AI가 준 값이 원문 문장과 일치할 때만
+  let topicEn = '';
+  const idxRaw = ai.topic_sentence_index;
+  const idx = Number(idxRaw);
+  if (Number.isFinite(idx) && idx >= 1 && idx <= originals.length) {
+    topicEn = originals[idx - 1];
+  } else if (ai.topic_sentence_en) {
+    const cand = String(ai.topic_sentence_en);
+    const hit = originals.find((s) => compactAlpha(s) === compactAlpha(cand));
+    topicEn = hit || originals[Math.max(0, originals.length - 2)] || originals[0];
+  } else {
+    topicEn = originals[Math.max(0, originals.length - 2)] || originals[0];
+  }
+  data.topic_sentence_en = topicEn;
+
+  // 제목: 입력값이 있으면 AI 제목 무시
+  const fixedTitle = (titleOpts.customTitle || '').trim();
+  if (fixedTitle) {
+    data.expected_title = fixedTitle;
+    if (/[\uAC00-\uD7AF]/.test(fixedTitle)) data.title_ko = fixedTitle;
+  }
+
+  return data;
 }
 
 /**
  * 결과 문장들을 이어붙인 글자가 원문과 다르면 거부.
- * @returns {{ ok: boolean, message?: string, expectedCount?: number, actualCount?: number }}
  */
 function validatePassageSentenceFidelity(passage, sentences) {
   const list = Array.isArray(sentences) ? sentences : [];
-  const expected = splitPassageIntoSentences(passage);
+  const expected = splitEnglishSentences(passage);
   if (expected.length === 0) {
     return { ok: false, message: '원문에서 문장을 분리할 수 없습니다.' };
   }
@@ -10111,10 +10240,9 @@ function validatePassageSentenceFidelity(passage, sentences) {
   const o = compactAlpha(passage);
   const j = compactAlpha(joined);
   if (o !== j) {
-    // 어느 쪽이 빠졌는지 짧게 힌트
     let missingHint = '';
     for (const exp of expected) {
-      if (!compactAlpha(joined).includes(compactAlpha(exp).slice(0, Math.min(24, compactAlpha(exp).length)))) {
+      if (!j.includes(compactAlpha(exp).slice(0, Math.min(24, compactAlpha(exp).length)))) {
         missingHint = ' 누락 추정: "' + exp.slice(0, 40) + (exp.length > 40 ? '…' : '') + '"';
         break;
       }
@@ -10126,7 +10254,6 @@ function validatePassageSentenceFidelity(passage, sentences) {
       message: '원문 글자 불일치 (공백 제외 ' + o.length + ' vs ' + j.length + ').' + missingHint
     };
   }
-  // 개별 문장 일치
   for (let i = 0; i < expected.length; i++) {
     const got = compactAlpha(list[i].sentence_en || stripHtmlToPlain(list[i].sentence_html || ''));
     if (got !== compactAlpha(expected[i])) {
@@ -10134,42 +10261,18 @@ function validatePassageSentenceFidelity(passage, sentences) {
         ok: false,
         expectedCount: expected.length,
         actualCount: list.length,
-        message: (i + 1) + '번 문장이 원문과 다름: 기대 "' + expected[i].slice(0, 40) + '…" / 실제 "' +
-          String(list[i].sentence_en || stripHtmlToPlain(list[i].sentence_html || '')).slice(0, 40) + '…"'
+        message: (i + 1) + '번 문장이 원문과 다름'
       };
     }
   }
   return { ok: true, expectedCount: expected.length, actualCount: list.length };
 }
 
-/** passage_html 평문이 원문과 다르면 원문으로 교체 */
-function ensurePassageHtmlFidelity(passage, passageHtml) {
-  const plain = stripHtmlToPlain(passageHtml || '');
-  if (compactAlpha(plain) === compactAlpha(passage)) return passageHtml;
-  return String(passage || '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\n/g, '<br>');
-}
-
-/**
- * AI 응답에 원문 강제 적용 + 검증. 실패 시 throw (조용한 누락 금지).
- */
-function lockAnalysisToOriginalPassage(passage, data) {
-  const originals = splitPassageIntoSentences(passage);
-  if (!originals.length) throw new Error('원문 문장 분리 실패 — 저장하지 않습니다.');
-
-  data.passage = passage;
-  data.sentences = reconcileAnalysisSentences(originals, data.sentences);
-  data.passage_html = ensurePassageHtmlFidelity(passage, data.passage_html);
-
-  const gate = validatePassageSentenceFidelity(passage, data.sentences);
-  if (!gate.ok) {
-    throw new Error(
-      '⛔ 원문 무결성 검증 실패 — 저장 거부\n\n' +
-      gate.message + '\n\n' +
-      '원인: AI가 문장을 누락·변형했을 수 있습니다. 다시 생성해 주세요.'
-    );
-  }
+/** @deprecated — assembleLockedAnalysis 사용 */
+function lockAnalysisToOriginalPassage(passage, data, titleOpts) {
+  const locked = assembleLockedAnalysis(passage, data, titleOpts);
+  Object.keys(data).forEach((k) => { delete data[k]; });
+  Object.assign(data, locked);
   return data;
 }
 
@@ -10180,14 +10283,24 @@ function lockAnalysisToOriginalPassage(passage, data) {
 let lastRawResponse = '';
 
 async function callClaude(passage, textbook, lesson, customTitle) {
-  const titleHint = customTitle ? `\n지정된 제목: ${customTitle} (이 제목을 topic_en의 힌트로 사용)` : '';
-  const originals = splitPassageIntoSentences(passage);
+  const originals = splitEnglishSentences(passage);
   if (!originals.length) {
     throw new Error('지문에서 문장을 분리할 수 없습니다. 원문을 확인해 주세요.');
   }
+  const hasFixedTitle = !!(customTitle && String(customTitle).trim());
+  const titleHint = hasFixedTitle
+    ? `\n지정된 제목: ${String(customTitle).trim()} (title_ko·expected_title은 빈 문자열로 둘 것 — 코드가 채움)`
+    : '\n제목 미지정 — title_ko·expected_title을 생성할 것';
+
   const sentenceCatalog = originals
-    .map((en, i) => (i + 1) + '. [' + sentenceCircleNumber(i) + '] ' + en)
+    .map((en, i) => (i + 1) + '. [' + sentenceCircleNumber(i) + '] ' + en.replace(/\n/g, ' '))
     .join('\n');
+
+  const titleSchema = hasFixedTitle
+    ? `"title_ko": "",
+  "expected_title": "",`
+    : `"title_ko": "한글 제목 (8~15자)",
+  "expected_title": "예상 제목 (영문, 부제 포함 가능)",`;
 
   const prompt = `당신은 대한민국 고등학생용 영어 구문분석 교안을 작성하는 전문 영어 강사입니다.
 
@@ -10196,52 +10309,44 @@ async function callClaude(passage, textbook, lesson, customTitle) {
 ═══════════════════════════════════════════════════════════════
 1. 응답은 **오직 JSON 객체 하나**만. 앞뒤에 설명 문구, markdown 코드펜스(\`\`\`) 금지.
 2. JSON 문자열 값 안에 HTML을 쓸 때, HTML 속성값은 **반드시 작은따옴표(')**만 사용.
-   - 올바름: "sentence_html": "Lina <span class='hl-red'>hardly</span> dared"
-   - 틀림: "sentence_html": "Lina <span class=\\"hl-red\\">hardly</span> dared"
-   - 틀림: "sentence_html": "Lina <span class="hl-red">hardly</span> dared"
 3. JSON 문자열 값 안에서 큰따옴표(")는 절대 사용 금지. 인용이 필요하면 작은따옴표(')로.
-4. 줄바꿈은 \\n이 아니라 <br> 태그로 (HTML 필드에서만).
-5. JSON 필드명(key)은 반드시 큰따옴표로 감싼다. 값(value)은 위 규칙을 따른다.
-6. ⚠️ 중요: 한국어 문법 설명에서 인용 표현을 쓸 때도 **반드시 작은따옴표**만 사용.
-   - 올바름: "grammar_points": ["'~하다'의 관용 표현"]
-   - 올바름: "note": "'run into'는 '우연히 만나다'의 의미"
-   - 틀림: "grammar_points": ["\\"~하다\\"의 관용 표현"]  ← 큰따옴표 이스케이프 금지
-   - 틀림: "grammar_points": [""~하다"의 관용 표현"]    ← 큰따옴표 사용 금지
-7. 영어 단어·표현·고유명사를 한국어 설명에 섞을 때도 작은따옴표로만 감쌀 것.
-   - 올바름: "'break the ice'는 어색한 분위기를 깨다"
-   - 틀림: "\\"break the ice\\"는 어색한 분위기를 깨다"
-8. ⛔ 원문 재작성 절대 금지. 문장 목록을 새로 만들지 말 것. 아래에 **이미 분리된 문장**만 분석할 것.
+4. 줄바꿈은 \\n이 아니라 공백 또는 설명 필드의 <br>만.
+5. JSON 필드명(key)은 반드시 큰따옴표로 감싼다.
+6. 한국어 설명의 인용은 **작은따옴표**만.
+7. ⛔ 원문 재작성 절대 금지.
+   - passage_html / sentence_html 필드를 **만들지 말 것** (코드가 원문으로 조립함).
+   - 문장 목록을 새로 만들거나 합치거나 생략하지 말 것.
+   - 각 번호에 대해 분석·하이라이트 표현 목록만 반환.
 ═══════════════════════════════════════════════════════════════
 
-[원문 지문 — 보존용. 다시 쓰거나 요약하지 말 것]
+[원문 지문 — 참고용. 다시 쓰지 말 것]
 ${passage}
 
-[이미 코드로 분리된 문장 목록 — 총 ${originals.length}개. 이 순서·이 텍스트를 그대로 사용]
+[이미 코드로 분리된 문장 목록 — 총 ${originals.length}개. 이 번호·텍스트만 분석]
 ${sentenceCatalog}
 
 [교재 정보]
 교재명: ${textbook}
 강 번호: ${lesson}${titleHint}
 
-다음 JSON 스키마에 정확히 맞춰 응답하세요:
+다음 JSON 스키마에 정확히 맞춰 응답하세요 (passage_html·sentence_html 금지):
 
 {
-  "topic_en": "영문 주제 (Topic: 뒤에 들어갈 짧은 문구)",
-  "topic_ko": "한글 주제 (2-3문장으로 지문의 핵심 요약)",
-  "title_ko": "한글 제목 (8~15자 이내 짧은 제목, 예: 전쟁 종전의 기쁨 / 로마 거리의 환호)",
-  "expected_title": "예상 제목 (영문, 부제 포함 가능)",
-  "text_type": "글의 유형 (예: 서사문 (narrative) — 시간 순서 / 인물의 심리 변화 중심)",
-  "mood_change": "심경 변화 (예: 불신·긴장 (hardly dared believe) → 기쁨·안도 (almost cried with joy))",
-  "passage_html": "원문 지문 전체 (글자 누락 없이 그대로. 핵심만 <strong>으로 감싸도 됨)",
-  "topic_sentence_en": "중심문장 영문 원문 (위 목록 중 하나, 글자 그대로)",
-  "topic_sentence_ko": "중심문장 한글 해석 및 의미",
+  "topic_en": "영문 주제 (짧은 문구)",
+  "topic_ko": "한글 주제 (2-3문장 핵심 요약)",
+  ${titleSchema}
+  "text_type": "글의 유형",
+  "mood_change": "심경 변화 요약",
+  "topic_sentence_index": 1,
+  "topic_sentence_ko": "중심문장 한글 해석",
   "keywords": ["키워드1", "키워드2", "키워드3", "키워드4", "키워드5", "키워드6"],
-  "mood_keyword": "심경 변화 핵심 키워드 (예: 불신 → 기쁨 (심경 변화))",
+  "mood_keyword": "심경 변화 핵심 키워드",
+  "passage_highlights": ["원문에 실제로 있는 강조 어구1", "강조 어구2"],
   "sentences": [
     {
       "number": "①",
-      "pattern_name": "구문 유형 이름 (예: 배경 묘사 (과거완료+진행))",
-      "sentence_html": "위 목록 N번 문장 원문 그대로 + 하이라이트만 추가 (<span class='hl-red'>단어</span>)",
+      "pattern_name": "구문 유형 이름",
+      "highlights": [{"phrase": "원문에 있는 어구", "class": "hl-blue"}],
       "analysis": [
         {"component": "성분/품사", "phrase": "어구", "explanation": "설명"}
       ],
@@ -10249,52 +10354,45 @@ ${sentenceCatalog}
     }
   ],
   "vocabulary": [
-    {"word": "단어/어구", "pos": "품사", "meaning": "한글 의미", "note": "유의어: word1(한글뜻), word2(한글뜻) | 반의어: word1(한글뜻), word2(한글뜻)"}
+    {"word": "단어/어구", "pos": "품사", "meaning": "한글 의미", "note": "유의어: a(뜻) | 반의어: b(뜻)"}
   ],
   "transformations": {
-    "blank_inference": ["빈칸 추론 포인트1", "..."],
-    "mood_change_desc": "심경 변화 설명 (<br>만 사용, 다른 HTML 속성 최소화)",
-    "grammar_points": ["어법 포인트1", "어법 포인트2", "어법 포인트3", "어법 포인트4"],
-    "title_theme_options": "제목·주제 선택지 (제목은 작은따옴표로 감싸기. 예: '제목 A' 또는 '제목 B')"
+    "blank_inference": ["빈칸 추론 포인트"],
+    "mood_change_desc": "심경 변화 설명",
+    "grammar_points": ["어법1", "어법2", "어법3", "어법4"],
+    "title_theme_options": "제목·주제 선택지"
   },
-  "background": "배경지식 요약 (2-3문장, 중요 용어에 <strong>태그)",
+  "background": "배경지식 요약 (2문장 이내)",
   "structure_steps": [
     {"step": "①", "title": "배경 설정", "phrase": "핵심 영어 어구", "relation": "장면 도입", "relation_type": "normal"},
-    {"step": "②", "title": "소식 입수·불신", "phrase": "...", "relation": "심리 → 불신", "relation_type": "normal"},
+    {"step": "②", "title": "...", "phrase": "...", "relation": "...", "relation_type": "normal"},
     {"step": "③", "title": "...", "phrase": "...", "relation": "...", "relation_type": "normal"},
-    {"step": "④", "title": "직접 확인 (전환점)", "phrase": "...", "relation": "★ 전환점", "relation_type": "pivot"},
+    {"step": "④", "title": "전환점", "phrase": "...", "relation": "★ 전환점", "relation_type": "pivot"},
     {"step": "⑤", "title": "...", "phrase": "...", "relation": "...", "relation_type": "normal"},
-    {"step": "⑥", "title": "...", "phrase": "...", "relation": "★ 주제문·결론", "relation_type": "conclusion"}
+    {"step": "⑥", "title": "결론", "phrase": "...", "relation": "★ 주제문·결론", "relation_type": "conclusion"}
   ],
   "diagram_nodes": [
-    {"id": 0, "title_short": "배경 설정", "keyword_short": "짧은 키워드 22자 이내", "detail_title": "상세 제목", "detail_en_html": "영문 (하이라이트는 작은따옴표 span)", "detail_ko_html": "한글 해석 (<br>만 사용)", "detail_pt_html": "시험 포인트 (<strong>만 사용)"}
+    {"id": 0, "title_short": "배경 설정", "keyword_short": "22자 이내", "detail_title": "상세 제목", "detail_en_html": "영문 요약(원문 일부만, 작은따옴표 span)", "detail_ko_html": "한글", "detail_pt_html": "시험 포인트"}
   ],
   "mood_bar": {
-    "start": "불신·긴장",
-    "start_en": "hardly dared believe",
-    "transition": "직접 확인 후",
-    "end": "기쁨·안도",
-    "end_en": "almost cried with joy"
+    "start": "시작 감정",
+    "start_en": "원문 어구",
+    "transition": "전환",
+    "end": "끝 감정",
+    "end_en": "원문 어구"
   }
 }
 
 중요 지침:
-1. ⛔ sentences는 **정확히 ${originals.length}개**. 의미 단위로 재분할·합치기·생략·재작성 금지. 위 목록 1~${originals.length}번을 그대로 분석만 할 것.
-2. 각 sentence_html에서 태그를 제거한 평문은 목록의 해당 문장과 글자 하나까지 일치해야 함.
-3. passage_html의 평문(태그 제거)도 원문 지문과 글자가 일치해야 함 (하이라이트만 추가).
-4. structure_steps와 diagram_nodes는 반드시 6단계, ④가 pivot, ⑥이 conclusion.
-5. 하이라이트 클래스: hl-blue(주요 구문), hl-red(부정/불신), hl-teal(시간/until), hl-amber(분사/양보), hl-purple(감정/결론).
-6. vocabulary는 8-10개. **각 항목 note 필드에 유의어·반의어를 반드시 포함** (아래 형식).
-   - note 형식: \`유의어: eng1(한글), eng2(한글) | 반의어: eng1(한글), eng2(한글)\`
-   - 예: \`유의어: request(요청), appeal(간청) | 반의어: reject(거절), deny(부인)\`
-   - 유의어는 2~4개, 반의어는 1~3개 (없으면 해당 라벨만 생략, 억지 금지)
-   - 추가 설명이 있으면 \`| 비고: ...\` 로 이어 붙임
-7. transformations.grammar_points는 **지문에서 출제 가능한 주요 어법 4개 이상** 필수 (수능 어법·구문 유형 중심).
-8. diagram_nodes keyword_short는 22자 이내.
-9. 모든 HTML 속성에 작은따옴표만 사용. 큰따옴표 금지.
-10. JSON 응답만 출력. 다른 텍스트 금지.
-11. ⚠️ 응답 길이 관리: analysis explanation은 1문장(40자 이내). detail_*_html·background는 간결하게.
-12. background는 2문장 이내로 제한.`;
+1. sentences는 **정확히 ${originals.length}개**. 번호 1~${originals.length}와 1:1 대응. 재분할·합치기·생략 금지.
+2. highlights.phrase / passage_highlights 는 **원문에 글자 그대로 존재하는 부분문자열만**. 없으면 빈 배열.
+3. topic_sentence_index 는 목록의 1-based 번호 (원문 다시 쓰지 말 것).
+4. structure_steps·diagram_nodes는 6단계, ④ pivot, ⑥ conclusion.
+5. 하이라이트 class: hl-blue / hl-red / hl-teal / hl-amber / hl-purple.
+6. vocabulary 8-10개, note에 유의어·반의어 포함.
+7. grammar_points 4개 이상.
+8. JSON만 출력.
+9. analysis.explanation은 40자 이내, background 2문장 이내.`;
 
   // API 키 확인 (외부 환경에서는 필수)
   const isArtifactEnv = (typeof window.storage === 'object' &&
@@ -10663,42 +10761,122 @@ function parsePassageBlocks(raw, batchMode) {
   const text = (raw || '').trim();
   if (!text) return [];
 
-  const bySeparator = text.split(/\n\s*(?:-{3,}|={3,}|\*{3,}|#{3,})\s*\n/)
-    .map(s => s.trim())
-    .filter(s => s.length >= 50);
-  if (bySeparator.length > 1) {
-    return bySeparator.map(passage => ({ unitTitle: null, passage }));
+  function parseOneBlock(blockText, defaultUnit) {
+    const lines = String(blockText || '').replace(/\r\n/g, '\n').split('\n');
+    let unitTitle = defaultUnit || null;
+    let titleKo = null;
+    let bodyStart = 0;
+
+    // 첫 비어 있지 않은 줄이 유닛 헤더인지 검사
+    let i = 0;
+    while (i < lines.length && !lines[i].trim()) i++;
+    if (i < lines.length) {
+      const trimmed = lines[i].trim();
+      // [6강 3번] 한글제목  — 같은 줄 제목
+      const bracket = trimmed.match(/^\s*(?:\*\*)?\[([^\]]+)\](?:\*\*)?\s*(.*)$/);
+      const simple = trimmed.match(/^\s*(?:\[(\d+)\]|(\d+)\s*번|(?:No\.?\s*|Passage\s*)(\d+)|(\d+)\.)\s*$/i);
+      if (bracket) {
+        unitTitle = bracket[1].trim();
+        const sameLineTitle = (bracket[2] || '').replace(/^[—\-–]\s*/, '').trim();
+        if (sameLineTitle) titleKo = sameLineTitle;
+        bodyStart = i + 1;
+        // 같은 줄 제목 없으면 다음 한 줄 = 제목
+        if (!titleKo) {
+          let j = bodyStart;
+          while (j < lines.length && !lines[j].trim()) j++;
+          if (j < lines.length) {
+            titleKo = lines[j].trim();
+            bodyStart = j + 1;
+          }
+        }
+      } else if (simple) {
+        const n = simple[1] || simple[2] || simple[3] || simple[4];
+        unitTitle = n + '번';
+        bodyStart = i + 1;
+        // N번 다음 한 줄 = 제목
+        let j = bodyStart;
+        while (j < lines.length && !lines[j].trim()) j++;
+        if (j < lines.length) {
+          titleKo = lines[j].trim();
+          bodyStart = j + 1;
+        }
+      }
+    }
+
+    const passage = lines.slice(bodyStart).join('\n').trim() || String(blockText || '').trim();
+    return { unitTitle, titleKo, passage };
   }
 
-  if (!batchMode) return [{ unitTitle: null, passage: text }];
+  const bySeparator = text.split(/\n\s*(?:-{3,}|={3,}|\*{3,}|#{3,})\s*\n/)
+    .map(s => s.trim())
+    .filter(s => s.length >= 20);
 
-  // [6강 1번], **[1회 36번]** — 유형, [6강 3번] 한글제목 한 줄 등
-  const bracketHeaderRe = /^\s*(?:\*\*)?\[([^\]]+)\](?:\*\*)?(?:\s*[—\-–][^\n]*)?(?:\s+[^\n\[]*)?\s*$/;
+  if (bySeparator.length > 1) {
+    const blocks = bySeparator.map((chunk) => {
+      const b = parseOneBlock(chunk, null);
+      return b.passage.length >= 20 ? b : null;
+    }).filter(Boolean);
+    if (blocks.length > 1) return blocks;
+  }
+
+  if (!batchMode) {
+    // 단일 모드: 본문 맨 앞에 N번+제목이 있으면 분리, 없으면 통째로
+    const single = parseOneBlock(text, null);
+    if (single.unitTitle || single.titleKo) {
+      if (single.passage.length >= 20) return [single];
+    }
+    return [{ unitTitle: null, titleKo: null, passage: text }];
+  }
+
+  // 일괄: 줄 단위 다중 헤더 스캔
+  const bracketHeaderRe = /^\s*(?:\*\*)?\[([^\]]+)\](?:\*\*)?\s*(.*)$/;
   const simpleHeaderRe = /^\s*(?:\[(\d+)\]|(\d+)\s*번|(?:No\.?\s*|Passage\s*)(\d+)|(\d+)\.)\s*$/i;
 
   const lines = text.split('\n');
   const blocks = [];
   let currentUnit = null;
+  let currentTitle = null;
+  let expectTitle = false;
   let buf = [];
 
   function flushBlock() {
     const passage = buf.join('\n').trim();
     buf = [];
-    if (passage.length >= 50) blocks.push({ unitTitle: currentUnit, passage });
+    if (passage.length >= 20) {
+      blocks.push({ unitTitle: currentUnit, titleKo: currentTitle, passage });
+    }
+    currentTitle = null;
   }
 
   for (const line of lines) {
     const trimmed = line.trim();
     const bracket = trimmed.match(bracketHeaderRe);
-    if (bracket) {
+    if (bracket && /^\s*(?:\*\*)?\[[^\]]+\]/.test(trimmed)) {
+      // 유닛 헤더로만 인정: 대괄호로 시작
       if (buf.length > 0) flushBlock();
       currentUnit = bracket[1].trim();
+      const same = (bracket[2] || '').replace(/^[—\-–]\s*/, '').trim();
+      if (same) {
+        currentTitle = same;
+        expectTitle = false;
+      } else {
+        currentTitle = null;
+        expectTitle = true;
+      }
       continue;
     }
     if (simpleHeaderRe.test(trimmed)) {
       if (buf.length > 0) flushBlock();
-      const m = trimmed.match(/(\d+)\s*번/) || trimmed.match(/\[(\d+)\]/);
-      currentUnit = m ? m[1] + '번' : trimmed.replace(/^\[|\]$/g, '');
+      const m = trimmed.match(/(\d+)\s*번/) || trimmed.match(/\[(\d+)\]/) || trimmed.match(/(\d+)/);
+      currentUnit = m ? m[1] + '번' : trimmed;
+      currentTitle = null;
+      expectTitle = true;
+      continue;
+    }
+    if (expectTitle) {
+      if (!trimmed) continue;
+      currentTitle = trimmed;
+      expectTitle = false;
       continue;
     }
     buf.push(line);
@@ -10706,8 +10884,9 @@ function parsePassageBlocks(raw, batchMode) {
   flushBlock();
 
   if (blocks.length > 1) return blocks;
-  return [{ unitTitle: null, passage: text }];
+  return [{ unitTitle: null, titleKo: null, passage: text }];
 }
+
 
 function splitPassages(raw, batchMode) {
   return parsePassageBlocks(raw, batchMode).map(b => b.passage);
@@ -10793,22 +10972,21 @@ function validateInputMeta(meta, passage, options) {
 async function createRecordFromPassage(passage, meta, opts) {
   const unit_no = opts.unit_no;
   const unit_title = opts.unit_title;
-  const customTitle = opts.customTitle || '';
+  const customTitle = (opts.customTitle || opts.embeddedTitle || '').trim();
   const textbook = meta.volume_title || meta.series_title || '교재';
   const lesson = unit_title || '';
   const itemCode = unit_no ? String(unit_no) : (unit_title || 'ANALYSIS');
 
-  const data = await callClaude(passage, textbook, lesson, customTitle);
-  // 원문 강제 잠금 + 문장 무결성 검증 (누락·변형 시 저장 거부)
-  lockAnalysisToOriginalPassage(passage, data);
-  if (customTitle) data.expected_title = customTitle;
+  const rawAi = await callClaude(passage, textbook, lesson, customTitle);
+  // 원문 조립 + 문장 수·글자 검증 (AI sentence_html/passage_html 미사용)
+  let data = assembleLockedAnalysis(passage, rawAi, { customTitle });
 
   if (opts.onProgress) opts.onProgress('어휘 유의어·반의어 보강 중...');
   await enrichAnalysisVocabulary(data, (bi, total) => {
     if (opts.onProgress) opts.onProgress('어휘 보강 중... (' + (bi + 1) + '/' + total + ')');
   });
-  // 어휘 보강 후에도 문장/원문이 오염되지 않았는지 재검증
-  lockAnalysisToOriginalPassage(passage, data);
+  // 어휘 보강 후 재검증·원문 재잠금
+  data = assembleLockedAnalysis(passage, data, { customTitle });
 
   const fullData = {
     ...data,
@@ -10917,11 +11095,15 @@ async function generateAnalysis() {
     setStatus('loading', 'Claude가 지문을 분석 중입니다... (약 30초~1분 소요)');
     try {
       let unit_no = meta.base_unit_no;
-      const unit_title = meta.unit_title_base;
+      const unit_title = meta.unit_title_base || blocks[0].unitTitle || '';
+      if ((unit_no === null || unit_no === undefined || isNaN(unit_no)) && blocks[0].unitTitle) {
+        unit_no = unitNoFromLabel(blocks[0].unitTitle, null);
+      }
       const { record, saved } = await createRecordFromPassage(passages[0], meta, {
         unit_no,
         unit_title,
-        customTitle: meta.customTitle,
+        customTitle: meta.customTitle || blocks[0].titleKo || '',
+        embeddedTitle: blocks[0].titleKo || '',
         onProgress: (msg) => setStatus('loading', 'Claude가 지문을 분석 중입니다... ' + msg)
       });
 
@@ -10977,7 +11159,8 @@ async function generateAnalysis() {
         const { record, saved } = await createRecordFromPassage(block.passage, meta, {
           unit_no,
           unit_title,
-          customTitle: '',
+          customTitle: block.titleKo || '',
+          embeddedTitle: block.titleKo || '',
           onProgress: (msg) => setStatus('loading',
             '<strong>' + (i + 1) + '/' + total + '</strong> ' + escapeHtml(msg) +
             (unit_title ? ' · ' + escapeHtml(unit_title) : '')
@@ -12613,7 +12796,11 @@ function validateJson() {
 
     // 원문 ↔ 문장 목록 무결성 게이트 (조용한 누락 금지)
     try {
-      lockAnalysisToOriginalPassage(parsed.passage, parsed);
+      const locked = assembleLockedAnalysis(parsed.passage, parsed, {
+        customTitle: parsed.expected_title || parsed.title_ko || ''
+      });
+      Object.keys(parsed).forEach((k) => { delete parsed[k]; });
+      Object.assign(parsed, locked);
     } catch (gateErr) {
       status.textContent = '⛔ ' + (gateErr.message || String(gateErr)).split('\n')[0];
       status.className = 'info error';
