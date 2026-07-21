@@ -1120,6 +1120,7 @@ Our club arrived at the Free Animals sanctuary. ...
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(event)">
       <span class="count-display">총 <strong id="total-count">145</strong>개</span>
     </div>
+    <div id="repair-progress-banner" style="display:none;margin:10px 0 6px;padding:12px 14px;border-radius:10px;border:1px solid #c2185b;background:linear-gradient(135deg,#fce4ec,#fff);color:#880e4f;font-weight:700;font-size:14px;line-height:1.5;"></div>
     <!-- 🆕 레벨별 탭 -->
     <div id="level-tabs" class="level-tabs"><button class="level-tab active" onclick="setActiveLevelTab(&#39;all&#39;)">🌐 전체 <span class="tab-count">145</span></button><button class="level-tab" onclick="setActiveLevelTab(&#39;L08&#39;)" title="L08 (고1+)">🌊 L08 <small style="opacity:0.85;font-weight:500;">(고1+)</small> <span class="tab-count">105</span></button><button class="level-tab" onclick="setActiveLevelTab(&#39;L09&#39;)" title="L09 (고2)">🌊 L09 <small style="opacity:0.85;font-weight:500;">(고2)</small> <span class="tab-count">40</span></button></div>
     <div id="library-container"><div class="library-grid">
@@ -10002,6 +10003,33 @@ function setStatus(type, message) {
   else box.innerHTML = message;
 }
 
+/** 책장 탭에서도 보이는 복구 진행 배너 (status-box는 입력 탭에만 있음) */
+function setRepairProgress(message, opts) {
+  opts = opts || {};
+  const el = document.getElementById('repair-progress-banner');
+  if (!el) return;
+  if (!message) {
+    el.style.display = 'none';
+    el.textContent = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.textContent = message;
+  if (opts.done) {
+    el.style.borderColor = '#2e7d32';
+    el.style.background = 'linear-gradient(135deg,#e8f5e9,#fff)';
+    el.style.color = '#1b5e20';
+  } else if (opts.error) {
+    el.style.borderColor = '#c62828';
+    el.style.background = 'linear-gradient(135deg,#ffebee,#fff)';
+    el.style.color = '#b71c1c';
+  } else {
+    el.style.borderColor = '#c2185b';
+    el.style.background = 'linear-gradient(135deg,#fce4ec,#fff)';
+    el.style.color = '#880e4f';
+  }
+}
+
 // ============================================================
 // 원문 보존 문장 분리 + 무결성 검증 (결정적 — AI 재작성 금지)
 // 분리기: gwj-syntax/src/lib/splitEnglishSentences.ts 차용 (아무것도 안 버림)
@@ -10705,7 +10733,12 @@ highlights.phrase는 문장에 글자 그대로 있는 것만.`;
 }
 
 /** ③ 빈 분석 문장만 선별 AI (전체 재생성 금지). passage 형식이상은 제외. */
+let _repairFillRunning = false;
 async function repairFillEmptyAnalysis() {
+  if (_repairFillRunning) {
+    showToast('③ 이미 진행 중입니다. 책장 상단 진행 배너를 확인하세요.', 'info');
+    return null;
+  }
   const targets = [];
   let skippedFormat = 0;
   for (const rec of analysisRecordsOnly()) {
@@ -10723,41 +10756,53 @@ async function repairFillEmptyAnalysis() {
   }
   if (targets.length === 0) {
     showToast('③ 빈 분석 없음' + (skippedFormat ? ' (형식이상 ' + skippedFormat + '건 제외)' : ''), 'success');
+    setRepairProgress('');
     return { filled: 0, skippedFormat };
   }
-  if (!confirm('③ 빈 분석 문장 ' + targets.length + '개만 AI 재호출할까요?\n\n· passage 형식이상 ' + skippedFormat + '건 제외\n· 레코드 전체 재생성 안 함')) return null;
+  if (!confirm('③ 빈 분석 문장 ' + targets.length + '개만 AI 재호출할까요?\n\n· passage 형식이상 ' + skippedFormat + '건 제외\n· 레코드 전체 재생성 안 함\n· 진행 상황은 책장 상단 분홍 배너에 표시')) return null;
 
+  _repairFillRunning = true;
+  const btn = document.querySelector('button[onclick="repairFillEmptyAnalysis()"]');
+  if (btn) btn.disabled = true;
   exportBackup();
   let filled = 0, failed = 0;
   setStatus('loading', '③ 빈 분석 보강 중... 0/' + targets.length);
-  for (let i = 0; i < targets.length; i++) {
-    const t = targets[i];
-    setStatus('loading', '③ 빈 분석 보강 중... ' + (i + 1) + '/' + targets.length);
-    try {
-      const one = await callClaudeSentenceOnly(t.en, t.rec.data);
-      const s = t.rec.data.sentences[t.idx];
-      s.pattern_name = one.pattern_name || s.pattern_name || '';
-      s.analysis = Array.isArray(one.analysis) ? one.analysis : [];
-      s.translation = one.translation || s.translation || '';
-      if (Array.isArray(one.highlights) && one.highlights.length) {
-        s.highlights = one.highlights;
-        s.sentence_html = applyHighlightsToPlain(s.sentence_en || t.en, s.highlights, 'span');
+  setRepairProgress('③ 빈 분석 보강 중... 0/' + targets.length + ' (페이지를 닫지 마세요)');
+  try {
+    for (let i = 0; i < targets.length; i++) {
+      const t = targets[i];
+      const msg = '③ 빈 분석 보강 중... ' + (i + 1) + '/' + targets.length + ' · 채움 ' + filled + ' · 실패 ' + failed;
+      setStatus('loading', msg);
+      setRepairProgress(msg + ' (페이지를 닫지 마세요)');
+      try {
+        const one = await callClaudeSentenceOnly(t.en, t.rec.data);
+        const s = t.rec.data.sentences[t.idx];
+        s.pattern_name = one.pattern_name || s.pattern_name || '';
+        s.analysis = Array.isArray(one.analysis) ? one.analysis : [];
+        s.translation = one.translation || s.translation || '';
+        if (Array.isArray(one.highlights) && one.highlights.length) {
+          s.highlights = one.highlights;
+          s.sentence_html = applyHighlightsToPlain(s.sentence_en || t.en, s.highlights, 'span');
+        }
+        s._emptyAnalysis = !(s.analysis && s.analysis.length);
+        filled++;
+        await saveRecord(t.rec);
+      } catch (e) {
+        console.warn('empty analysis fill failed', t.rec.id, t.idx, e);
+        failed++;
       }
-      s._emptyAnalysis = !(s.analysis && s.analysis.length);
-      filled++;
-      // 문장마다 저장 (중단 대비)
-      await saveRecord(t.rec);
-    } catch (e) {
-      console.warn('empty analysis fill failed', t.rec.id, t.idx, e);
-      failed++;
     }
+    const scan = repairFidelityScan();
+    const doneMsg = '③ 완료: 채움 ' + filled + ' / 실패 ' + failed + ' · 잔여손상 ' + (scan.damaged || 0);
+    setStatus('success', doneMsg);
+    setRepairProgress(doneMsg, { done: true });
+    showToast('③ 빈 분석 AI 완료: ' + filled + '채움 / ' + failed + '실패', failed ? 'info' : 'success');
+    renderLibrary();
+    return { filled, failed };
+  } finally {
+    _repairFillRunning = false;
+    if (btn) btn.disabled = false;
   }
-  // 최종 게이트 스캔
-  const scan = repairFidelityScan();
-  setStatus('success', '③ 완료: 채움 ' + filled + ' / 실패 ' + failed + ' · 잔여손상 ' + (scan.damaged || 0));
-  showToast('③ 빈 분석 AI 완료: ' + filled + '채움 / ' + failed + '실패', failed ? 'info' : 'success');
-  renderLibrary();
-  return { filled, failed };
 }
 
 /** @deprecated — assembleLockedAnalysis 사용 (신규 생성용). 복구는 reconcile 경로. */
