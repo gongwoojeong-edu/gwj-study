@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>구문정독 BASIC</title>
+<style>
+  :root {
+    --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3;
+    --bg: #F7F5F0; --card: #fff; --border: #e8e4f3;
+    --text: #2a2438; --text-soft: #6c6480; --text-muted: #999;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', 'Malgun Gothic', -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    padding: 24px 16px; min-height: 100vh;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* 헤더 */
+  .header {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff; padding: 36px 28px; border-radius: 18px;
+    text-align: center; margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(74,61,107,0.2);
+  }
+  .brand { font-size: 13px; opacity: 0.9; letter-spacing: 0.12em; margin-bottom: 8px; }
+  h1 { font-size: 28px; margin-bottom: 8px; word-break: keep-all; font-weight: 700; }
+  .subtitle { font-size: 14px; opacity: 0.92; }
+  .intro {
+    background: #fff; border-left: 4px solid var(--brand);
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 18px;
+    font-size: 14px; color: var(--text-soft);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  /* 레벨 섹션 */
+  .level-section {
+    background: var(--card); border-radius: 16px;
+    padding: 22px 24px; margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .level-header {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding-bottom: 14px; margin-bottom: 18px;
+    border-bottom: 2px solid var(--brand-light);
+  }
+  .level-badge {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff; padding: 6px 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  }
+  .level-name {
+    font-size: 18px; font-weight: 700; color: var(--brand-dark);
+  }
+  .level-count {
+    margin-left: auto; font-size: 12px; color: var(--text-muted);
+    background: var(--brand-light); padding: 4px 10px; border-radius: 12px;
+  }
+
+  /* 시리즈 블록 */
+  .series-block { margin-bottom: 22px; }
+  .series-block:last-child { margin-bottom: 0; }
+  .series-title {
+    font-size: 17px; font-weight: 700; color: var(--brand-dark);
+    margin-bottom: 12px; padding-left: 6px;
+    border-left: 4px solid var(--brand);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .series-count {
+    background: #f0ede6; color: var(--text-soft);
+    padding: 1px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600;
+  }
+
+  /* 권/볼륨 블록 */
+  .volume-block {
+    background: #faf9fc; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .volume-block:last-child { margin-bottom: 0; }
+  .volume-title {
+    font-size: 14px; font-weight: 600; color: var(--text-soft);
+    margin-bottom: 12px;
+  }
+
+  /* 유닛 그리드 (카드) */
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .unit-card {
+    display: block;
+    background: #fff; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+    text-decoration: none; color: inherit;
+    transition: all 0.18s;
+    cursor: pointer;
+  }
+  .unit-card:hover {
+    border-color: var(--brand);
+    background: linear-gradient(135deg, #fff, var(--brand-light));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107,91,149,0.15);
+  }
+  .unit-badge {
+    display: inline-block;
+    background: var(--brand); color: #fff;
+    padding: 2px 9px; border-radius: 5px;
+    font-size: 11px; font-weight: 700;
+    margin-bottom: 6px;
+    font-family: 'SF Mono', Consolas, monospace;
+  }
+  .unit-title {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    line-height: 1.4; word-break: keep-all;
+  }
+  .unit-card:hover .unit-title { color: var(--brand-dark); }
+
+  .footer {
+    text-align: center; padding: 24px 0 8px; font-size: 12px; color: var(--text-muted);
+  }
+
+  /* 모바일 */
+  @media (max-width: 600px) {
+    body { padding: 16px 12px; }
+    h1 { font-size: 22px; }
+    .level-section { padding: 16px; }
+    .units-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">공우정바른학원 · GWJ EDU</div>
+    <h1>구문정독 BASIC</h1>
+    <div class="subtitle">40개 자료 · 2026. 7. 21. 오후 4:16:28</div>
+  </div>
+  
+  <div class="book"><h2 class="book-title">📚 BASIC</h2><div class="chapter"><h3 class="chapter-title">📖 1번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/1번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">1</code>
+              <strong class="item-title">1강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/1번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/1번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 2번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/2번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">2</code>
+              <strong class="item-title">2강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/2번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/2번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 3번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/3번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">3</code>
+              <strong class="item-title">3강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/3번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/3번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 4번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/4번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">4</code>
+              <strong class="item-title">4강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/4번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/4번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 5번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/5번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">5</code>
+              <strong class="item-title">5강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/5번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/5번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 6번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/6번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">6</code>
+              <strong class="item-title">6강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/6번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/6번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 7번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/7번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">7</code>
+              <strong class="item-title">7강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/7번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/7번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 8번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/8번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">8</code>
+              <strong class="item-title">8강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/8번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/8번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 9번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/9번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">9</code>
+              <strong class="item-title">9강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/9번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/9번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 10번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/10번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">10</code>
+              <strong class="item-title">10강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/10번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/10번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 11번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/11번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">11</code>
+              <strong class="item-title">11강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/11번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/11번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 12번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/12번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">12</code>
+              <strong class="item-title">12강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/12번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/12번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 13번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/13번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">13</code>
+              <strong class="item-title">13강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/13번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/13번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 14번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/14번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">14</code>
+              <strong class="item-title">14강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/14번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/14번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 15번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/15번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">15</code>
+              <strong class="item-title">15강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/15번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/15번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 16번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/16번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">16</code>
+              <strong class="item-title">16강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/16번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/16번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 17번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/17번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">17</code>
+              <strong class="item-title">17강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/17번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/17번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 18번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/18번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">18</code>
+              <strong class="item-title">18강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/18번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/18번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 19번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/19번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">19</code>
+              <strong class="item-title">19강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/19번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/19번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 20번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/20번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">20</code>
+              <strong class="item-title">20강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/20번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/20번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 21번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/21번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">21</code>
+              <strong class="item-title">21강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/21번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/21번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 22번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/22번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">22</code>
+              <strong class="item-title">22강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/22번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/22번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 23번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/23번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">23</code>
+              <strong class="item-title">23강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/23번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/23번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 24번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/24번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">24</code>
+              <strong class="item-title">24강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/24번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/24번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 25번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/25번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">25</code>
+              <strong class="item-title">25강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/25번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/25번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 26번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/26번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">26</code>
+              <strong class="item-title">26강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/26번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/26번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 27번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/27번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">27</code>
+              <strong class="item-title">27강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/27번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/27번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 28번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/28번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">28</code>
+              <strong class="item-title">28강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/28번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/28번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 29번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/29번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">29</code>
+              <strong class="item-title">29강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/29번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/29번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 30번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/30번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">30</code>
+              <strong class="item-title">30강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/30번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/30번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 31번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/31번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">31</code>
+              <strong class="item-title">31강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/31번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/31번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 32번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/32번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">32</code>
+              <strong class="item-title">32강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/32번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/32번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 33번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/33번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">33</code>
+              <strong class="item-title">33강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/33번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/33번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 34번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/34번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">34</code>
+              <strong class="item-title">34강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/34번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/34번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 35번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/35번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">35</code>
+              <strong class="item-title">35강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/35번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/35번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 36번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/36번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">36</code>
+              <strong class="item-title">36강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/36번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/36번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 37번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/37번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">37</code>
+              <strong class="item-title">37강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/37번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/37번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 38번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/38번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">38</code>
+              <strong class="item-title">38강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/38번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/38번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 39번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/39번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">39</code>
+              <strong class="item-title">39강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/39번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/39번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div><div class="chapter"><h3 class="chapter-title">📖 40번</h3><div class="items"><div class="item">
+          <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/40번/analysis.html#analysis" target="_blank" class="item-main-link">
+            <div class="item-meta">
+              <code class="item-code">40</code>
+              <strong class="item-title">40강</strong>
+            </div>
+          </a>
+          <div class="item-links">
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/40번/analysis.html#analysis" target="_blank">📄 분석교안</a>
+            <a href="https://gongwoojeong-edu.github.io/gwj-study/study/L02/구문정독/BASIC/40번/structure.html#structure" target="_blank">🗂 구조도</a>
+          </div>
+        </div></div></div></div>
+  <div class="footer">Powered by GWJ AI 영어 분석기</div>
+</div>
+</body>
+</html>
