@@ -1109,10 +1109,10 @@ Our club arrived at the Free Animals sanctuary. ...
       </select>
       <button class="action-btn" onclick="exportBackup()">📦 백업 내보내기</button>
       <button class="action-btn" onclick="document.getElementById(&#39;import-file&#39;).click()">📥 복원</button>
-      <button class="action-btn" onclick="repairFidelityScan()" style="background:linear-gradient(135deg,#fff8e1,#fff);border-color:#f9a825;color:#f57f17;font-weight:700;" title="전 레코드 원문 무결성 점검 → 손상 CSV (읽기만)">① 손상점검</button>
-      <button class="action-btn" onclick="repairFidelityDryRun()" style="background:linear-gradient(135deg,#e3f2fd,#fff);border-color:#1976d2;color:#0d47a1;font-weight:700;" title="백업 + reconcile dry-run CSV (미적용)">② dry-run복구</button>
-      <button class="action-btn" onclick="repairFidelityApply()" style="background:linear-gradient(135deg,#e8f5e9,#fff);border-color:#2e7d32;color:#1b5e20;font-weight:700;" title="문장 원문 1차 복구 적용 (AI 0원)">② apply복구</button>
-      <button class="action-btn" onclick="repairFillEmptyAnalysis()" style="background:linear-gradient(135deg,#fce4ec,#fff);border-color:#c2185b;color:#880e4f;font-weight:700;" title="분석 빈 문장만 선별 AI (전체 재생성 금지)">③ 빈분석AI</button>
+      <button class="action-btn" onclick="repairFidelityScan()" style="background:linear-gradient(135deg,#fff8e1,#fff);border-color:#f9a825;color:#f57f17;font-weight:700;" title="형식이상/문장손상 분류 → CSV (읽기만)">① 손상점검</button>
+      <button class="action-btn" onclick="repairFidelityDryRun()" style="background:linear-gradient(135deg,#e3f2fd,#fff);border-color:#1976d2;color:#0d47a1;font-weight:700;" title="백업 + dry-run (형식이상 제외, 미적용)">② dry-run복구</button>
+      <button class="action-btn" onclick="repairFidelityApply()" style="background:linear-gradient(135deg,#e8f5e9,#fff);border-color:#2e7d32;color:#1b5e20;font-weight:700;" title="문장손상만 1차 복구 (형식이상 제외·AI 0원)">② apply복구</button>
+      <button class="action-btn" onclick="repairFillEmptyAnalysis()" style="background:linear-gradient(135deg,#fce4ec,#fff);border-color:#c2185b;color:#880e4f;font-weight:700;" title="빈 분석만 AI (형식이상·전체재생성 제외)">③ 빈분석AI</button>
       <button class="action-btn" onclick="migrateLibraryToRubelStructure()" style="background: linear-gradient(135deg, #f3e5f5, #fff); border-color: #6B5B95; color: #4A3D6B; font-weight:700;" title="기존 자료를 새 러버블 5계층 구조(Level/Series/Volume/Unit)로 자동 변환">🔄 새 구조로 마이그레이션</button>
       <button class="action-btn" onclick="regenerateCatalog()" style="background: linear-gradient(135deg, #e3f2fd, #fff); border-color: #1976d2; color: #0d47a1;" title="공개된 모든 자료의 전체 목차(index.html)를 재생성 - 학원 대표 URL">📚 전체 목차 갱신</button>
       <button class="action-btn" onclick="redeployAllPublished()" style="background: linear-gradient(135deg, #e8f5e9, #fff); border-color: #2d7a3f; color: #1b5e20;" title="공개된 모든 자료를 최신 포맷으로 재업로드 (구조도/분석교안 분리 반영)">🔄 전체 재배포</button>
@@ -10358,18 +10358,98 @@ function ensurePassageHtmlFidelity(passage, passageHtml) {
   return applyHighlightsToPlain(passage, [], 'strong');
 }
 
+/** passage에 제목·한글해석·①② 등이 섞였는지 분류 (reconcile 오판 방지) */
+function classifyPassageFormat(passage) {
+  const text = String(passage || '');
+  const reasons = [];
+  if (!text.trim()) {
+    return { abnormal: true, reasons: ['empty'], label: 'passage_format' };
+  }
+  // ①②…⑳ / ➊… / ⑴…
+  if (/[\u2460-\u2473\u2776-\u277F\u278A-\u2793\u2474-\u2487]/.test(text)) {
+    reasons.push('circled_markers');
+  }
+  const hangulChars = (text.match(/[\uAC00-\uD7AF]/g) || []).length;
+  const latinChars = (text.match(/[A-Za-z]/g) || []).length;
+  const letterTotal = hangulChars + latinChars;
+  if (letterTotal > 40 && hangulChars / letterTotal >= 0.06) {
+    reasons.push('korean_mixed');
+  }
+  const lines = text.replace(/\r\n/g, '\n').split('\n').map((l) => l.trim()).filter(Boolean);
+  let koOnlyLines = 0;
+  let glossLines = 0;
+  for (const line of lines) {
+    const h = (line.match(/[\uAC00-\uD7AF]/g) || []).length;
+    const a = (line.match(/[A-Za-z]/g) || []).length;
+    if (h >= 2 && a === 0) koOnlyLines++;
+    if (h >= 2 && a >= 2 && h >= a * 0.5) glossLines++;
+    if (/(?:^|\s)\*+[A-Za-z]/.test(line) && h >= 1) glossLines++;
+  }
+  if (koOnlyLines >= 1) reasons.push('title_or_ko_lines');
+  if (glossLines >= 2) reasons.push('ko_gloss_lines');
+  if (/(?:^|\n)\s*(?:\[[^\]]*\d+[^\]]*\]|\d+\s*번)\s*(?:\n|$)/.test(text)) {
+    reasons.push('unit_header_in_passage');
+  }
+  return {
+    abnormal: reasons.length > 0,
+    reasons,
+    label: reasons.length ? 'passage_format' : 'clean'
+  };
+}
+
 /**
  * 레코드 손상 진단 (읽기 전용)
+ * category: ok | passage_format | sentence_damage
+ * reconcileEligible: passage 형식이 정상일 때만 true
  */
 function diagnoseRecordFidelity(rec) {
   const d = rec && rec.data ? rec.data : {};
   const passage = d.passage || '';
   const sentences = Array.isArray(d.sentences) ? d.sentences : [];
-  const originals = splitEnglishSentences(passage);
-  const gate = passage
-    ? validatePassageSentenceFidelity(passage, sentences)
-    : { ok: false, message: 'passage 없음', expectedCount: 0, actualCount: sentences.length };
+  const format = classifyPassageFormat(passage);
+  const title = d.title_ko || d.expected_title || d.topic_en || rec.title || '';
+  const emptyAnalysisCount = sentences.filter((s) => !Array.isArray(s.analysis) || s.analysis.length === 0).length;
 
+  if (!passage.trim()) {
+    return {
+      id: rec.id || '',
+      title,
+      textbook: d.textbook || d.series_title || '',
+      lesson: d.lesson || d.unit_title || '',
+      expectedCount: 0,
+      actualCount: sentences.length,
+      ok: false,
+      category: 'passage_format',
+      formatReasons: ['empty'],
+      reconcileEligible: false,
+      message: 'passage 없음',
+      missing: [],
+      invented: [],
+      emptyAnalysisCount
+    };
+  }
+
+  if (format.abnormal) {
+    return {
+      id: rec.id || '',
+      title,
+      textbook: d.textbook || d.series_title || '',
+      lesson: d.lesson || d.unit_title || '',
+      expectedCount: splitEnglishSentences(passage).length,
+      actualCount: sentences.length,
+      ok: false,
+      category: 'passage_format',
+      formatReasons: format.reasons,
+      reconcileEligible: false,
+      message: 'passage 형식 이상: ' + format.reasons.join('+'),
+      missing: [],
+      invented: [],
+      emptyAnalysisCount
+    };
+  }
+
+  const originals = splitEnglishSentences(passage);
+  const gate = validatePassageSentenceFidelity(passage, sentences);
   const joinedSaved = compactAlpha(sentences.map(sentencePlainText).join(' '));
   const missing = originals.filter((o) => {
     const k = compactAlpha(o);
@@ -10382,7 +10462,7 @@ function diagnoseRecordFidelity(rec) {
       return k && !compactAlpha(passage).includes(k);
     });
 
-  const title = d.title_ko || d.expected_title || d.topic_en || rec.title || '';
+  const category = gate.ok ? 'ok' : 'sentence_damage';
   return {
     id: rec.id || '',
     title,
@@ -10391,10 +10471,13 @@ function diagnoseRecordFidelity(rec) {
     expectedCount: originals.length,
     actualCount: sentences.length,
     ok: !!gate.ok,
+    category,
+    formatReasons: [],
+    reconcileEligible: !gate.ok,
     message: gate.message || '',
     missing,
     invented,
-    emptyAnalysisCount: sentences.filter((s) => !Array.isArray(s.analysis) || s.analysis.length === 0).length
+    emptyAnalysisCount
   };
 }
 
@@ -10420,18 +10503,23 @@ function analysisRecordsOnly() {
 
 /** ① 전 레코드 점검 → 손상 CSV (읽기만) */
 function repairFidelityScan() {
-  const rows = [['id', 'title', 'textbook', 'lesson', 'expected_n', 'saved_n', 'ok', 'missing', 'invented', 'empty_analysis', 'message']];
-  let damaged = 0;
+  const rows = [['id', 'title', 'textbook', 'lesson', 'category', 'format_reasons', 'reconcile_eligible', 'expected_n', 'saved_n', 'ok', 'missing', 'invented', 'empty_analysis', 'message']];
+  let damaged = 0, formatBad = 0, sentenceBad = 0;
   const reports = [];
   for (const rec of analysisRecordsOnly()) {
     const diag = diagnoseRecordFidelity(rec);
     reports.push(diag);
     if (!diag.ok) damaged++;
+    if (diag.category === 'passage_format') formatBad++;
+    if (diag.category === 'sentence_damage') sentenceBad++;
     rows.push([
       diag.id,
       diag.title,
       diag.textbook,
       diag.lesson,
+      diag.category,
+      (diag.formatReasons || []).join('+'),
+      diag.reconcileEligible ? 'Y' : 'N',
       diag.expectedCount,
       diag.actualCount,
       diag.ok ? 'Y' : 'N',
@@ -10445,14 +10533,40 @@ function repairFidelityScan() {
   const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
   downloadTextFile('gwj_fidelity_damage_' + stamp + '.csv', '\uFEFF' + csv, 'text/csv;charset=utf-8');
   window._lastFidelityReport = reports;
-  showToast('① 점검 완료: 총 ' + reports.length + '건 / 손상 ' + damaged + '건 → CSV 저장', damaged ? 'info' : 'success');
-  return { total: reports.length, damaged, reports };
+  showToast(
+    '① 점검: 총 ' + reports.length +
+    ' · 형식이상 ' + formatBad +
+    ' · 문장손상 ' + sentenceBad +
+    ' · 정상 ' + (reports.length - damaged) + ' → CSV',
+    damaged ? 'info' : 'success'
+  );
+  return { total: reports.length, damaged, formatBad, sentenceBad, reports };
 }
 
 function buildReconcilePreview(rec) {
-  const passage = rec.data.passage || '';
-  const originals = splitEnglishSentences(passage);
   const before = diagnoseRecordFidelity(rec);
+  const passage = rec.data.passage || '';
+  // 형식 이상 레코드는 reconcile 대상 제외 (빈 분석 양산 방지)
+  if (!before.reconcileEligible) {
+    return {
+      id: rec.id,
+      title: before.title,
+      beforeOk: before.ok,
+      afterOk: before.ok,
+      skipped: true,
+      skipReason: before.category === 'passage_format' ? 'passage_format' : (before.ok ? 'already_ok' : 'ineligible'),
+      category: before.category,
+      expectedCount: before.expectedCount,
+      beforeCount: before.actualCount,
+      afterCount: before.actualCount,
+      emptyAfter: before.emptyAnalysisCount,
+      missingBefore: before.missing.length,
+      inventedBefore: before.invented.length,
+      nextSentences: null,
+      nextPassageHtml: null
+    };
+  }
+  const originals = splitEnglishSentences(passage);
   const nextSentences = reconcileAnalysisSentences(originals, rec.data.sentences || []);
   const afterGate = validatePassageSentenceFidelity(passage, nextSentences);
   const emptyAfter = nextSentences.filter((s) => !s.analysis || !s.analysis.length).length;
@@ -10460,7 +10574,10 @@ function buildReconcilePreview(rec) {
     id: rec.id,
     title: before.title,
     beforeOk: before.ok,
-    afterOk: afterGate.ok,
+    afterOk: !!afterGate.ok,
+    skipped: false,
+    skipReason: '',
+    category: before.category,
     expectedCount: originals.length,
     beforeCount: before.actualCount,
     afterCount: nextSentences.length,
@@ -10472,41 +10589,51 @@ function buildReconcilePreview(rec) {
   };
 }
 
-/** ② dry-run — 백업 후 CSV만 (저장소 변경 없음) */
+/** ② dry-run — 백업 후 CSV만 (미적용). 형식이상은 제외. */
 function repairFidelityDryRun() {
   if (library.length === 0) { showToast('책장이 비어있습니다.', 'info'); return null; }
   exportBackup();
-  const rows = [['id', 'title', 'before_ok', 'after_ok', 'expected_n', 'before_n', 'after_n', 'missing_before', 'invented_before', 'empty_after']];
+  const rows = [['id', 'title', 'category', 'skipped', 'before_ok', 'after_ok', 'expected_n', 'before_n', 'after_n', 'missing_before', 'invented_before', 'empty_after']];
   const previews = [];
-  let wouldFix = 0;
+  let wouldFix = 0, skippedFormat = 0;
   for (const rec of analysisRecordsOnly()) {
     const p = buildReconcilePreview(rec);
     previews.push(p);
-    if (!p.beforeOk && p.afterOk) wouldFix++;
-    rows.push([p.id, p.title, p.beforeOk ? 'Y' : 'N', p.afterOk ? 'Y' : 'N', p.expectedCount, p.beforeCount, p.afterCount, p.missingBefore, p.inventedBefore, p.emptyAfter]);
+    if (p.skipReason === 'passage_format') skippedFormat++;
+    if (!p.skipped && !p.beforeOk && p.afterOk) wouldFix++;
+    rows.push([p.id, p.title, p.category || '', p.skipped ? p.skipReason : '', p.beforeOk ? 'Y' : 'N', p.afterOk ? 'Y' : 'N', p.expectedCount, p.beforeCount, p.afterCount, p.missingBefore, p.inventedBefore, p.emptyAfter]);
   }
   const csv = rows.map((r) => r.map(csvEscape).join(',')).join('\n');
   const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
   downloadTextFile('gwj_fidelity_dryrun_' + stamp + '.csv', '\uFEFF' + csv, 'text/csv;charset=utf-8');
   window._lastFidelityDryRun = previews;
-  showToast('② dry-run 완료 + 백업 다운로드. 복구 예정 ' + wouldFix + '건 (미적용)', 'info');
-  return { wouldFix, previews };
+  showToast('② dry-run: 복구예정 ' + wouldFix + ' · 형식이상제외 ' + skippedFormat + ' (미적용)', 'info');
+  return { wouldFix, skippedFormat, previews };
 }
 
-/** ② apply — dry-run 결과 또는 즉시 재계산 후 저장 */
+/** ② apply — 문장손상만. passage 형식이상은 건너뜀. */
 async function repairFidelityApply() {
-  if (!confirm('② 문장 원문 1차 복구를 적용할까요?\n\n· AI 호출 없음\n· 기존 분석은 매칭되는 문장에 유지\n· 누락 문장은 빈 분석으로 추가\n\n※ 먼저 dry-run과 백업을 권장합니다.')) return null;
+  if (!confirm('② 문장 원문 1차 복구를 적용할까요?\n\n· AI 호출 없음\n· passage 형식 이상(제목/한글/①② 섞임)은 제외\n· 기존 분석은 매칭 문장에 유지\n\n※ dry-run·백업 권장')) return null;
 
   exportBackup();
-  let fixed = 0, stillBad = 0, skipped = 0;
+  let fixed = 0, stillBad = 0, skipped = 0, skippedFormat = 0;
   const applied = [];
   for (const rec of analysisRecordsOnly()) {
     const before = diagnoseRecordFidelity(rec);
     if (before.ok) { skipped++; continue; }
+    if (!before.reconcileEligible) {
+      skippedFormat++;
+      applied.push({ id: rec.id, ok: false, skipped: true, reason: before.category });
+      continue;
+    }
     const p = buildReconcilePreview(rec);
+    if (p.skipped || !p.nextSentences) {
+      skippedFormat++;
+      applied.push({ id: rec.id, ok: false, skipped: true, reason: p.skipReason || 'no_preview' });
+      continue;
+    }
     rec.data.sentences = p.nextSentences;
     rec.data.passage_html = p.nextPassageHtml;
-    rec.data.passage = rec.data.passage; // 원문 유지
     // 게이트 재확인
     const gate = validatePassageSentenceFidelity(rec.data.passage, rec.data.sentences);
     if (!gate.ok) {
@@ -10519,9 +10646,9 @@ async function repairFidelityApply() {
     else { stillBad++; applied.push({ id: rec.id, ok: false, message: 'save failed' }); }
   }
   window._lastFidelityApply = applied;
-  showToast('② apply 완료: 복구 ' + fixed + ' / 실패 ' + stillBad + ' / 이미정상 ' + skipped, stillBad ? 'info' : 'success');
+  showToast('② apply: 복구 ' + fixed + ' / 실패 ' + stillBad + ' / 형식제외 ' + skippedFormat + ' / 이미정상 ' + skipped, stillBad ? 'info' : 'success');
   renderLibrary();
-  return { fixed, stillBad, skipped, applied };
+  return { fixed, stillBad, skipped, skippedFormat, applied };
 }
 
 /**
@@ -10577,10 +10704,16 @@ highlights.phrase는 문장에 글자 그대로 있는 것만.`;
   return JSON.parse(text);
 }
 
-/** ③ 빈 분석 문장만 선별 AI (전체 재생성 금지) */
+/** ③ 빈 분석 문장만 선별 AI (전체 재생성 금지). passage 형식이상은 제외. */
 async function repairFillEmptyAnalysis() {
   const targets = [];
+  let skippedFormat = 0;
   for (const rec of analysisRecordsOnly()) {
+    const diag = diagnoseRecordFidelity(rec);
+    if (diag.category === 'passage_format') {
+      skippedFormat++;
+      continue;
+    }
     const sents = rec.data.sentences || [];
     sents.forEach((s, idx) => {
       if (!Array.isArray(s.analysis) || s.analysis.length === 0) {
@@ -10589,10 +10722,10 @@ async function repairFillEmptyAnalysis() {
     });
   }
   if (targets.length === 0) {
-    showToast('③ 빈 분석 문장 없음', 'success');
-    return { filled: 0 };
+    showToast('③ 빈 분석 없음' + (skippedFormat ? ' (형식이상 ' + skippedFormat + '건 제외)' : ''), 'success');
+    return { filled: 0, skippedFormat };
   }
-  if (!confirm('③ 빈 분석 문장 ' + targets.length + '개만 AI 재호출할까요?\n\n레코드 전체 재생성은 하지 않습니다.')) return null;
+  if (!confirm('③ 빈 분석 문장 ' + targets.length + '개만 AI 재호출할까요?\n\n· passage 형식이상 ' + skippedFormat + '건 제외\n· 레코드 전체 재생성 안 함')) return null;
 
   exportBackup();
   let filled = 0, failed = 0;

@@ -164,14 +164,74 @@ function csvEscape(v) {
   return s;
 }
 
+function classifyPassageFormat(passage) {
+  const text = String(passage || "");
+  const reasons = [];
+  if (!text.trim()) return { abnormal: true, reasons: ["empty"], label: "passage_format" };
+  if (/[\u2460-\u2473\u2776-\u277F\u278A-\u2793\u2474-\u2487]/.test(text)) reasons.push("circled_markers");
+  const hangulChars = (text.match(/[\uAC00-\uD7AF]/g) || []).length;
+  const latinChars = (text.match(/[A-Za-z]/g) || []).length;
+  const letterTotal = hangulChars + latinChars;
+  if (letterTotal > 40 && hangulChars / letterTotal >= 0.06) reasons.push("korean_mixed");
+  const lines = text.replace(/\r\n/g, "\n").split("\n").map((l) => l.trim()).filter(Boolean);
+  let koOnlyLines = 0;
+  let glossLines = 0;
+  for (const line of lines) {
+    const h = (line.match(/[\uAC00-\uD7AF]/g) || []).length;
+    const a = (line.match(/[A-Za-z]/g) || []).length;
+    if (h >= 2 && a === 0) koOnlyLines++;
+    if (h >= 2 && a >= 2 && h >= a * 0.5) glossLines++;
+    if (/(?:^|\s)\*+[A-Za-z]/.test(line) && h >= 1) glossLines++;
+  }
+  if (koOnlyLines >= 1) reasons.push("title_or_ko_lines");
+  if (glossLines >= 2) reasons.push("ko_gloss_lines");
+  if (/(?:^|\n)\s*(?:\[[^\]]*\d+[^\]]*\]|\d+\s*번)\s*(?:\n|$)/.test(text)) reasons.push("unit_header_in_passage");
+  return { abnormal: reasons.length > 0, reasons, label: reasons.length ? "passage_format" : "clean" };
+}
+
 function diagnose(rec) {
   const d = rec.data || {};
   const passage = d.passage || "";
   const sentences = Array.isArray(d.sentences) ? d.sentences : [];
+  const format = classifyPassageFormat(passage);
+  const title = d.title_ko || d.expected_title || d.topic_en || "";
+  const emptyAnalysisCount = sentences.filter((s) => !Array.isArray(s.analysis) || !s.analysis.length).length;
+
+  if (!passage.trim()) {
+    return {
+      id: rec.id || "",
+      title,
+      expectedCount: 0,
+      actualCount: sentences.length,
+      ok: false,
+      category: "passage_format",
+      formatReasons: ["empty"],
+      reconcileEligible: false,
+      message: "passage 없음",
+      missing: [],
+      invented: [],
+      emptyAnalysisCount,
+    };
+  }
+  if (format.abnormal) {
+    return {
+      id: rec.id || "",
+      title,
+      expectedCount: splitEnglishSentences(passage).length,
+      actualCount: sentences.length,
+      ok: false,
+      category: "passage_format",
+      formatReasons: format.reasons,
+      reconcileEligible: false,
+      message: "passage 형식 이상: " + format.reasons.join("+"),
+      missing: [],
+      invented: [],
+      emptyAnalysisCount,
+    };
+  }
+
   const originals = splitEnglishSentences(passage);
-  const gate = passage
-    ? validatePassageSentenceFidelity(passage, sentences)
-    : { ok: false, message: "passage 없음", expectedCount: 0, actualCount: sentences.length };
+  const gate = validatePassageSentenceFidelity(passage, sentences);
   const joinedSaved = compactAlpha(sentences.map(sentencePlainText).join(" "));
   const missing = originals.filter((o) => compactAlpha(o) && !joinedSaved.includes(compactAlpha(o)));
   const invented = sentences
@@ -179,14 +239,17 @@ function diagnose(rec) {
     .filter((p) => compactAlpha(p) && !compactAlpha(passage).includes(compactAlpha(p)));
   return {
     id: rec.id || "",
-    title: d.title_ko || d.expected_title || d.topic_en || "",
+    title,
     expectedCount: originals.length,
     actualCount: sentences.length,
     ok: !!gate.ok,
+    category: gate.ok ? "ok" : "sentence_damage",
+    formatReasons: [],
+    reconcileEligible: !gate.ok,
     message: gate.message || "",
     missing,
     invented,
-    emptyAnalysisCount: sentences.filter((s) => !Array.isArray(s.analysis) || !s.analysis.length).length,
+    emptyAnalysisCount,
   };
 }
 
@@ -204,15 +267,20 @@ const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
 const outDir = dirname(file);
 
 const damageRows = [
-  ["id", "title", "expected_n", "saved_n", "ok", "missing", "invented", "empty_analysis", "message"],
+  ["id", "title", "category", "format_reasons", "reconcile_eligible", "expected_n", "saved_n", "ok", "missing", "invented", "empty_analysis", "message"],
 ];
-let damaged = 0;
+let damaged = 0, formatBad = 0, sentenceBad = 0;
 for (const rec of analysis) {
   const d = diagnose(rec);
   if (!d.ok) damaged++;
+  if (d.category === "passage_format") formatBad++;
+  if (d.category === "sentence_damage") sentenceBad++;
   damageRows.push([
     d.id,
     d.title,
+    d.category,
+    (d.formatReasons || []).join("+"),
+    d.reconcileEligible ? "Y" : "N",
     d.expectedCount,
     d.actualCount,
     d.ok ? "Y" : "N",
@@ -225,15 +293,35 @@ for (const rec of analysis) {
 const damageCsv = damageRows.map((r) => r.map(csvEscape).join(",")).join("\n");
 const damagePath = join(outDir, `gwj_fidelity_damage_${stamp}.csv`);
 writeFileSync(damagePath, "\uFEFF" + damageCsv, "utf8");
-console.log(`① damage CSV: ${damagePath} (total=${analysis.length}, damaged=${damaged})`);
+console.log(`① ${basename(file)}: total=${analysis.length} format=${formatBad} sentence=${sentenceBad} ok=${analysis.length - damaged}`);
+console.log(`   CSV: ${damagePath}`);
 
 const dryRows = [
-  ["id", "title", "before_ok", "after_ok", "expected_n", "before_n", "after_n", "missing_before", "invented_before", "empty_after"],
+  ["id", "title", "category", "skipped", "before_ok", "after_ok", "expected_n", "before_n", "after_n", "missing_before", "invented_before", "empty_after"],
 ];
 let wouldFix = 0;
+let skippedFormat = 0;
 let emptyAfterTotal = 0;
 for (const rec of analysis) {
   const before = diagnose(rec);
+  if (!before.reconcileEligible) {
+    if (before.category === "passage_format") skippedFormat++;
+    dryRows.push([
+      rec.id,
+      before.title,
+      before.category,
+      before.category === "passage_format" ? "passage_format" : before.ok ? "already_ok" : "ineligible",
+      before.ok ? "Y" : "N",
+      before.ok ? "Y" : "N",
+      before.expectedCount,
+      before.actualCount,
+      before.actualCount,
+      before.missing.length,
+      before.invented.length,
+      before.emptyAnalysisCount,
+    ]);
+    continue;
+  }
   const originals = splitEnglishSentences(rec.data.passage || "");
   const next = reconcileAnalysisSentences(originals, rec.data.sentences || []);
   const after = validatePassageSentenceFidelity(rec.data.passage || "", next);
@@ -243,6 +331,8 @@ for (const rec of analysis) {
   dryRows.push([
     rec.id,
     before.title,
+    before.category,
+    "",
     before.ok ? "Y" : "N",
     after.ok ? "Y" : "N",
     originals.length,
@@ -252,7 +342,7 @@ for (const rec of analysis) {
     before.invented.length,
     emptyAfter,
   ]);
-  if (apply && !before.ok) {
+  if (apply) {
     rec.data.sentences = next;
     rec.data.passage_html = ensurePassageHtmlFidelity(rec.data.passage, rec.data.passage_html);
   }
@@ -260,7 +350,8 @@ for (const rec of analysis) {
 const dryCsv = dryRows.map((r) => r.map(csvEscape).join(",")).join("\n");
 const dryPath = join(outDir, `gwj_fidelity_dryrun_${stamp}.csv`);
 writeFileSync(dryPath, "\uFEFF" + dryCsv, "utf8");
-console.log(`② dry-run CSV: ${dryPath} (wouldFix=${wouldFix}, emptyAfterTotal=${emptyAfterTotal})`);
+console.log(`② dry-run: wouldFix=${wouldFix} skippedFormat=${skippedFormat} emptyAfter(eligible only)=${emptyAfterTotal}`);
+console.log(`   CSV: ${dryPath}`);
 
 if (apply) {
   const out = {
@@ -268,13 +359,12 @@ if (apply) {
     exportedAt: new Date().toISOString(),
     count: records.length,
     repairedAt: new Date().toISOString(),
-    note: "sentence reconcile applied; empty analyses still need selective AI fill in app",
+    note: "sentence reconcile applied only to sentence_damage; passage_format excluded",
     records,
   };
   const outPath = join(outDir, `gwj_backup_repaired_${stamp}.json`);
   writeFileSync(outPath, JSON.stringify(out, null, 2), "utf8");
   console.log(`② apply: ${outPath}`);
-  console.log("③ 다음: 앱에서 복원 후 「③ 빈분석AI」 실행 (레코드 전체 재생성 금지)");
 } else {
-  console.log("② apply 안 함. 적용하려면 --apply 추가");
+  console.log("② apply 안 함 (--apply 로 적용). passage_format 은 절대 적용되지 않음.");
 }
