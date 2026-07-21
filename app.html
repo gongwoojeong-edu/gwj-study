@@ -5336,35 +5336,21 @@ let currentDetail = -1;
 })();
 
 // ============================================================
-// 스토리지 폴리필 (Claude 아티팩트 vs 로컬 파일 둘 다 작동)
+// 스토리지 폴리필 (Claude 아티팩트 vs GitHub Pages/로컬)
 // ============================================================
-// Claude 아티팩트 샌드박스에는 window.storage가 이미 존재.
-// 로컬에서 HTML을 더블클릭해 열면 window.storage가 없음 → localStorage 기반 대체 구현 주입.
+// Claude 아티팩트: 네이티브 window.storage
+// GitHub Pages/로컬: IndexedDB (localStorage ~5MB 한도 → 책장 확장 불가)
 (function setupStoragePolyfill() {
-  // 이미 window.storage가 있으면 (Claude 아티팩트 환경) 그대로 사용
   if (typeof window.storage === 'object' && window.storage !== null &&
       typeof window.storage.get === 'function') {
     console.info('[storage] 네이티브 window.storage 사용 (아티팩트 환경)');
     return;
   }
 
-  // 로컬 파일 또는 일반 브라우저 → localStorage 래퍼 생성
-  console.info('[storage] localStorage 폴리필 사용 (로컬 파일 환경)');
   window._gwjPolyfillUsed = true;
 
-  // localStorage 사용 가능 여부 체크
-  let hasLocalStorage = false;
-  try {
-    const testKey = '__gwj_test__';
-    localStorage.setItem(testKey, '1');
-    localStorage.removeItem(testKey);
-    hasLocalStorage = true;
-  } catch (e) {
-    console.error('[storage] localStorage 사용 불가:', e);
-  }
-
-  if (!hasLocalStorage) {
-    // localStorage도 없으면 메모리 저장 (경고)
+  function installMemoryStore(reason) {
+    console.warn('[storage] 메모리 폴백:', reason);
     alert('⚠️ 브라우저 저장소를 사용할 수 없습니다.\n\nChrome에서 열거나, 시크릿 모드가 아닌지 확인해주세요.\n현재는 데이터가 새로고침 시 사라집니다.');
     const memStore = {};
     window.storage = {
@@ -5376,61 +5362,176 @@ let currentDetail = -1;
         return { keys, prefix, shared: false };
       }
     };
-    return;
   }
 
-  // localStorage 기반 정식 폴리필
-  window.storage = {
-    async get(key) {
-      try {
+  if (typeof indexedDB === 'undefined') {
+    // IndexedDB 없으면 구 localStorage 폴백
+    try {
+      const testKey = '__gwj_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+    } catch (e) {
+      installMemoryStore(e);
+      return;
+    }
+    console.warn('[storage] IndexedDB 없음 → localStorage 폴백 (용량 제한 있음)');
+    window.storage = {
+      async get(key) {
         const value = localStorage.getItem(key);
-        if (value === null) {
-          throw new Error('Key not found: ' + key);
-        }
+        if (value === null) throw new Error('Key not found: ' + key);
         return { key, value, shared: false };
-      } catch (e) {
-        // 네이티브 API와 호환되게 에러 throw
-        throw e;
-      }
-    },
-    async set(key, value) {
-      try {
-        localStorage.setItem(key, value);
-        return { key, value, shared: false };
-      } catch (e) {
-        console.error('[storage] set 실패:', e);
-        if (e.name === 'QuotaExceededError') {
-          alert('💾 저장 공간이 가득 찼습니다.\n\n오래된 자료를 삭제하거나 백업 후 일부를 제거해주세요.');
+      },
+      async set(key, value) {
+        try {
+          localStorage.setItem(key, value);
+          return { key, value, shared: false };
+        } catch (e) {
+          console.error('[storage] set 실패:', e);
+          if (e.name === 'QuotaExceededError') {
+            alert('💾 저장 공간이 가득 찼습니다.\n\n📦 백업 후 브라우저를 최신 Chrome으로 열어 IndexedDB를 사용하세요.');
+          }
+          throw e;
         }
-        return null;
-      }
-    },
-    async delete(key) {
-      try {
+      },
+      async delete(key) {
         const existed = localStorage.getItem(key) !== null;
         localStorage.removeItem(key);
         return { key, deleted: existed, shared: false };
-      } catch (e) {
-        console.error('[storage] delete 실패:', e);
-        return null;
-      }
-    },
-    async list(prefix) {
-      try {
+      },
+      async list(prefix) {
         const keys = [];
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
-          if (k && (!prefix || k.startsWith(prefix))) {
-            keys.push(k);
-          }
+          if (k && (!prefix || k.startsWith(prefix))) keys.push(k);
         }
         return { keys, prefix, shared: false };
-      } catch (e) {
-        console.error('[storage] list 실패:', e);
-        return { keys: [], prefix, shared: false };
       }
+    };
+    return;
+  }
+
+  const DB_NAME = 'gwj-syntax-studio';
+  const STORE = 'kv';
+  const MIGRATE_FLAG = '__gwj_idb_migrated_v1__';
+  let dbPromise = null;
+
+  function openDb() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise(function (resolve, reject) {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = function () {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error('IndexedDB open failed')); };
+    });
+    return dbPromise;
+  }
+
+  function idbReq(fn) {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        let finished = false;
+        try {
+          const tx = db.transaction(STORE, 'readwrite');
+          const store = tx.objectStore(STORE);
+          const req = fn(store);
+          req.onsuccess = function () { finished = true; resolve(req.result); };
+          req.onerror = function () { finished = true; reject(req.error); };
+          tx.onabort = function () { if (!finished) reject(tx.error || new Error('IDB tx abort')); };
+        } catch (e) { reject(e); }
+      });
+    });
+  }
+
+  function idbGet(key) {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        const tx = db.transaction(STORE, 'readonly');
+        const req = tx.objectStore(STORE).get(key);
+        req.onsuccess = function () { resolve(req.result); };
+        req.onerror = function () { reject(req.error); };
+      });
+    });
+  }
+
+  function idbGetAllKeys() {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        const tx = db.transaction(STORE, 'readonly');
+        const req = tx.objectStore(STORE).getAllKeys();
+        req.onsuccess = function () { resolve(req.result || []); };
+        req.onerror = function () { reject(req.error); };
+      });
+    });
+  }
+
+  async function migrateFromLocalStorageOnce() {
+    try {
+      const already = await idbGet(MIGRATE_FLAG);
+      if (already) return;
+      let copied = 0;
+      const toRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        const v = localStorage.getItem(k);
+        if (v === null) continue;
+        await idbReq(function (store) { return store.put(v, k); });
+        copied++;
+        if (k.indexOf('gwj_analysis:') === 0) toRemove.push(k);
+      }
+      await idbReq(function (store) { return store.put('1', MIGRATE_FLAG); });
+      for (let j = 0; j < toRemove.length; j++) {
+        try { localStorage.removeItem(toRemove[j]); } catch (e) {}
+      }
+      console.info('[storage] localStorage → IndexedDB 이전 완료:', copied, 'keys, analysis freed:', toRemove.length);
+    } catch (e) {
+      console.warn('[storage] 이전 실패(데이터는 localStorage에 유지):', e);
+    }
+  }
+
+  const migratePromise = migrateFromLocalStorageOnce();
+
+  window.storage = {
+    async get(key) {
+      await migratePromise;
+      const value = await idbGet(key);
+      if (value === undefined || value === null) throw new Error('Key not found: ' + key);
+      return { key, value, shared: false };
+    },
+    async set(key, value) {
+      await migratePromise;
+      try {
+        await idbReq(function (store) { return store.put(value, key); });
+        return { key, value, shared: false };
+      } catch (e) {
+        console.error('[storage] IndexedDB set 실패:', e);
+        if (e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message || '')))) {
+          alert('💾 저장 공간이 가득 찼습니다.\n\n📦 백업 후 디스크 여유 공간을 확보해주세요.');
+        }
+        throw e;
+      }
+    },
+    async delete(key) {
+      await migratePromise;
+      const prev = await idbGet(key);
+      const existed = prev !== undefined && prev !== null;
+      await idbReq(function (store) { return store.delete(key); });
+      try { localStorage.removeItem(key); } catch (e) {}
+      return { key, deleted: !!existed, shared: false };
+    },
+    async list(prefix) {
+      await migratePromise;
+      const all = await idbGetAllKeys();
+      const keys = (all || []).filter(function (k) {
+        return typeof k === 'string' && (!prefix || k.indexOf(prefix) === 0);
+      });
+      return { keys, prefix, shared: false };
     }
   };
+  console.info('[storage] IndexedDB 폴리필 사용 (책장 대용량)');
 })();
 
 // ============================================================
@@ -11779,6 +11880,7 @@ async function saveRecord(record) {
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const result = await window.storage.set(key, json);
+      if (!result) throw new Error('storage.set returned null');
       console.log(`[저장 성공] 시도 ${attempt}회`, result);
 
       // 로컬 배열 업데이트
