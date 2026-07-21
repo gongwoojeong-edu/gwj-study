@@ -5388,7 +5388,10 @@ let currentDetail = -1;
         } catch (e) {
           console.error('[storage] set 실패:', e);
           if (e.name === 'QuotaExceededError') {
-            alert('💾 저장 공간이 가득 찼습니다.\n\n📦 백업 후 브라우저를 최신 Chrome으로 열어 IndexedDB를 사용하세요.');
+            if (!window._gwjQuotaNotified) {
+              window._gwjQuotaNotified = true;
+              alert('💾 저장 공간이 가득 찼습니다.\n\n주소창에 ?v=idb2 를 붙여 강력 새로고침 후 IndexedDB를 사용하세요.\n예: app.html?v=idb2');
+            }
           }
           throw e;
         }
@@ -5509,7 +5512,10 @@ let currentDetail = -1;
       } catch (e) {
         console.error('[storage] IndexedDB set 실패:', e);
         if (e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message || '')))) {
-          alert('💾 저장 공간이 가득 찼습니다.\n\n📦 백업 후 디스크 여유 공간을 확보해주세요.');
+          if (!window._gwjQuotaNotified) {
+            window._gwjQuotaNotified = true;
+            alert('💾 IndexedDB 저장 실패(용량).\n\n📦 백업 후 디스크 여유를 확인하세요. 이 알림은 한 번만 표시됩니다.');
+          }
         }
         throw e;
       }
@@ -10886,11 +10892,22 @@ async function repairFillEmptyAnalysis() {
           s.sentence_html = applyHighlightsToPlain(s.sentence_en || t.en, s.highlights, 'span');
         }
         s._emptyAnalysis = !(s.analysis && s.analysis.length);
+        const saved = await saveRecord(t.rec);
+        if (!saved) {
+          failed++;
+          setRepairProgress('③ 저장 실패로 중단 · 채움 ' + filled + ' / 실패 ' + failed + ' · 주소에 ?v=idb2 붙여 새로고침 후 재시도', { error: true });
+          showToast('③ 저장 실패로 중단됨. app.html?v=idb2 로 새로 연 뒤 ③ 재실행', 'error');
+          break;
+        }
         filled++;
-        await saveRecord(t.rec);
       } catch (e) {
         console.warn('empty analysis fill failed', t.rec.id, t.idx, e);
         failed++;
+        if (e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message || '')))) {
+          setRepairProgress('③ 저장공간 부족으로 중단 · 채움 ' + filled + ' · app.html?v=idb2 로 새로고침', { error: true });
+          showToast('③ 저장공간 부족으로 중단. ?v=idb2 로 새로 여세요', 'error');
+          break;
+        }
       }
     }
     const scan = repairFidelityScan();
