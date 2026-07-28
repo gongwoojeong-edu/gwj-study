@@ -6463,7 +6463,7 @@ async function uploadFileToGithub(cfg, filePath, htmlContent, commitMsgPrefix) {
   const base64Content = btoa(unescape(encodeURIComponent(htmlContent)));
 
   // 타임아웃 적용된 fetch
-  const fetchWithTimeout = async (url, opts, timeoutMs = 8000) => {
+  const fetchWithTimeout = async (url, opts, timeoutMs = 30000) => {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), timeoutMs);
     try {
@@ -6522,7 +6522,7 @@ async function uploadFileToGithub(cfg, filePath, htmlContent, commitMsgPrefix) {
           branch: cfg.branch,
           sha: sha || undefined
         })
-      }, 12000);
+      }, 45000);
 
       if (putRes.ok) {
         if (attempt > 1) {
@@ -7653,9 +7653,9 @@ async function bulkPublishSelected() {
       showToast('✅ ' + successCount + '개 자료 모두 웹공개 완료!', 'success');
     } else {
       showToast('⚠️ ' + successCount + '개 성공, ' + failed.length + '개 실패', 'error');
-      const failedTitles = failed.map(f => '• ' + f.title).join('\n');
+      const failedTitles = failed.map(f => '• ' + f.title + (f.error ? ' — ' + String(f.error).slice(0, 120) : '')).join('\n');
       setTimeout(() => {
-        alert('⚠️ ' + failed.length + '개 자료 배포 실패:\n\n' + failedTitles + '\n\n개별로 다시 시도해주세요.');
+        alert('⚠️ ' + failed.length + '개 자료 배포 실패:\n\n' + failedTitles + '\n\n개별로 🌐 다시 시도하거나 F12 Console을 확인해주세요.');
       }, 600);
     }
 
@@ -9140,10 +9140,12 @@ async function publishToGithubSilent(rec) {
     htmlStructure = buildStandaloneHtml(rec, 'structure');
   } catch (e) {
     console.error('HTML 생성 실패:', e);
-    return null;
+    throw e;
   }
 
-  if (!htmlAnalysis || htmlAnalysis.length < 100) return null;
+  if (!htmlAnalysis || htmlAnalysis.length < 100) {
+    throw new Error('분석교안 HTML이 너무 짧습니다');
+  }
 
   const htmlIndex = buildHandoutIndexHtml(rec);
   const codeName = rec.data.title_ko || rec.data.item_code || 'handout';
@@ -9160,7 +9162,7 @@ async function publishToGithubSilent(rec) {
     ]);
   } catch (e) {
     console.error('publishToGithubSilent 실패:', e);
-    return null;
+    throw e;
   }
 
   const urlIndex = buildGithubPublicUrl(pathIndex);
