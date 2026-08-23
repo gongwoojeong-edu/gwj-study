@@ -120,7 +120,7 @@ function buildStructureStandaloneHtml(rec, meta) {
     '<html lang="ko">\\n<head>\\n<meta charset="utf-8">\\n<title>' + title + '</title>\\n' +
     '<style>' + getStructureStandaloneStyles() + '</style>\\n</head>\\n<body>\\n' +
     innerHtml + '\\n' +
-    '<script type="application/json" id="gwj-structure-data">\\n' + jsonStr + '\\n</script>\\n' +
+    '<script type="application/json" id="gwj-structure-data">\\n' + jsonStr + '\\n<' + '/script>\\n' +
     '<script>\\n' +
     '(function(){\\n' +
     'var STEP_BADGES=[' + badgeScript + '];\\n' +
@@ -150,7 +150,7 @@ function buildStructureStandaloneHtml(rec, meta) {
     '  document.getElementById("detail-wrap").classList.remove("visible");\\n' +
     '};\\n' +
     '})();\\n' +
-    '</script>\\n</body>\\n</html>';
+    '<' + '/script>\\n</body>\\n</html>';
 }
 
 `;
