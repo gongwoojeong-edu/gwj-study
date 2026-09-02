@@ -7445,6 +7445,10 @@ async function sendToLearnerSilent(rec) {
 
   const j = await res.json().catch(() => ({ ok: false, error: 'parse error' }));
   if (!j.ok) throw new Error(j.error || ('HTTP ' + res.status));
+  if (j.warning) {
+    console.warn('📤 학습기 전송 경고:', j.warning);
+    throw new Error('분석/구조도 저장 실패: ' + j.warning);
+  }
 
   // rec 업데이트
   rec.learnerSentAt = new Date().toISOString();
@@ -7452,6 +7456,12 @@ async function sendToLearnerSilent(rec) {
   rec.learnerUrl = j.learn_url || '';
   syncCardMetaFromLearner(rec, metaForSend);
   rec._lastLearnerSendPath = formatLearnerSendPathFromBody(body);
+  // 분석·구조도 HTML이 실제로 실렸는지 기록 (디버그용)
+  rec._lastLearnerMaterials = {
+    analysisBytes: (body.analysis_html || '').length,
+    structureBytes: (body.structure_html || '').length,
+    hasStructureJson: !!(body.structure && body.structure.nodes && body.structure.nodes.length)
+  };
   try {
     await window.storage.set(STORAGE_PREFIX + rec.id, JSON.stringify(rec));
   } catch (e) { /* ignore */ }
