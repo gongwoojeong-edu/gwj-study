@@ -7445,9 +7445,13 @@ async function sendToLearnerSilent(rec) {
 
   const j = await res.json().catch(() => ({ ok: false, error: 'parse error' }));
   if (!j.ok) throw new Error(j.error || ('HTTP ' + res.status));
-  if (j.warning) {
-    console.warn('📤 학습기 전송 경고:', j.warning);
-    throw new Error('분석/구조도 저장 실패: ' + j.warning);
+  // 문장 저장은 됐는데 분석/구조도만 실패한 경우 — 부분 성공으로 기록
+  if (j.warning || j.materials_ok === false) {
+    console.warn('📤 학습기 전송 부분 성공(분석/구조도):', j.warning);
+    const err = new Error('문장 OK · 분석/구조도 실패: ' + (j.warning || 'materials_ok=false'));
+    err.partial = true;
+    err.result = j;
+    throw err;
   }
 
   // rec 업데이트
@@ -9717,8 +9721,15 @@ function showBulkLearnerSuccessModal(succeeded, commonMeta, failed) {
   }).join('');
 
   const failHtml = (failed && failed.length)
-    ? '<div style="margin-top:12px;font-size:12px;color:#c62828;">실패 ' + failed.length + '개: ' +
-      failed.map(f => escapeHtml(f.title)).join(', ') + '</div>'
+    ? '<div style="margin-top:12px;font-size:12px;color:#c62828;line-height:1.6;">' +
+      '<strong>실패 ' + failed.length + '개</strong>' +
+      '<ul style="margin:8px 0 0;padding-left:18px;">' +
+      failed.map(f => {
+        const reason = f.error || '원인 미상';
+        return '<li style="margin-bottom:4px;"><strong>' + escapeHtml(f.title) + '</strong><br>' +
+          '<span style="color:#8a1f1f;font-family:monospace;font-size:11px;">' + escapeHtml(reason) + '</span></li>';
+      }).join('') +
+      '</ul></div>'
     : '';
 
   const modal = document.createElement('div');
