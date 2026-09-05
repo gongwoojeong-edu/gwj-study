@@ -5855,21 +5855,29 @@ function normalizeSendVolumeTitle(vt) {
 }
 
 /** import-claude-handout POST body — series_no/volume_no 기본 1 금지(오배송 원인) */
+function clipLearnerField(s, max) {
+  const t = String(s == null ? '' : s).trim();
+  if (!t) return '';
+  if (t.length <= max) return t;
+  return t.slice(0, Math.max(0, max - 1)) + '…';
+}
+
 function buildLearnerImportBody(meta, rec, htmlExtras) {
   htmlExtras = htmlExtras || {};
   const series_title = normalizeSendSeriesTitle(meta);
   const volume_title = normalizeSendVolumeTitle(meta.volume_title);
   const body = {
     level: meta.level || 'L08',
-    series_title,
-    volume_title,
-    unit_title: meta.unit_title || '',
+    series_title: clipLearnerField(series_title, 500),
+    volume_title: clipLearnerField(volume_title, 500),
+    unit_title: clipLearnerField(meta.unit_title || '', 500),
     passage_no: meta.passage_no || 1,
-    item_code: meta.new_item_code || meta.item_code || rec.data.item_code || undefined,
-    title_ko: rec.data.title_ko || '',
-    expected_title: rec.data.expected_title || '',
-    topic_ko: rec.data.topic_ko || '',
-    topic_en: rec.data.topic_en || '',
+    item_code: clipLearnerField(meta.new_item_code || meta.item_code || rec.data.item_code || '', 500) || undefined,
+    title_ko: clipLearnerField(rec.data.title_ko || '', 500),
+    // 영문 제목에 본문이 잘못 들어간 경우 전송 거절 방지
+    expected_title: clipLearnerField(rec.data.expected_title || '', 500),
+    topic_ko: clipLearnerField(rec.data.topic_ko || '', 500),
+    topic_en: clipLearnerField(rec.data.topic_en || '', 500),
     passage: rec.data.passage || '',
     passage_audio_url: rec.passageAudioUrl || '',
     sentences: (rec.data.sentences || []).map((s, idx) => {
