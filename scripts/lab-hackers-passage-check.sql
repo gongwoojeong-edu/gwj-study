@@ -91,9 +91,7 @@ merged AS (
 UPDATE textbook_passages p
 SET
   english = m.english_all,
-  korean = m.korean_all,
-  -- code 는 기존 첫 행 유지 ( -1/-2 접미사 행이면 루트만 남기고 싶을 때 수동 조정 )
-  updated_at = now()
+  korean = m.korean_all
 FROM merged m
 WHERE p.id = m.keep_id;
 
