@@ -923,7 +923,7 @@ body.edit-mode .page::before {
         <div class="input-row">
           <div class="input-field">
             <label>🌊 레벨</label>
-            <select id="in-level" onchange="syncWholePassageOption()" style="width:100%; padding: 9px; font-family: inherit; font-size: 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff;">
+            <select id="in-level" style="width:100%; padding: 9px; font-family: inherit; font-size: 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff;">
               <option value="L01">L01 (초저)</option>
               <option value="L02">L02 (초고)</option>
               <option value="L03">L03 (예비중1)</option>
@@ -938,7 +938,7 @@ body.edit-mode .page::before {
           </div>
           <div class="input-field">
             <label>📁 시리즈</label>
-            <input type="text" id="in-series" list="series-presets" placeholder="예: 고1 모의고사, 고1 올림포스" value="고1 모의고사" oninput="syncWholePassageOption()">
+            <input type="text" id="in-series" list="series-presets" placeholder="예: 고1 모의고사, 고1 올림포스" value="고1 모의고사">
             <datalist id="series-presets">
               <option value="고1 모의고사">
               </option><option value="고2 모의고사">
@@ -961,7 +961,7 @@ body.edit-mode .page::before {
         <div class="input-row">
           <div class="input-field">
             <label>📖 권/교재 (volume)</label>
-            <input type="text" id="in-volume" placeholder="예: 2026년 3월" value="" oninput="syncWholePassageOption()">
+            <input type="text" id="in-volume" placeholder="예: 2026년 3월" value="">
           </div>
           <div class="input-field">
             <label>🏷 유닛 (unit) <span style="font-weight:normal;color:#999;font-size:11px;">— 일괄+[6강 1번] 헤더면 생략 가능</span></label>
@@ -1007,12 +1007,7 @@ Our club arrived at the Free Animals sanctuary. ...
           <input type="checkbox" id="in-batch-mode" onchange="previewBatchPassages()">
           <span><strong>여러 지문 일괄 처리</strong> — <code>N번</code> 다음 줄=제목, <code>[6강 3번] 제목</code>, 또는 <code>---</code> 구분</span>
         </label>
-        <label class="batch-option" id="whole-passage-option">
-          <input type="checkbox" id="in-whole-passage" disabled onchange="syncWholePassageOption()">
-          <span><strong>지문 통입력</strong> — 구문랩에는 문장으로 나누지 않고 지문 1개로 저장합니다. 한글 해석·단어는 문장마다 유지됩니다.
-            <em id="whole-passage-hint">고등부 부교재(시리즈·교재명에 “부교재”)에서만 켤 수 있습니다. 그 외는 기존처럼 문장별 저장입니다.</em>
-          </span>
-        </label>
+        <div id="in-passage-input-wrap" style="margin-top:10px;"></div>
         <div class="batch-preview" id="batch-preview"></div>
       </div>
 
@@ -5862,11 +5857,35 @@ function normalizeSendVolumeTitle(vt) {
   return (vt || '').trim().replace(/\s+/g, '');
 }
 
-/** 통입력은 고등부 부교재에서 켠 경우에만. 아니면 항상 문장별. */
+/** 전송/생성 시 선택한 passage_input 그대로 사용 (문장별|본문통합). */
 function resolvePassageInput(meta, rec) {
   const want = (meta && meta.passage_input) || (rec && rec.data && rec.data.passage_input) || 'sentence';
-  if (want !== 'whole') return 'sentence';
-  return allowsWholePassageInput(meta || {}) ? 'whole' : 'sentence';
+  return want === 'whole' ? 'whole' : 'sentence';
+}
+
+function readPassageInputChoice(prefix) {
+  const whole = document.querySelector('input[name="' + prefix + '-passage-input"]:checked');
+  if (whole && whole.value === 'whole') return 'whole';
+  const legacy = document.getElementById(prefix === 'send' ? 'send-whole-passage' : (prefix === 'bulk' ? 'bulk-send-whole' : 'in-whole-passage'));
+  if (legacy && legacy.checked && !legacy.disabled) return 'whole';
+  return 'sentence';
+}
+
+function passageInputChoiceHtml(name, selected) {
+  const sel = selected === 'whole' ? 'whole' : 'sentence';
+  const nSent = (sel === 'sentence') ? ' checked' : '';
+  const nWhole = (sel === 'whole') ? ' checked' : '';
+  return '<div class="passage-input-choice" style="border:1px solid #d6cfe9;border-radius:8px;padding:12px;margin:0 0 12px;background:#faf9fc;">' +
+    '<div style="font-size:12px;font-weight:700;color:#4A3D6B;margin-bottom:8px;">📦 구문랩 저장 방식</div>' +
+    '<label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.55;cursor:pointer;margin-bottom:8px;">' +
+      '<input type="radio" name="' + name + '-passage-input" value="sentence"' + nSent + ' style="margin-top:2px;">' +
+      '<span><strong>문장별</strong> — 문장 수만큼 행을 만듭니다. (기본 · 단어학습·구문분석에 맞음)</span>' +
+    '</label>' +
+    '<label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.55;cursor:pointer;">' +
+      '<input type="radio" name="' + name + '-passage-input" value="whole"' + nWhole + ' style="margin-top:2px;">' +
+      '<span><strong>본문통합</strong> — 한 유닛 당 지문 1개로 저장합니다. 한글 해석은 문장 순서대로 한 칸에 붙입니다.</span>' +
+    '</label>' +
+  '</div>';
 }
 
 /** import-claude-handout POST body — series_no/volume_no 기본 1 금지(오배송 원인) */
@@ -9375,7 +9394,7 @@ function openSendPreviewModal(rec) {
         '🎯 <strong>구문랩 학습기</strong> 계층 구조로 전송됩니다.<br>' +
         '📍 <strong>레벨 › 시리즈 › 권/교재 › 유닛(문항)</strong><br>' +
         '💡 분석교안/구조도는 <strong>유닛(문항) 단위</strong>로 저장됩니다.<br>' +
-        '📌 학생 학습 화면에서는 본문이 자동으로 문장별 분리됩니다. 고등부 부교재만 아래에서 지문 통입력을 켤 수 있습니다.<br>' +
+        '📌 구문랩 저장 방식은 아래에서 <strong>문장별</strong> 또는 <strong>본문통합(유닛당 지문 1개)</strong>을 고릅니다.<br>' +
         '📚 같은 유닛명이면 덮어쓰기, 다른 유닛명이면 새 유닛 생성' +
       '</div>' +
 
@@ -9431,12 +9450,7 @@ function openSendPreviewModal(rec) {
       // ═══ 숨김 필드 (내부 사용 - passage_no는 자동 = unit_no) ═══
       '<input type="hidden" id="send-passage-no" value="' + (meta.passage_no || meta.unit_no || 1) + '">' +
 
-      '<label id="send-whole-wrap" style="display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;font-size:12px;line-height:1.55;cursor:pointer;">' +
-        '<input type="checkbox" id="send-whole-passage" style="margin-top:2px;"' +
-          ((rec.data.passage_input === 'whole') ? ' checked' : '') + '>' +
-        '<span><strong>지문 통입력</strong> — 이 유닛을 문장 여러 개가 아니라 지문 1개로 저장합니다. 한글 해석은 문장 순서대로 한 칸에 붙입니다.<br>' +
-        '<span id="send-whole-hint" style="color:#666;">고등부 부교재(이름에 “부교재”)에서만 켤 수 있습니다.</span></span>' +
-      '</label>' +
+      passageInputChoiceHtml('send', (rec.data.passage_input === 'whole' || (rec.learnerMeta && rec.learnerMeta.passage_input === 'whole')) ? 'whole' : 'sentence') +
 
       // ═══ 제목 ═══
       '<div style="margin-bottom: 10px;">' +
@@ -9500,18 +9514,6 @@ function openSendPreviewModal(rec) {
       warnEl.innerHTML = learnerMismatchWarningHtml(rec, {
         level: lv, series_title: st, volume_title: vt, unit_title: ut
       }, { confirmId: 'send-mismatch-confirm' });
-    }
-    const wholeBox = document.getElementById('send-whole-passage');
-    const wholeHint = document.getElementById('send-whole-hint');
-    const wholeOk = allowsWholePassageInput({ level: lv, series_title: st, volume_title: vt, unit_title: ut });
-    if (wholeBox) {
-      wholeBox.disabled = !wholeOk;
-      if (!wholeOk) wholeBox.checked = false;
-    }
-    if (wholeHint) {
-      wholeHint.textContent = wholeOk
-        ? '이 커리는 통입력이 가능합니다. 끄면 기존처럼 문장별로 저장됩니다.'
-        : '고등부 부교재(이름에 “부교재”)에서만 켤 수 있습니다. 지금은 문장별 저장입니다.';
     }
   };
 
@@ -9640,11 +9642,7 @@ function openBulkSendPreviewModal(selected) {
           'placeholder="예: YBM박준언M2, 5강, 2026년 3월" ' +
           'style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brand,#6B5B95);border-radius:6px;background:#fffbea;">' +
       '</div>' +
-      '<label style="display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;font-size:12px;line-height:1.55;">' +
-        '<input type="checkbox" id="bulk-send-whole" style="margin-top:2px;">' +
-        '<span><strong>지문 통입력</strong> — 허용된 고등부 부교재일 때만, 각 유닛을 지문 1개로 저장합니다.<br>' +
-        '<span id="bulk-send-whole-hint" style="color:#666;">이름에 “부교재”가 없으면 문장별 저장으로 유지됩니다.</span></span>' +
-      '</label>' +
+      passageInputChoiceHtml('bulk', 'sentence') +
       '<div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-left:4px solid #4caf50;padding:12px;border-radius:4px;font-size:12px;margin-bottom:12px;">' +
         '📍 <strong>공통 저장 경로</strong> (구문랩에 실제로 들어가는 위치)<br>' +
         '<div id="bulk-send-path-preview" style="font-family:monospace;font-size:12px;margin-top:4px;color:#1b5e20;"></div>' +
@@ -9667,18 +9665,6 @@ function openBulkSendPreviewModal(selected) {
     const pathEl = document.getElementById('bulk-send-path-preview');
     if (pathEl) {
       pathEl.textContent = formatLearnerPath({ ...common, unit_title: '(자료별 자동)' });
-    }
-    const wholeBox = document.getElementById('bulk-send-whole');
-    const wholeHint = document.getElementById('bulk-send-whole-hint');
-    const wholeOk = allowsWholePassageInput(common);
-    if (wholeBox) {
-      wholeBox.disabled = !wholeOk;
-      if (!wholeOk) wholeBox.checked = false;
-    }
-    if (wholeHint) {
-      wholeHint.textContent = wholeOk
-        ? '이 커리는 통입력이 가능합니다. 체크한 자료만 지문 1개로 저장됩니다.'
-        : '이름에 “부교재”가 없으면 문장별 저장으로 유지됩니다.';
     }
     const listEl = document.getElementById('bulk-send-item-list');
     if (listEl) {
@@ -9717,7 +9703,7 @@ function openBulkSendPreviewModal(selected) {
     }
   };
 
-  ['bulk-send-level', 'bulk-send-series', 'bulk-send-volume', 'bulk-send-whole'].forEach(id => {
+  ['bulk-send-level', 'bulk-send-series', 'bulk-send-volume'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', updateBulkPreview);
   });
@@ -9725,12 +9711,11 @@ function openBulkSendPreviewModal(selected) {
 }
 
 function readBulkSendCommonMeta() {
-  const wholeBox = document.getElementById('bulk-send-whole');
   return {
     level: (document.getElementById('bulk-send-level')?.value || 'L08').trim(),
     series_title: (document.getElementById('bulk-send-series')?.value || '').trim(),
     volume_title: (document.getElementById('bulk-send-volume')?.value || '').trim(),
-    passage_input: (wholeBox && wholeBox.checked && !wholeBox.disabled) ? 'whole' : 'sentence'
+    passage_input: readPassageInputChoice('bulk')
   };
 }
 
@@ -9852,8 +9837,7 @@ async function confirmAndSendToLearner(id) {
   const passage_no = parseInt(document.getElementById('send-passage-no')?.value || '1', 10);
   const item_code = (document.getElementById('send-item-code')?.value || '').trim();
   const title_ko = (document.getElementById('send-title-ko')?.value || '').trim();
-  const wholeBox = document.getElementById('send-whole-passage');
-  const passage_input = (wholeBox && wholeBox.checked && !wholeBox.disabled) ? 'whole' : 'sentence';
+  const passage_input = readPassageInputChoice('send');
 
   // 필수 필드 검증
   if (!series_title) {
@@ -10231,27 +10215,15 @@ function splitEnglishSentences(text) {
   return GWJSplit.splitEnglishSentences(text);
 }
 
-function allowsWholePassageInput(meta) {
-  return !!(typeof GWJSplit !== 'undefined' && GWJSplit.allowsWholePassageInput && GWJSplit.allowsWholePassageInput(meta || {}));
+function allowsWholePassageInput(/* meta */) {
+  return true;
 }
 
 function syncWholePassageOption() {
-  const box = document.getElementById('in-whole-passage');
-  const hint = document.getElementById('whole-passage-hint');
-  if (!box) return;
-  const meta = {
-    level: document.getElementById('in-level')?.value || '',
-    series_title: document.getElementById('in-series')?.value || '',
-    volume_title: document.getElementById('in-volume')?.value || ''
-  };
-  const ok = allowsWholePassageInput(meta);
-  box.disabled = !ok;
-  if (!ok) box.checked = false;
-  if (hint) {
-    hint.textContent = ok
-      ? '이 커리는 지문 통입력이 가능합니다. 끄면 기존처럼 문장별로 저장됩니다.'
-      : '고등부 부교재(시리즈·교재명에 “부교재”)에서만 켤 수 있습니다. 그 외는 기존처럼 문장별 저장입니다.';
-  }
+  const wrap = document.getElementById('in-passage-input-wrap');
+  if (!wrap) return;
+  const current = readPassageInputChoice('in') || 'sentence';
+  wrap.innerHTML = passageInputChoiceHtml('in', current);
 }
 
 /** @deprecated use splitEnglishSentences — 호환 별칭 */
@@ -11707,7 +11679,7 @@ async function createRecordFromPassage(passage, meta, opts) {
     unit_no: unit_no || undefined,
     passage_no: unit_no || 1,
     new_item_code: unit_no ? (unit_title + '-1') : unit_title,
-    passage_input: (opts.passage_input === 'whole' && allowsWholePassageInput(meta)) ? 'whole' : 'sentence'
+    passage_input: opts.passage_input === 'whole' ? 'whole' : 'sentence'
   };
   fullData.passage_input = learnerMeta.passage_input;
 
@@ -11804,7 +11776,7 @@ async function generateAnalysis() {
         unit_title,
         customTitle: meta.customTitle || blocks[0].titleKo || '',
         embeddedTitle: blocks[0].titleKo || '',
-        passage_input: document.getElementById('in-whole-passage')?.checked ? 'whole' : 'sentence',
+        passage_input: readPassageInputChoice('in'),
         onProgress: (msg) => setStatus('loading', 'Claude가 지문을 분석 중입니다... ' + msg)
       });
 
@@ -11862,7 +11834,7 @@ async function generateAnalysis() {
           unit_title,
           customTitle: block.titleKo || '',
           embeddedTitle: block.titleKo || '',
-          passage_input: document.getElementById('in-whole-passage')?.checked ? 'whole' : 'sentence',
+          passage_input: readPassageInputChoice('in'),
           onProgress: (msg) => setStatus('loading',
             '<strong>' + (i + 1) + '/' + total + '</strong> ' + escapeHtml(msg) +
             (unit_title ? ' · ' + escapeHtml(unit_title) : '')

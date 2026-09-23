@@ -24,9 +24,6 @@
     sep: 1, sept: 1, oct: 1, nov: 1, dec: 1
   };
 
-  /** 고등부이면서 시리즈·교재명에 부교재가 있을 때만 지문 통입력 허용. */
-  var WHOLE_PASSAGE_SERIES = [/부교재/];
-
   function closersEnd(text, i) {
     var j = i;
     while (j + 1 < text.length && CLOSERS.test(text[j + 1])) j++;
@@ -147,41 +144,16 @@
     return parts.length ? parts : [trimmed];
   }
 
-  function isHighSchoolLevel(meta) {
-    var level = String((meta && meta.level) || '').trim();
-    if (/^L0(7|8|9)$/.test(level) || level === 'L10') return true;
-    var blob = [
-      meta && meta.series_title,
-      meta && meta.volume_title,
-      meta && meta.textbook,
-      meta && meta.lesson,
-      meta && meta.unit_title
-    ].filter(Boolean).join(' ');
-    return /고\s*[1-3]|예비\s*고|고등/.test(blob);
-  }
-
-  function curriculumBlob(meta) {
-    return [
-      meta && meta.series_title,
-      meta && meta.volume_title,
-      meta && meta.textbook,
-      meta && meta.lesson,
-      meta && meta.unit_title
-    ].filter(Boolean).join(' ');
-  }
-
-  function allowsWholePassageInput(meta) {
-    if (!meta || !isHighSchoolLevel(meta)) return false;
-    var blob = curriculumBlob(meta);
-    for (var i = 0; i < WHOLE_PASSAGE_SERIES.length; i++) {
-      if (WHOLE_PASSAGE_SERIES[i].test(blob)) return true;
-    }
-    return false;
+  /**
+   * 통입력(본문통합)은 전송 시 사용자가 선택한다.
+   * 커리큘럼 제한 없음 — 호환용으로 true 유지.
+   */
+  function allowsWholePassageInput(/* meta */) {
+    return true;
   }
 
   return {
     splitEnglishSentences: splitEnglishSentences,
-    allowsWholePassageInput: allowsWholePassageInput,
-    WHOLE_PASSAGE_SERIES: WHOLE_PASSAGE_SERIES
+    allowsWholePassageInput: allowsWholePassageInput
   };
 });

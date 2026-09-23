@@ -57,12 +57,9 @@ assert.strictEqual(allowsWholePassageInput({
 }), true);
 assert.strictEqual(allowsWholePassageInput({
   level: 'L09', series_title: '고2 모의고사', volume_title: '2026년 3월'
-}), false);
+}), true);
 assert.strictEqual(allowsWholePassageInput({
   level: 'L04', series_title: '중1 부교재', volume_title: '1과'
-}), false);
-assert.strictEqual(allowsWholePassageInput({
-  level: 'L08', series_title: '올림포스', volume_title: '부교재 5강'
 }), true);
 
 console.log('split-english-sentences: ok');

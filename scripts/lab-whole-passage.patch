@@ -1,9 +1,9 @@
 diff --git a/supabase/functions/_shared/splitEnglishSentences.js b/supabase/functions/_shared/splitEnglishSentences.js
 new file mode 100644
-index 0000000..113c75d
+index 0000000..a426fbe
 --- /dev/null
 +++ b/supabase/functions/_shared/splitEnglishSentences.js
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,159 @@
 +/**
 + * 영어 문장 경계 분리 — Syntax Studio와 구문랩(import-claude-handout)이 같이 씀.
 + * 약어(Mr./Ms./U.S./p.m.)·닫는 인용부호·말줄임(...)에서 문장을 잘라 내지 않고,
@@ -29,9 +29,6 @@ index 0000000..113c75d
 +    jan: 1, feb: 1, mar: 1, apr: 1, jun: 1, jul: 1, aug: 1,
 +    sep: 1, sept: 1, oct: 1, nov: 1, dec: 1
 +  };
-+
-+  /** 고등부이면서 시리즈·교재명에 부교재가 있을 때만 지문 통입력 허용. */
-+  var WHOLE_PASSAGE_SERIES = [/부교재/];
 +
 +  function closersEnd(text, i) {
 +    var j = i;
@@ -153,46 +150,21 @@ index 0000000..113c75d
 +    return parts.length ? parts : [trimmed];
 +  }
 +
-+  function isHighSchoolLevel(meta) {
-+    var level = String((meta && meta.level) || '').trim();
-+    if (/^L0(7|8|9)$/.test(level) || level === 'L10') return true;
-+    var blob = [
-+      meta && meta.series_title,
-+      meta && meta.volume_title,
-+      meta && meta.textbook,
-+      meta && meta.lesson,
-+      meta && meta.unit_title
-+    ].filter(Boolean).join(' ');
-+    return /고\s*[1-3]|예비\s*고|고등/.test(blob);
-+  }
-+
-+  function curriculumBlob(meta) {
-+    return [
-+      meta && meta.series_title,
-+      meta && meta.volume_title,
-+      meta && meta.textbook,
-+      meta && meta.lesson,
-+      meta && meta.unit_title
-+    ].filter(Boolean).join(' ');
-+  }
-+
-+  function allowsWholePassageInput(meta) {
-+    if (!meta || !isHighSchoolLevel(meta)) return false;
-+    var blob = curriculumBlob(meta);
-+    for (var i = 0; i < WHOLE_PASSAGE_SERIES.length; i++) {
-+      if (WHOLE_PASSAGE_SERIES[i].test(blob)) return true;
-+    }
-+    return false;
++  /**
++   * 통입력(본문통합)은 전송 시 사용자가 선택한다.
++   * 커리큘럼 제한 없음 — 호환용으로 true 유지.
++   */
++  function allowsWholePassageInput(/* meta */) {
++    return true;
 +  }
 +
 +  return {
 +    splitEnglishSentences: splitEnglishSentences,
-+    allowsWholePassageInput: allowsWholePassageInput,
-+    WHOLE_PASSAGE_SERIES: WHOLE_PASSAGE_SERIES
++    allowsWholePassageInput: allowsWholePassageInput
 +  };
 +});
 diff --git a/supabase/functions/import-claude-handout/index.ts b/supabase/functions/import-claude-handout/index.ts
-index 9d658ab..d77a269 100644
+index 9d658ab..7d7a212 100644
 --- a/supabase/functions/import-claude-handout/index.ts
 +++ b/supabase/functions/import-claude-handout/index.ts
 @@ -3,6 +3,20 @@
@@ -203,7 +175,7 @@ index 9d658ab..d77a269 100644
 +
 +type SharedSplit = {
 +  splitEnglishSentences: (text: string) => string[];
-+  allowsWholePassageInput: (meta: Record<string, unknown>) => boolean;
++  allowsWholePassageInput?: (meta: Record<string, unknown>) => boolean;
 +};
 +
 +function sharedSplit(): SharedSplit {
@@ -234,7 +206,7 @@ index 9d658ab..d77a269 100644
    unit_title?: string;       // e.g. "263모고32" — different per question to create separate units
    unit_no?: number;
    passage_no?: number;
-+  /** sentence = 문장별 행(기본). whole = 고등부 부교재만, 유닛당 지문 1행 */
++  /** sentence = 문장별 행(기본). whole = 유닛당 지문 1행(본문통합) */
 +  passage_input?: "whole" | "sentence";
  }
  
@@ -254,31 +226,18 @@ index 9d658ab..d77a269 100644
    // is stored as one row; multi-sentence passages produce N rows that share a
    // common base code with -1, -2, ... suffix.
 -  const sentences = splitIntoSentences(p.passage);
-+  // sentence: 문장마다 1행. whole: 고등부 부교재만 지문 1행(해석은 줄바꿈으로 유지).
++  // sentence: 문장마다 1행. whole: 유닛당 지문 1행(해석은 줄바꿈으로 유지).
 +  let sentences = splitIntoSentences(p.passage);
    if (sentences.length === 0)
      return json({ ok: false, error: "passage에서 문장을 찾지 못했습니다" }, 400);
  
-@@ -642,7 +659,31 @@ Deno.serve(async (req) => {
+@@ -642,7 +659,18 @@ Deno.serve(async (req) => {
      }
    }
  
 -  const koreanSentences = extractPayloadKoreanSentences(p, sentences.length);
 +  let koreanSentences = extractPayloadKoreanSentences(p, sentences.length);
 +  if (p.passage_input === "whole") {
-+    const allowed = sharedSplit().allowsWholePassageInput({
-+      level,
-+      series_title: seriesTitle,
-+      volume_title: volumeTitle,
-+      textbook: p.textbook || "",
-+      unit_title: unitTitleExplicit || "",
-+    });
-+    if (!allowed) {
-+      return json({
-+        ok: false,
-+        error: "지문 통입력은 고등부 부교재(레벨 L07–L10, 시리즈·교재명에 부교재)에서만 사용할 수 있습니다. 문장별 저장으로 보내 주세요.",
-+      }, 400);
-+    }
 +    const explicitKo = Array.isArray(p.sentences)
 +      ? p.sentences.map((s) => String(s?.ko || s?.translation || s?.korean || "")
 +          .replace(/^▶?\s*직독[·ㆍ]\s*의역\s*/i, "")
