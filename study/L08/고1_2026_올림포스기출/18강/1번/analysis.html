@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Vision Biased by Functional Relationships: Beyond Camera-like Perception</title>
+<title>Truth Bias: Why We Tend to Believe What We Hear</title>
 <style>*, ::before, ::after { box-sizing: border-box; margin: 0px; padding: 0px; }
 :root { --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3; --brand-bg: #F4F2F8; --paper: #ffffff; --bg: #F7F5F0; --border: #E3DFD5; --text: #2A2A2A; --text-muted: #6E6B65; --charcoal: #3D3D3D; --accent-red: #A32D2D; --accent-teal: #0F6E56; --accent-blue: #185FA5; --accent-amber: #c8900a; --navy: var(--brand-dark); --navy-dark: var(--brand-dark); --accent-purple: var(--brand); }
 body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -15,7 +15,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .teacher-info { font-size: 11px; color: var(--text-muted); padding: 4px 10px; background: rgb(248, 247, 243); border-radius: 12px; border: 1px solid var(--border); }
 .teacher-info strong { color: var(--brand-dark); }
 .tab-group { display: flex; gap: 4px; margin-left: auto; }
-.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
+.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
 .tab-btn:hover { background: rgb(245, 245, 242); color: var(--text); }
 .tab-btn.active { background: var(--brand); color: rgb(255, 255, 255); }
 .tab-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -43,7 +43,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .passage-area { width: 100%; min-height: 180px; resize: vertical; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13.5px; line-height: 1.7; color: var(--text); background: rgb(250, 250, 247); }
 .passage-area:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
 .action-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
-.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
+.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
 .generate-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: rgba(107, 91, 149, 0.3) 0px 4px 12px; }
 .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 .status-box { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.6; display: none; }
@@ -51,7 +51,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .status-box.loading { background: rgb(254, 249, 240); border: 1px solid rgb(232, 200, 122); color: rgb(122, 69, 0); }
 .status-box.error { background: rgb(254, 242, 242); border: 1px solid rgb(244, 199, 199); color: rgb(154, 32, 16); }
 .status-box.success { background: rgb(225, 245, 238); border: 1px solid rgb(134, 212, 188); color: rgb(8, 80, 65); }
-.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: initial; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
+.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: none; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
 @keyframes spin { 
   100% { transform: rotate(360deg); }
 }
@@ -78,7 +78,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .library-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: 0.15s; position: relative; display: flex; flex-direction: column; gap: 10px; }
 .library-card:hover { border-color: var(--brand); box-shadow: rgba(107, 91, 149, 0.15) 0px 4px 14px; transform: translateY(-1px); }
 .library-card.has-selection { border-color: rgb(76, 175, 80); background: rgb(241, 248, 233); }
-.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
+.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
 .library-card .fav-btn.active { color: var(--accent-amber); }
 .library-card .fav-btn:hover { color: var(--accent-amber); }
 .card-select-check { position: absolute; top: 12px; left: 12px; cursor: pointer; user-select: none; z-index: 2; }
@@ -217,7 +217,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .hl-purple { color: rgb(74, 45, 136); font-weight: 700; }
 .ko-box { background: var(--brand-light); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: rgb(51, 51, 51); line-height: 1.7; margin-bottom: 10px; }
 .ko-box strong { color: var(--brand-dark); }
-.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: initial; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
+.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: none; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
 .point-box strong { color: rgb(154, 96, 0); }
 .close-btn { display: block; width: 100%; margin-top: 12px; padding: 8px; background: none; border: 1px solid rgb(221, 221, 221); border-radius: 8px; font-size: 12px; color: rgb(170, 170, 170); cursor: pointer; font-family: inherit; }
 .close-btn:hover { background: rgb(245, 245, 245); color: rgb(102, 102, 102); }
@@ -232,26 +232,15 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .viewing-bar strong { font-weight: 700; }
 .viewing-bar .edit-mode-toggle { padding: 4px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(134, 212, 188); border-radius: 14px; transition: 0.15s; }
 .viewing-bar .edit-mode-toggle:has(input:checked) { background: rgb(122, 69, 0); color: rgb(255, 255, 255); border-color: rgb(122, 69, 0); }
-.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
+.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
 .dropdown { position: relative; display: inline-block; }
-.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: hidden; }
+.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: visible; }
 .dropdown.open .dropdown-menu { display: block; }
-.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
+.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: none; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
 .dropdown-menu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
 .dropdown-menu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-item { position: relative; }
-.dropdown-menu .submenu-trigger { width: 100%; padding: 10px 14px; justify-content: space-between; align-items: center; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; display: flex !important; }
-.dropdown-menu .submenu-item:last-child .submenu-trigger { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu-trigger .arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.15s; }
-.dropdown-menu .submenu-trigger:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-trigger:hover .arrow { color: var(--brand); }
-.dropdown-menu .submenu { display: none; position: absolute; left: 100%; top: 0px; margin-left: 2px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 260px; z-index: 201; overflow: hidden; }
-.dropdown-menu .submenu-item:hover > .submenu, .dropdown-menu .submenu-item:focus-within > .submenu { display: block; }
-.dropdown-menu .submenu-item:hover > .submenu-trigger { background: var(--brand); color: rgb(255, 255, 255); }
-.dropdown-menu .submenu-item:hover > .submenu-trigger .arrow { color: rgb(255, 255, 255); transform: translateX(2px); }
-.dropdown-menu .submenu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
-.dropdown-menu .submenu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.dropdown-menu .download-section-label { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted); background: rgb(250, 250, 247); border-bottom: 1px solid rgb(240, 237, 230); }
+.dropdown-menu .download-section-label:not(:first-child) { border-top: 1px solid rgb(238, 238, 238); }
 .modal.json-editor { max-width: 900px; width: 90vw; max-height: 85vh; display: flex; flex-direction: column; }
 .json-editor-body { flex: 1 1 0%; min-height: 0px; display: flex; flex-direction: column; gap: 10px; }
 .json-editor-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 1px solid rgb(240, 237, 230); }
@@ -267,6 +256,21 @@ body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; trans
 body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
 body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
 body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+.line-translation-wrap { max-width: 720px; margin: 0px auto; padding: 16px 20px 40px; }
+.line-translation-note { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading { font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700; }
+.line-translation-list { list-style: none; padding: 0px; margin: 0px; display: flex; flex-direction: column; gap: 0px; }
+.line-translation-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; line-height: 1.55; font-size: 14px; padding: 5px 0px 5px 6px; border-left: 2px solid rgba(107, 91, 149, 0.18); background: transparent; }
+.line-translation-item + .line-translation-item { margin-top: 1px; }
+.line-translation-item:nth-child(2n) { background: rgba(107, 91, 149, 0.035); }
+.line-translation-num { flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55; }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
+.line-translation-passage { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.line-translation-passage:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; margin-bottom: 0px; padding-bottom: 0px; }
+.line-translation-passage h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12); }
+.line-translation-passage .passage-meta { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.line-translation-empty-line { color: rgb(153, 153, 153); font-size: 12px; margin: 2px 0px 0px 34px; }
 @media print {
   body { background: rgb(255, 255, 255); }
   body.edit-mode .page::before { display: none !important; }
@@ -280,7 +284,18 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .page:last-child { break-after: auto; }
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  #tab-line-translation.print-target .line-translation-wrap { max-width: none; padding: 0px; margin: 0px; }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage { margin-bottom: 8pt; padding-bottom: 6pt; break-inside: avoid-page; }
+  #tab-line-translation.print-target .line-translation-passage h3 { font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt; border-bottom-color: rgb(204, 204, 204); }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: rgb(85, 85, 85); }
+  #tab-line-translation.print-target .line-translation-item { grid-template-columns: 16pt 1fr; gap: 4pt; font-size: 9.5pt; line-height: 1.38; padding: 0.5pt 0px; border-left-width: medium; border-left-style: none; border-left-color: currentcolor; background: transparent !important; }
+  #tab-line-translation.print-target .line-translation-num { font-size: 9pt; color: rgb(51, 51, 51); font-weight: 600; }
+  #tab-line-translation.print-target .line-translation-empty-line { font-size: 8.5pt; margin-left: 16pt; }
   @page { size: a4; margin: 0px; }
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
 }
 </style>
 </head>
@@ -301,31 +316,31 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
       </div>
       <div class="header-right">
         <div class="title-line">18강 | 1번 | <span class="analysis-tag">1</span></div>
-        <div class="topic-line">Topic: Topic: How functional relationships bias visual perception</div>
+        <div class="topic-line">Topic: Truth Bias in Human Communication</div>
       </div>
     </header>
       <div class="section">
         <div class="section-title"><span class="num">1</span> 제목 및 주제</div>
         <table class="info-table">
-          <tr><th>주제</th><td>우리의 시각적 인식은 사물과의 기능적 관계에 기반한 무의식적 위계에 의해 형성되며, 이는 객관적으로 보는 능력을 방해한다. 카메라는 기계적 무관심으로 세상을 있는 그대로 기록하지만, 인간의 눈은 선입견과 우선순위에 따라 대상을 왜곡하여 인식한다.</td></tr>
-          <tr><th>예상 제목</th><td>Vision Biased by Functional Relationships: Beyond Camera-like Perception</td></tr>
-          <tr><th>글의 유형</th><td>설명문 (expository) — 원인·결과 구조 / 예시를 통한 논증</td></tr>
-          <tr><th>심경 변화</th><td>객관적 설명 유지 (심경 변화 없음)</td></tr>
+          <tr><th>주제</th><td>인간은 의사소통할 때 자연스럽게 상대방의 말을 진실로 받아들이는 경향이 있다. 이는 인지적 노력을 절약하려는 본능 때문이며, 온라인 정보를 볼 때도 처음엔 믿게 된다.</td></tr>
+          <tr><th>예상 제목</th><td>Truth Bias: Why We Tend to Believe What We Hear</td></tr>
+          <tr><th>글의 유형</th><td>설명문</td></tr>
+          <tr><th>심경 변화</th><td>심경 변화 없음</td></tr>
         </table>
       </div>
       <div class="section">
         <div class="passage-label">▶ 원문 지문</div>
-        <div class="passage-box"><strong>Vision is influenced by our preconceptions about reality.</strong> In viewing a scene, we establish unconscious hierarchies that reflect our functional relationship to objects and our momentary priorities. For example, when visualizing a hammer in our mind's eye, we tend to 'see' it in profile or at some other 'ready for use' angle. One would probably not visualize a hammer as seen from the top so that the handle is hidden by the hammer's head. <strong>The functional relationship we have with objects creates visual expectations that interfere with our ability to see 'like a camera.'</strong> The camera, like the human eye, sees only shapes and colors. It documents the world impartially through a lens that is similar to the eye. When we look at them carefully, photographs are often surprising because they don't interpret confusing details but simply serve them up to us with a mechanical indifference. And because of their flatness, photographs often contain areas that appear as unrecognizable colors and shapes.</div>
+        <div class="passage-box">There is a natural assumption of truth, or a <strong>truth bias</strong> when humans communicate with one another.<br>In other words, when we're listening to others or reading their words, our automatic assumption is that the other person is telling the truth.<br>This usually works out fine.<br>If you ask someone where the restroom is located or if it's raining outside, you can safely assume that most people will not lie in their responses.<br>Imagine how difficult it would be to converse with someone if you assumed that everything they were telling you was false!<br>Indeed, questioning the truth of a statement and then choosing not to believe it requires additional mental steps.<br>For the most part, humans are "<strong>cognitive misers</strong>," which means we typically don't expend more mental effort than seems necessary in a given situation.<br>It makes sense then, that when we see something online, even if it is fake, <strong>our default is to believe it</strong>, at least at first.<br>We humans are unlikely to doubt the truth of information we receive, due to our tendency to save mental effort.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">3</span> 중심문장 &amp; 핵심 키워드</div>
         <div style="border: 1px solid var(--border); border-top: none; padding: 12px; border-radius: 0 0 4px 4px;">
           <div class="topic-sentence-label">▶ TOPIC SENTENCE (중심문장)</div>
           <div class="topic-sentence-box">
-            <div class="en">"The functional relationship we have with objects creates visual expectations that interfere with our ability to see 'like a camera.'"</div>
-            <div class="ko">→ 사물과의 기능적 관계가 시각적 기대를 만들어 객관적으로 보는 능력을 방해한다는 핵심 주장.</div>
+            <div class="en">"There is a natural assumption of truth, or a truth bias when humans communicate with one another."</div>
+            <div class="ko">→ 인간이 서로 의사소통할 때 진실에 대한 자연스러운 가정, 즉 진실 편향이 존재한다.</div>
           </div>
-          <div class="keyword-row"><span class="keyword-chip">preconceptions</span><span class="keyword-chip">functional relationship</span><span class="keyword-chip">visual expectations</span><span class="keyword-chip">unconscious hierarchies</span><span class="keyword-chip">mechanical indifference</span><span class="keyword-chip">objective perception</span><span class="keyword-chip highlight">객관적 분석 (설명문)</span></div>
+          <div class="keyword-row"><span class="keyword-chip">truth bias</span><span class="keyword-chip">진실 편향</span><span class="keyword-chip">cognitive misers</span><span class="keyword-chip">인지적 구두쇠</span><span class="keyword-chip">mental effort</span><span class="keyword-chip">정신적 노력</span><span class="keyword-chip highlight">해당 없음</span></div>
         </div>
       </div>
       
@@ -349,64 +364,106 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ① 수동태 + 전치사구 (by)</div>
+      <div class="sentence-title">2 문장별 분석 — ① There is 구문, 동격 표현</div>
       <div class="sentence-body">
-        <div class="sentence-en">Vision <span class='hl-blue'>is influenced by</span> our preconceptions about reality.</div>
+        <div class="sentence-en"><span class='hl-blue'>There is a natural assumption of truth</span>, <span class='hl-teal'>or a truth bias</span> when humans communicate with one another.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>주어</td><td>Vision</td><td>시각, 추상 명사</td></tr>
+              <tr><td>유도부사</td><td>There</td><td>존재를 나타내는 구문의 형식적 주어</td></tr>
             
-              <tr><td>수동태</td><td>is influenced by</td><td>~에 의해 영향받다</td></tr>
+              <tr><td>진주어</td><td>a natural assumption of truth</td><td>진실에 대한 자연스러운 가정</td></tr>
             
-              <tr><td>행위자</td><td>our preconceptions about reality</td><td>현실에 대한 선입견</td></tr>
+              <tr><td>동격어구</td><td>or a truth bias</td><td>앞 명사구와 동격, 즉 진실 편향</td></tr>
+            
+              <tr><td>시간부사절</td><td>when humans communicate with one another</td><td>인간이 서로 의사소통할 때</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>시각은 / 영향을 받는다 / 현실에 대한 우리의 선입견에 의해</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>진실에 대한 자연스러운 가정이 존재한다 / 즉 인간이 서로 의사소통할 때 진실 편향이 있다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ② 분사구문 + 관계대명사 that</div>
+      <div class="sentence-title">2 문장별 분석 — ② 명사절(that절), 동명사구</div>
       <div class="sentence-body">
-        <div class="sentence-en"><span class='hl-amber'>In viewing a scene</span>, we establish unconscious hierarchies <span class='hl-blue'>that reflect</span> our functional relationship to objects and our momentary priorities.</div>
+        <div class="sentence-en"><span class='hl-purple'>In other words</span>, when we're listening to others or reading their words, <span class='hl-blue'>our automatic assumption is that</span> the other person is telling the truth.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>분사구문</td><td>In viewing a scene</td><td>장면을 볼 때 (시간·조건)</td></tr>
+              <tr><td>연결어</td><td>In other words</td><td>바꿔 말하면, 앞 내용 부연</td></tr>
             
-              <tr><td>동사</td><td>establish</td><td>확립하다</td></tr>
+              <tr><td>시간부사절</td><td>when we're listening to others or reading their words</td><td>타인의 말을 듣거나 글을 읽을 때</td></tr>
             
-              <tr><td>목적어</td><td>unconscious hierarchies</td><td>무의식적 위계</td></tr>
+              <tr><td>주어</td><td>our automatic assumption</td><td>우리의 자동적인 가정</td></tr>
             
-              <tr><td>관계절</td><td>that reflect...</td><td>기능적 관계와 우선순위를 반영하는</td></tr>
+              <tr><td>보어(명사절)</td><td>that the other person is telling the truth</td><td>상대방이 진실을 말한다는 내용</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>한 장면을 볼 때 / 우리는 무의식적 위계를 확립한다 / 사물과의 기능적 관계와 순간적 우선순위를 반영하는</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>다시 말해 남의 말을 듣거나 글을 읽을 때 / 우리의 자동적 가정은 상대방이 진실을 말한다는 것이다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ③④ 예시 제시 (For example) + 시각화 경향</div>
+      <div class="sentence-title">2 문장별 분석 — ③ 자동사 + 부사구</div>
       <div class="sentence-body">
-        <div class="sentence-en">For example, when visualizing a hammer in our mind's eye, we tend to 'see' it <span class='hl-blue'>in profile</span> or at some other 'ready for use' angle. One would probably not visualize a hammer <span class='hl-red'>as seen from the top</span> so that the handle is hidden by the hammer's head.</div>
+        <div class="sentence-en"><span class='hl-teal'>This usually works out fine</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>예시 표지</td><td>For example</td><td>구체적 사례 도입</td></tr>
+              <tr><td>주어</td><td>This</td><td>앞 문장 내용을 가리키는 지시대명사</td></tr>
             
-              <tr><td>종속절</td><td>when visualizing</td><td>시각화할 때</td></tr>
+              <tr><td>부사</td><td>usually</td><td>대개, 보통</td></tr>
             
-              <tr><td>경향 표현</td><td>tend to 'see'</td><td>~하는 경향이 있다</td></tr>
-            
-              <tr><td>부정 표현</td><td>would probably not</td><td>아마 ~하지 않을 것</td></tr>
+              <tr><td>자동사구</td><td>works out fine</td><td>잘 작동하다, 문제없이 진행되다</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>예를 들어 망치를 마음속으로 시각화할 때 / 우리는 옆모습이나 사용 준비 각도로 보는 경향 / 위에서 본 모습으로는 시각화하지 않음</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이것은 대개 잘 작동한다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ④ 조건절, 간접의문문, 가정법 현재</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-blue'>If you ask someone where the restroom is located</span> or if it's raining outside, <span class='hl-teal'>you can safely assume that</span> most people will not lie in their responses.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>조건절</td><td>If you ask someone</td><td>누군가에게 묻는다면</td></tr>
+            
+              <tr><td>간접의문문</td><td>where the restroom is located</td><td>화장실이 어디 있는지</td></tr>
+            
+              <tr><td>주절</td><td>you can safely assume</td><td>안전하게 가정할 수 있다</td></tr>
+            
+              <tr><td>명사절</td><td>that most people will not lie in their responses</td><td>대부분 사람들이 거짓말하지 않을 것</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>화장실 위치나 밖에 비가 오는지 묻는다면 / 대부분의 사람들이 거짓 대답을 하지 않을 거라 안전하게 가정할 수 있다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑤ 가정법 과거, 명령문, 의문사 + 형용사절</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-amber'>Imagine how difficult it would be</span> to converse with someone <span class='hl-red'>if you assumed that everything they were telling you was false</span>!</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>명령문</td><td>Imagine</td><td>상상해 보라</td></tr>
+            
+              <tr><td>간접의문문</td><td>how difficult it would be to converse</td><td>대화하는 것이 얼마나 어려울지</td></tr>
+            
+              <tr><td>조건절</td><td>if you assumed</td><td>만약 가정한다면</td></tr>
+            
+              <tr><td>명사절</td><td>that everything they were telling you was false</td><td>그들이 말하는 모든 것이 거짓이라고</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>상상해 보라 얼마나 어려울지 / 만약 상대방이 말하는 모든 것이 거짓이라고 가정하며 대화한다면</div>
       </div>
     </div>
       
@@ -430,64 +487,91 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑤ 주제문 (인과 관계)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑥ 동명사 주어, 병렬 구조</div>
       <div class="sentence-body">
-        <div class="sentence-en"><span class='hl-purple'>The functional relationship</span> we have with objects <span class='hl-blue'>creates visual expectations</span> that <span class='hl-red'>interfere with</span> our ability to see 'like a camera.'</div>
+        <div class="sentence-en">Indeed, <span class='hl-blue'>questioning the truth of a statement and then choosing not to believe it</span> <span class='hl-teal'>requires additional mental steps</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>주어</td><td>The functional relationship we have with objects</td><td>사물과의 기능적 관계 (관계절 수식)</td></tr>
+              <tr><td>부사</td><td>Indeed</td><td>실제로, 정말로</td></tr>
             
-              <tr><td>동사</td><td>creates</td><td>만들어내다</td></tr>
+              <tr><td>동명사 주어</td><td>questioning the truth of a statement</td><td>진술의 진실성을 의심하는 것</td></tr>
             
-              <tr><td>목적어</td><td>visual expectations</td><td>시각적 기대</td></tr>
+              <tr><td>병렬 동명사</td><td>and then choosing not to believe it</td><td>그리고 그것을 믿지 않기로 선택하는 것</td></tr>
             
-              <tr><td>관계절</td><td>that interfere with</td><td>~을 방해하는</td></tr>
+              <tr><td>동사</td><td>requires</td><td>요구하다</td></tr>
+            
+              <tr><td>목적어</td><td>additional mental steps</td><td>추가적인 정신적 단계들</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>사물과의 기능적 관계는 / 시각적 기대를 만들어내고 / 이는 카메라처럼 보는 능력을 방해한다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>진술의 진실성을 의심하고 그것을 믿지 않기로 선택하는 것은 / 추가적인 정신적 단계를 요구한다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑥⑦ 대조 구조 (카메라 vs 인간)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑦ 관계대명사 계속적 용법, 비교급</div>
       <div class="sentence-body">
-        <div class="sentence-en">The camera, <span class='hl-blue'>like the human eye</span>, sees only shapes and colors. It documents the world <span class='hl-teal'>impartially</span> through a lens that is similar to the eye.</div>
+        <div class="sentence-en"><span class='hl-purple'>For the most part</span>, humans are "<span class='hl-blue'>cognitive misers</span>," <span class='hl-teal'>which means</span> we typically don't expend more mental effort than seems necessary in a given situation.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>비교 표현</td><td>like the human eye</td><td>인간의 눈처럼</td></tr>
+              <tr><td>부사구</td><td>For the most part</td><td>대부분, 대체로</td></tr>
             
-              <tr><td>동사</td><td>sees only</td><td>오직 ~만 본다</td></tr>
+              <tr><td>보어</td><td>cognitive misers</td><td>인지적 구두쇠</td></tr>
             
-              <tr><td>부사</td><td>impartially</td><td>공평하게, 편견 없이</td></tr>
+              <tr><td>관계대명사절</td><td>which means</td><td>그것은 의미한다</td></tr>
+            
+              <tr><td>명사절</td><td>we typically don't expend more mental effort than seems necessary</td><td>필요해 보이는 것보다 더 많은 정신적 노력을 쓰지 않는다</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>카메라는 인간의 눈처럼 형태와 색만 본다 / 눈과 비슷한 렌즈로 세상을 공평하게 기록한다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>대부분 인간은 인지적 구두쇠이다 / 이는 주어진 상황에서 필요해 보이는 것보다 더 많은 정신적 노력을 쓰지 않음을 의미한다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑧⑨ 이유절 (because) + 결과 설명</div>
+      <div class="sentence-title">2 문장별 분석 — ⑧ 가주어-진주어, 양보절</div>
       <div class="sentence-body">
-        <div class="sentence-en">When we look at them carefully, photographs are often surprising <span class='hl-blue'>because they don't interpret</span> confusing details but simply <span class='hl-purple'>serve them up</span> to us with a mechanical indifference. And <span class='hl-amber'>because of their flatness</span>, photographs often contain areas that appear as unrecognizable colors and shapes.</div>
+        <div class="sentence-en"><span class='hl-purple'>It makes sense then</span>, that when we see something online, <span class='hl-red'>even if it is fake</span>, <span class='hl-blue'>our default is to believe it</span>, at least at first.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>이유절</td><td>because they don't interpret</td><td>해석하지 않기 때문에</td></tr>
+              <tr><td>가주어</td><td>It</td><td>형식적 주어</td></tr>
             
-              <tr><td>대조 접속사</td><td>but simply</td><td>그저 단순히</td></tr>
+              <tr><td>동사</td><td>makes sense</td><td>말이 되다, 이치에 맞다</td></tr>
             
-              <tr><td>구동사</td><td>serve up</td><td>제공하다</td></tr>
+              <tr><td>진주어절</td><td>that when we see something online</td><td>온라인에서 무언가를 볼 때</td></tr>
             
-              <tr><td>전치사구</td><td>because of their flatness</td><td>평면성 때문에</td></tr>
+              <tr><td>양보절</td><td>even if it is fake</td><td>비록 그것이 가짜일지라도</td></tr>
+            
+              <tr><td>주절</td><td>our default is to believe it</td><td>우리의 기본값은 그것을 믿는 것</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>사진을 주의 깊게 보면 놀랍다 / 세부 사항을 해석하지 않고 기계적 무관심으로 제공하기 때문 / 평면성으로 인해 알아보기 어려운 영역 포함</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그러면 이치에 맞다 / 온라인에서 무언가를 볼 때 가짜일지라도 처음엔 적어도 믿는 것이 우리의 기본값이라는 것이</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑨ be likely to 구문, due to</div>
+      <div class="sentence-body">
+        <div class="sentence-en">We humans <span class='hl-blue'>are unlikely to doubt</span> the truth of information we receive, <span class='hl-teal'>due to our tendency to save mental effort</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주어</td><td>We humans</td><td>우리 인간은</td></tr>
+            
+              <tr><td>서술어</td><td>are unlikely to doubt</td><td>의심하지 않을 가능성이 높다</td></tr>
+            
+              <tr><td>목적어</td><td>the truth of information we receive</td><td>우리가 받는 정보의 진실성</td></tr>
+            
+              <tr><td>이유 전치사구</td><td>due to our tendency to save mental effort</td><td>정신적 노력을 절약하려는 우리의 경향 때문에</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>우리 인간은 받은 정보의 진실성을 의심하지 않을 가능성이 높다 / 정신적 노력을 절약하려는 경향 때문에</div>
       </div>
     </div>
       
@@ -515,82 +599,82 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
           <thead><tr><th>단어·어구</th><th>품사</th><th>의미</th><th>유의어 / 반의어 / 비고</th></tr></thead>
           <tbody>
     <tr>
-      <td>preconception</td><td>n.</td>
-      <td>선입견, 고정관념</td><td>유의어 prejudice, bias</td>
+      <td>assumption</td><td>명사</td>
+      <td>가정, 추정</td><td>유의어: supposition(추측) | 반의어: certainty(확실성)</td>
     </tr>
     <tr>
-      <td>unconscious</td><td>adj.</td>
-      <td>무의식적인</td><td>반의어 conscious</td>
+      <td>truth bias</td><td>명사구</td>
+      <td>진실 편향</td><td>반의어: lie bias(거짓 편향), deception bias(속임 편향) | 비고: 상대방의 말을 진실로 받아들이는 경향</td>
     </tr>
     <tr>
-      <td>hierarchy</td><td>n.</td>
-      <td>위계, 계층</td><td>hierarchical (adj.)</td>
+      <td>work out</td><td>동사구</td>
+      <td>잘 되다, 해결되다</td><td>유의어: succeed(성공하다) | 반의어: fail(실패하다)</td>
     </tr>
     <tr>
-      <td>momentary</td><td>adj.</td>
-      <td>순간적인, 일시적인</td><td>moment (n.)</td>
+      <td>converse</td><td>동사</td>
+      <td>대화하다</td><td>유의어: talk(말하다), communicate(의사소통하다) | 반의어: ignore(무시하다), avoid(피하다)</td>
     </tr>
     <tr>
-      <td>in profile</td><td>idiom</td>
-      <td>옆모습으로</td><td>측면에서 본</td>
+      <td>cognitive</td><td>형용사</td>
+      <td>인지의, 인식의</td><td>유의어: mental(정신의), intellectual(지적인), cerebral(두뇌의) | 반의어: physical(신체의), emotional(감정의), instinctive(본능적인) | 비고: cognition(인지) 형용사형</td>
     </tr>
     <tr>
-      <td>interfere with</td><td>v.</td>
-      <td>~을 방해하다</td><td>interrupt와 유사</td>
+      <td>miser</td><td>명사</td>
+      <td>구두쇠, 인색한 사람</td><td>유의어: cheapskate(짠돌이) | 반의어: spendthrift(낭비가)</td>
     </tr>
     <tr>
-      <td>impartially</td><td>adv.</td>
-      <td>공평하게, 편견 없이</td><td>impartial (adj.)</td>
+      <td>expend</td><td>동사</td>
+      <td>쓰다, 소비하다</td><td>유의어: spend(소비하다), consume(소모하다) | 반의어: save(절약하다), conserve(보존하다), preserve(지키다)</td>
     </tr>
     <tr>
-      <td>mechanical indifference</td><td>n.</td>
-      <td>기계적 무관심</td><td>감정 없는 객관성</td>
+      <td>fake</td><td>형용사</td>
+      <td>가짜의, 거짓의</td><td>유의어: false(거짓의) | 반의어: real(진짜의), genuine(진품의)</td>
     </tr>
     <tr>
-      <td>flatness</td><td>n.</td>
-      <td>평면성, 평평함</td><td>flat (adj.)</td>
+      <td>default</td><td>명사</td>
+      <td>기본값, 초기 설정</td><td>유의어: standard(표준), preset(사전 설정) | 반의어: custom(맞춤), customized(사용자설정), modified(수정된)</td>
     </tr>
     <tr>
-      <td>unrecognizable</td><td>adj.</td>
-      <td>알아볼 수 없는</td><td>recognize (v.)</td>
+      <td>tendency</td><td>명사</td>
+      <td>경향, 성향</td><td>유의어: inclination(성향), propensity(경향) | 반의어: aversion(혐오), reluctance(꺼림)</td>
     </tr></tbody>
         </table>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">5</span> 변형 예상 포인트</div>
         <div class="two-col" style="padding: 8px 0;">
-          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>빈칸: 'like a camera' - 카메라처럼 객관적으로 보는 능력을 방해한다는 문맥</li><li>빈칸: 'visual expectations' - 기능적 관계가 만들어내는 것</li><li>빈칸: 'impartially' - 카메라가 세상을 기록하는 방식</li><li>빈칸: 'mechanical indifference' - 사진이 놀라운 이유</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">이 글은 설명문으로 심경 변화가 없으며, 객관적 분석 톤을 유지한다.<br>기능적 관계 → 시각적 기대 형성 → 객관적 인식 방해라는 논리적 흐름.</div></div>
-          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>수동태: 'is influenced by' - 행위자 강조</li><li>관계대명사 that: 선행사 수식 ('hierarchies that reflect', 'expectations that interfere')</li><li>tend to 부정사: ~하는 경향이 있다</li><li>because 이유절: 인과 관계 명확화</li><li>as seen from: 과거분사구 (보이는 대로)</li><li>so that 결과절: ~하도록</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: '기능적 선입견이 시각을 왜곡하다' 또는 '카메라와 인간의 눈: 객관성의 차이'<br>주제: 사물과의 기능적 관계가 시각적 인식을 왜곡한다 vs 카메라는 편견 없이 세상을 기록한다</div></div>
+          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>빈칸: 인간은 의사소통 시 상대방의 말을 (진실로 가정)하는 경향이 있다</li><li>빈칸: 거짓 여부를 판단하는 것은 추가적인 (정신적 노력)을 요구한다</li><li>빈칸: 인간은 (인지적 구두쇠)로서 필요 이상의 정신적 노력을 쓰지 않는다</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">이 글은 설명문으로 심경 변화가 없음</div></div>
+          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>There is 구문: There is a natural assumption</li><li>명사절 that: our assumption is that ~</li><li>간접의문문: where the restroom is located</li><li>가정법 과거: how difficult it would be</li><li>동명사 주어: questioning... and choosing... requires</li><li>관계대명사 계속적 용법: which means</li><li>가주어-진주어: It makes sense that ~</li><li>be likely to: are unlikely to doubt</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: 인간의 진실 편향 / 인지적 절약과 믿음 / 왜 우리는 쉽게 믿는가 | 주제: 인간은 인지적 노력을 절약하기 위해 타인의 말을 자동으로 진실로 받아들이는 경향이 있다</div></div>
         </div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">6</span> 배경지식 요약</div>
-        <div class="background-box" style="border-radius: 0 0 4px 4px;">인간의 시각적 인식은 <strong>기능적 맥락</strong>과 <strong>우선순위</strong>에 따라 형성된다. 카메라는 기계적으로 형태와 색만 기록하지만, 인간은 무의식적 위계를 통해 대상을 해석하며 이는 <strong>객관적 인식을 방해</strong>한다.</div>
+        <div class="background-box" style="border-radius: 0 0 4px 4px;">진실 편향(truth bias)은 심리학에서 인간이 타인의 진술을 기본적으로 진실로 받아들이는 경향을 말한다. 인지적 구두쇠(cognitive miser) 이론은 인간이 정신적 자원을 절약하려는 본능적 경향이 있음을 설명한다.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">7</span> 문장 간 맥락 (구조도)</div>
         <table class="structure-table">
           <thead><tr><th>단계</th><th>내용</th><th>핵심 어구</th><th>논리 관계</th></tr></thead>
           <tbody><tr>
-      <td>①</td><td>주제 제시</td>
-      <td>influenced by preconceptions</td><td><span class="relation-tag">논제 도입</span></td>
+      <td>①</td><td>개념 도입</td>
+      <td>truth bias</td><td><span class="relation-tag">진실 편향 개념 제시</span></td>
     </tr><tr>
-      <td>②</td><td>무의식적 위계</td>
-      <td>unconscious hierarchies</td><td><span class="relation-tag">원인 설명</span></td>
+      <td>②</td><td>부연 설명</td>
+      <td>automatic assumption</td><td><span class="relation-tag">개념 구체화</span></td>
     </tr><tr>
-      <td>③④</td><td>구체적 예시</td>
-      <td>visualizing a hammer</td><td><span class="relation-tag">예시 전개</span></td>
+      <td>③④</td><td>긍정 예시</td>
+      <td>works out fine</td><td><span class="relation-tag">일상 사례</span></td>
     </tr><tr>
-      <td>⑤</td><td><strong>중심 주장 (전환점)</strong></td>
-      <td><strong>interfere with our ability</strong></td><td><span class="relation-tag pivot">★ 핵심 논점</span></td>
+      <td>⑤⑥</td><td><strong>전환점</strong></td>
+      <td><strong>additional mental steps</strong></td><td><span class="relation-tag pivot">★ 전환: 의심에 필요한 노력</span></td>
     </tr><tr>
-      <td>⑥⑦</td><td>카메라의 객관성</td>
-      <td>impartially documents</td><td><span class="relation-tag">대조 제시</span></td>
+      <td>⑦⑧</td><td>원인 분석</td>
+      <td>cognitive misers</td><td><span class="relation-tag">이유 설명</span></td>
     </tr><tr>
-      <td>⑧⑨</td><td><strong>사진의 특성 (결론)</strong></td>
-      <td><strong>mechanical indifference</strong></td><td><span class="relation-tag conclusion">★ 결론·함의</span></td>
+      <td>⑨</td><td><strong>결론</strong></td>
+      <td><strong>tendency to save mental effort</strong></td><td><span class="relation-tag conclusion">★ 주제문: 인지적 절약 경향</span></td>
     </tr></tbody>
         </table>
       </div>
