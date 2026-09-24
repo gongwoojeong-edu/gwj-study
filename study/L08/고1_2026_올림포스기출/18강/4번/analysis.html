@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Monkeys React to Unfair Treatment</title>
+<title>Avoiding Trick-Punishments: Rewarding Positive Behaviors</title>
 <style>*, ::before, ::after { box-sizing: border-box; margin: 0px; padding: 0px; }
 :root { --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3; --brand-bg: #F4F2F8; --paper: #ffffff; --bg: #F7F5F0; --border: #E3DFD5; --text: #2A2A2A; --text-muted: #6E6B65; --charcoal: #3D3D3D; --accent-red: #A32D2D; --accent-teal: #0F6E56; --accent-blue: #185FA5; --accent-amber: #c8900a; --navy: var(--brand-dark); --navy-dark: var(--brand-dark); --accent-purple: var(--brand); }
 body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -15,7 +15,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .teacher-info { font-size: 11px; color: var(--text-muted); padding: 4px 10px; background: rgb(248, 247, 243); border-radius: 12px; border: 1px solid var(--border); }
 .teacher-info strong { color: var(--brand-dark); }
 .tab-group { display: flex; gap: 4px; margin-left: auto; }
-.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
+.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
 .tab-btn:hover { background: rgb(245, 245, 242); color: var(--text); }
 .tab-btn.active { background: var(--brand); color: rgb(255, 255, 255); }
 .tab-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -43,7 +43,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .passage-area { width: 100%; min-height: 180px; resize: vertical; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13.5px; line-height: 1.7; color: var(--text); background: rgb(250, 250, 247); }
 .passage-area:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
 .action-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
-.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
+.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
 .generate-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: rgba(107, 91, 149, 0.3) 0px 4px 12px; }
 .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 .status-box { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.6; display: none; }
@@ -51,7 +51,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .status-box.loading { background: rgb(254, 249, 240); border: 1px solid rgb(232, 200, 122); color: rgb(122, 69, 0); }
 .status-box.error { background: rgb(254, 242, 242); border: 1px solid rgb(244, 199, 199); color: rgb(154, 32, 16); }
 .status-box.success { background: rgb(225, 245, 238); border: 1px solid rgb(134, 212, 188); color: rgb(8, 80, 65); }
-.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: initial; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
+.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: none; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
 @keyframes spin { 
   100% { transform: rotate(360deg); }
 }
@@ -78,7 +78,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .library-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: 0.15s; position: relative; display: flex; flex-direction: column; gap: 10px; }
 .library-card:hover { border-color: var(--brand); box-shadow: rgba(107, 91, 149, 0.15) 0px 4px 14px; transform: translateY(-1px); }
 .library-card.has-selection { border-color: rgb(76, 175, 80); background: rgb(241, 248, 233); }
-.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
+.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
 .library-card .fav-btn.active { color: var(--accent-amber); }
 .library-card .fav-btn:hover { color: var(--accent-amber); }
 .card-select-check { position: absolute; top: 12px; left: 12px; cursor: pointer; user-select: none; z-index: 2; }
@@ -217,7 +217,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .hl-purple { color: rgb(74, 45, 136); font-weight: 700; }
 .ko-box { background: var(--brand-light); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: rgb(51, 51, 51); line-height: 1.7; margin-bottom: 10px; }
 .ko-box strong { color: var(--brand-dark); }
-.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: initial; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
+.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: none; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
 .point-box strong { color: rgb(154, 96, 0); }
 .close-btn { display: block; width: 100%; margin-top: 12px; padding: 8px; background: none; border: 1px solid rgb(221, 221, 221); border-radius: 8px; font-size: 12px; color: rgb(170, 170, 170); cursor: pointer; font-family: inherit; }
 .close-btn:hover { background: rgb(245, 245, 245); color: rgb(102, 102, 102); }
@@ -232,26 +232,15 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .viewing-bar strong { font-weight: 700; }
 .viewing-bar .edit-mode-toggle { padding: 4px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(134, 212, 188); border-radius: 14px; transition: 0.15s; }
 .viewing-bar .edit-mode-toggle:has(input:checked) { background: rgb(122, 69, 0); color: rgb(255, 255, 255); border-color: rgb(122, 69, 0); }
-.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
+.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
 .dropdown { position: relative; display: inline-block; }
-.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: hidden; }
+.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: visible; }
 .dropdown.open .dropdown-menu { display: block; }
-.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
+.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: none; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
 .dropdown-menu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
 .dropdown-menu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-item { position: relative; }
-.dropdown-menu .submenu-trigger { width: 100%; padding: 10px 14px; justify-content: space-between; align-items: center; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; display: flex !important; }
-.dropdown-menu .submenu-item:last-child .submenu-trigger { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu-trigger .arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.15s; }
-.dropdown-menu .submenu-trigger:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-trigger:hover .arrow { color: var(--brand); }
-.dropdown-menu .submenu { display: none; position: absolute; left: 100%; top: 0px; margin-left: 2px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 260px; z-index: 201; overflow: hidden; }
-.dropdown-menu .submenu-item:hover > .submenu, .dropdown-menu .submenu-item:focus-within > .submenu { display: block; }
-.dropdown-menu .submenu-item:hover > .submenu-trigger { background: var(--brand); color: rgb(255, 255, 255); }
-.dropdown-menu .submenu-item:hover > .submenu-trigger .arrow { color: rgb(255, 255, 255); transform: translateX(2px); }
-.dropdown-menu .submenu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
-.dropdown-menu .submenu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.dropdown-menu .download-section-label { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted); background: rgb(250, 250, 247); border-bottom: 1px solid rgb(240, 237, 230); }
+.dropdown-menu .download-section-label:not(:first-child) { border-top: 1px solid rgb(238, 238, 238); }
 .modal.json-editor { max-width: 900px; width: 90vw; max-height: 85vh; display: flex; flex-direction: column; }
 .json-editor-body { flex: 1 1 0%; min-height: 0px; display: flex; flex-direction: column; gap: 10px; }
 .json-editor-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 1px solid rgb(240, 237, 230); }
@@ -267,6 +256,21 @@ body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; trans
 body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
 body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
 body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+.line-translation-wrap { max-width: 720px; margin: 0px auto; padding: 16px 20px 40px; }
+.line-translation-note { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading { font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700; }
+.line-translation-list { list-style: none; padding: 0px; margin: 0px; display: flex; flex-direction: column; gap: 0px; }
+.line-translation-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; line-height: 1.55; font-size: 14px; padding: 5px 0px 5px 6px; border-left: 2px solid rgba(107, 91, 149, 0.18); background: transparent; }
+.line-translation-item + .line-translation-item { margin-top: 1px; }
+.line-translation-item:nth-child(2n) { background: rgba(107, 91, 149, 0.035); }
+.line-translation-num { flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55; }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
+.line-translation-passage { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.line-translation-passage:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; margin-bottom: 0px; padding-bottom: 0px; }
+.line-translation-passage h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12); }
+.line-translation-passage .passage-meta { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.line-translation-empty-line { color: rgb(153, 153, 153); font-size: 12px; margin: 2px 0px 0px 34px; }
 @media print {
   body { background: rgb(255, 255, 255); }
   body.edit-mode .page::before { display: none !important; }
@@ -280,7 +284,18 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .page:last-child { break-after: auto; }
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  #tab-line-translation.print-target .line-translation-wrap { max-width: none; padding: 0px; margin: 0px; }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage { margin-bottom: 8pt; padding-bottom: 6pt; break-inside: avoid-page; }
+  #tab-line-translation.print-target .line-translation-passage h3 { font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt; border-bottom-color: rgb(204, 204, 204); }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: rgb(85, 85, 85); }
+  #tab-line-translation.print-target .line-translation-item { grid-template-columns: 16pt 1fr; gap: 4pt; font-size: 9.5pt; line-height: 1.38; padding: 0.5pt 0px; border-left-width: medium; border-left-style: none; border-left-color: currentcolor; background: transparent !important; }
+  #tab-line-translation.print-target .line-translation-num { font-size: 9pt; color: rgb(51, 51, 51); font-weight: 600; }
+  #tab-line-translation.print-target .line-translation-empty-line { font-size: 8.5pt; margin-left: 16pt; }
   @page { size: a4; margin: 0px; }
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
 }
 </style>
 </head>
@@ -301,31 +316,31 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
       </div>
       <div class="header-right">
         <div class="title-line">18강 | 4번 | <span class="analysis-tag">4</span></div>
-        <div class="topic-line">Topic: Topic: Capuchin monkeys' sense of fairness and protest behavior against unequal rewards</div>
+        <div class="topic-line">Topic: The Ineffectiveness of Punishment and the Concept of Trick-Punishments</div>
       </div>
     </header>
       <div class="section">
         <div class="section-title"><span class="num">1</span> 제목 및 주제</div>
         <table class="info-table">
-          <tr><th>주제</th><td>Capuchin 원숭이는 동일한 노력에 대해 다른 보상을 받는 상황을 불공정하게 인식한다. 자신의 절대적 보상은 변하지 않았지만 상대적 불평등을 감지하면 보상을 거부하며 불만을 표현한다.</td></tr>
-          <tr><th>예상 제목</th><td>Monkeys React to Unfair Treatment</td></tr>
-          <tr><th>글의 유형</th><td>설명문 (expository) — 실험 사례 중심 / 동물 행동 분석</td></tr>
-          <tr><th>심경 변화</th><td>해당 없음 (실험 관찰 기록)</td></tr>
+          <tr><th>주제</th><td>아동을 처벌하는 것이 효과적이지 않을 수 있는 이유는 '역효과 처벌' 때문이다. 부정적 행동에 주목하기보다 긍정적 행동을 보상하는 전략이 더 효과적이다.</td></tr>
+          <tr><th>예상 제목</th><td>Avoiding Trick-Punishments: Rewarding Positive Behaviors</td></tr>
+          <tr><th>글의 유형</th><td>설명문 (교육심리학)</td></tr>
+          <tr><th>심경 변화</th><td>해당 없음 (논리적 설명 중심)</td></tr>
         </table>
       </div>
       <div class="section">
         <div class="passage-label">▶ 원문 지문</div>
-        <div class="passage-box">Capuchins ─ New World Monkeys that live in large social groups ─ will, in captivity, <strong>trade with people all day long</strong>, especially if food is involved. I give you this rock and you give me a treat to eat. If you put two monkeys in cages next to each other, and offer them both slices of cucumber for the rocks they already have, they will <strong>happily eat the cucumbers</strong>. If, however, you give one monkey grapes instead ─ <strong>grapes being universally preferred to cucumbers</strong> ─ the monkey that is still receiving cucumbers will <strong>begin to throw them back at the experimenter</strong>. Even though she is still getting 'paid' the same amount for her effort of sourcing rocks, and so her particular situation has not changed, <strong>the comparison to another makes the situation unfair</strong>. Furthermore, she is now willing to <strong>abandon all gains ─ the cucumbers themselves ─ to communicate her displeasure</strong> to the experimenter.</div>
+        <div class="passage-box">Punishing a child may not be effective due to what Alvaro Bilbao, a neuropsychologist, calls 'trickpunishments.'<br>A <strong>trick-punishment</strong> is a scolding, a moment of anger or a punishment in the most classic sense of the word.<br>Instead of discouraging the child from doing something, it encourages them to do it.<br>For example, Hugh learns that when he hits his little brother, his mother scolds him.<br>For a child who feels lonely, being scolded is much better than feeling invisible, so he will continue to hit his brother.<br>In this case, his mother would be better adopting a different strategy.<br>For instance, she could congratulate Hugh when he has not hit his brother for a certain length of time.<br>The mother clearly cannot allow the child to hit his little brother, but instead of constantly pointing out the negatives, she can choose to <strong>reward the positives</strong>.<br>In this way, any parent can avoid <strong>trick-punishment</strong>s.<br>A <strong>trick-punishment</strong> <strong>reinforces the unwanted behavior</strong> of a child, which implies that parents should focus on reducing the attention to negatives while rewarding positive behaviors.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">3</span> 중심문장 &amp; 핵심 키워드</div>
         <div style="border: 1px solid var(--border); border-top: none; padding: 12px; border-radius: 0 0 4px 4px;">
           <div class="topic-sentence-label">▶ TOPIC SENTENCE (중심문장)</div>
           <div class="topic-sentence-box">
-            <div class="en">"Even though she is still getting 'paid' the same amount for her effort of sourcing rocks, and so her particular situation has not changed, the comparison to another makes the situation unfair."</div>
-            <div class="ko">→ 비록 그녀가 돌을 모은 노력에 대해 같은 양을 여전히 '받고' 있어서 그녀의 특정 상황이 변하지 않았지만, 다른 원숭이와의 비교가 그 상황을 부당하게 만든다. 절대적 보상이 아닌 상대적 비교가 공정성 판단의 기준임을 보여준다.</div>
+            <div class="en">"A trick-punishment reinforces the unwanted behavior of a child, which implies that parents should focus on reducing the attention to negatives while rewarding positive behaviors."</div>
+            <div class="ko">→ 역효과 처벌은 아이의 원치 않는 행동을 강화시키며, 이는 부모가 부정적인 것에 대한 관심을 줄이고 긍정적 행동을 보상하는 데 집중해야 함을 의미한다.</div>
           </div>
-          <div class="keyword-row"><span class="keyword-chip">Capuchin monkeys</span><span class="keyword-chip">fairness</span><span class="keyword-chip">inequality</span><span class="keyword-chip">comparison</span><span class="keyword-chip">protest behavior</span><span class="keyword-chip">relative rewards</span><span class="keyword-chip highlight">불공정 인식 → 항의 행동</span></div>
+          <div class="keyword-row"><span class="keyword-chip">trick-punishment</span><span class="keyword-chip">reinforcement</span><span class="keyword-chip">positive behavior</span><span class="keyword-chip">reward</span><span class="keyword-chip">attention</span><span class="keyword-chip">strategy</span><span class="keyword-chip highlight">해당 없음</span></div>
         </div>
       </div>
       
@@ -349,68 +364,112 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ① 주격 보어 + 관계사절 (동격 dash)</div>
+      <div class="sentence-title">2 문장별 분석 — ① 명사절(what절) / 동격 명사구</div>
       <div class="sentence-body">
-        <div class="sentence-en">Capuchins ─ <span class='hl-blue'>New World Monkeys that live in large social groups</span> ─ will, in captivity, <span class='hl-teal'>trade with people all day long</span>, especially if food is involved.</div>
+        <div class="sentence-en">Punishing a child <span class='hl-red'>may not be effective</span> due to <span class='hl-blue'>what Alvaro Bilbao, a neuropsychologist, calls</span> 'trickpunishments.'</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>주어</td><td>Capuchins</td><td>Capuchin 원숭이 (신세계원숭이의 일종)</td></tr>
+              <tr><td>주어</td><td>Punishing a child</td><td>동명사구 주어</td></tr>
             
-              <tr><td>동격 설명</td><td>New World Monkeys that live in large social groups</td><td>dash(─)로 삽입된 동격 구조, 관계대명사 that이 Monkeys 수식</td></tr>
+              <tr><td>조동사+본동사</td><td>may not be</td><td>가능성의 부정 'effective'의 보어</td></tr>
             
-              <tr><td>부사구</td><td>in captivity</td><td>갇힌 상태에서 (조건)</td></tr>
+              <tr><td>전치사구</td><td>due to</td><td>이유를 나타내는 전치사</td></tr>
             
-              <tr><td>동사구</td><td>will trade with people all day long</td><td>온종일 사람들과 거래할 것이다</td></tr>
+              <tr><td>명사절</td><td>what Alvaro Bilbao calls</td><td>선행사 포함 관계대명사 what</td></tr>
             
-              <tr><td>조건절</td><td>especially if food is involved</td><td>특히 먹이가 관련되면</td></tr>
+              <tr><td>동격어구</td><td>a neuropsychologist</td><td>Alvaro Bilbao를 설명하는 동격</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>대규모 사회 집단으로 사는 신세계원숭이인 Capuchin은 / 갇힌 상태에서 온종일 사람들과 거래를 할 것이다 / 특히 먹이가 연관된다면</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>아이를 처벌하는 것은 / 효과적이지 않을 수 있다 / 신경심리학자인 Alvaro Bilbao가 '역효과 처벌'이라고 부르는 것 때문에</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ③ 조건절 (If + 현재) + 관계사절</div>
+      <div class="sentence-title">2 문장별 분석 — ② be동사 + 병렬구조(A, B or C)</div>
       <div class="sentence-body">
-        <div class="sentence-en">If you put two monkeys in cages next to each other, and offer them both slices of cucumber <span class='hl-blue'>for the rocks they already have</span>, they will <span class='hl-teal'>happily eat the cucumbers</span>.</div>
+        <div class="sentence-en">A trick-punishment is <span class='hl-teal'>a scolding, a moment of anger or a punishment</span> in the most classic sense of the word.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>조건절</td><td>If you put two monkeys in cages next to each other</td><td>두 원숭이를 나란한 우리에 넣으면</td></tr>
+              <tr><td>주어</td><td>A trick-punishment</td><td>단수 명사</td></tr>
             
-              <tr><td>병렬 동사</td><td>and offer them both slices of cucumber</td><td>둘 다에게 오이 조각을 주면</td></tr>
+              <tr><td>be동사</td><td>is</td><td>주격보어를 연결</td></tr>
             
-              <tr><td>전치사구</td><td>for the rocks they already have</td><td>그들이 이미 가진 돌의 대가로 (목적격 관계대명사 생략)</td></tr>
+              <tr><td>병렬구조</td><td>a scolding, a moment of anger or a punishment</td><td>세 개의 명사구가 or로 연결</td></tr>
             
-              <tr><td>주절</td><td>they will happily eat the cucumbers</td><td>기쁘게 오이를 먹을 것이다</td></tr>
+              <tr><td>전치사구</td><td>in the most classic sense of the word</td><td>가장 고전적 의미에서</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>두 원숭이를 나란한 우리에 넣고 / 그들이 이미 가진 돌의 대가로 오이 조각을 둘 다에게 주면 / 그들은 기쁘게 오이를 먹을 것이다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>역효과 처벌은 / 꾸중, 화내는 순간 또는 처벌이다 / 그 단어의 가장 고전적인 의미에서</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ④ 조건절 + 분사구문 (동격 dash)</div>
+      <div class="sentence-title">2 문장별 분석 — ③ Instead of A, B 구문 / 대조구조</div>
       <div class="sentence-body">
-        <div class="sentence-en">If, however, you give one monkey grapes instead ─ <span class='hl-amber'>grapes being universally preferred to cucumbers</span> ─ the monkey that is still receiving cucumbers will <span class='hl-red'>begin to throw them back at the experimenter</span>.</div>
+        <div class="sentence-en"><span class='hl-amber'>Instead of discouraging</span> the child from doing something, <span class='hl-red'>it encourages them to do it</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>조건절</td><td>If you give one monkey grapes instead</td><td>한 원숭이에게 포도를 대신 준다면</td></tr>
+              <tr><td>전치사구</td><td>Instead of discouraging the child</td><td>~하는 대신에 (동명사 목적어)</td></tr>
             
-              <tr><td>분사구문</td><td>grapes being universally preferred to cucumbers</td><td>독립분사구문, 포도가 일반적으로 오이보다 선호되는데</td></tr>
+              <tr><td>주어</td><td>it</td><td>trick-punishment 지칭</td></tr>
             
-              <tr><td>주어</td><td>the monkey that is still receiving cucumbers</td><td>여전히 오이를 받는 원숭이가</td></tr>
+              <tr><td>5형식 동사</td><td>encourages them to do</td><td>목적어+목적격보어(to부정사)</td></tr>
             
-              <tr><td>동사구</td><td>will begin to throw them back</td><td>그것들을 던지기 시작할 것이다 (항의 행동)</td></tr>
+              <tr><td>목적어</td><td>them</td><td>the child를 복수로 받음</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그러나 한 원숭이에게 포도를 대신 준다면 / 포도는 일반적으로 오이보다 선호되는데 / 여전히 오이를 받는 원숭이는 실험자에게 그것들을 던지기 시작할 것이다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>아이가 무언가를 하지 못하게 막는 대신에 / 그것은 그들이 그것을 하도록 부추긴다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ④ 명사절(that절) / 시간부사절(when)</div>
+      <div class="sentence-body">
+        <div class="sentence-en">For example, Hugh <span class='hl-blue'>learns that</span> <span class='hl-teal'>when he hits his little brother</span>, his mother scolds him.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주어+동사</td><td>Hugh learns</td><td>3인칭 단수 현재</td></tr>
+            
+              <tr><td>명사절</td><td>that when he hits</td><td>learn의 목적어절</td></tr>
+            
+              <tr><td>시간부사절</td><td>when he hits his little brother</td><td>~할 때</td></tr>
+            
+              <tr><td>주절</td><td>his mother scolds him</td><td>명사절 내 주절</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>Hugh는 배운다 / 그가 동생을 때릴 때 / 엄마가 그를 꾸짖는다는 것을</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑤ 관계대명사절 / 동명사 주어 / 비교급 구문</div>
+      <div class="sentence-body">
+        <div class="sentence-en">For a child <span class='hl-teal'>who feels lonely</span>, <span class='hl-red'>being scolded is much better than feeling invisible</span>, so he will continue to hit his brother.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>전치사구</td><td>For a child who feels lonely</td><td>관계대명사 who로 수식받는 명사</td></tr>
+            
+              <tr><td>동명사 주어</td><td>being scolded</td><td>수동 동명사</td></tr>
+            
+              <tr><td>비교급</td><td>is much better than</td><td>much는 비교급 강조</td></tr>
+            
+              <tr><td>비교대상</td><td>feeling invisible</td><td>동명사 형태</td></tr>
+            
+              <tr><td>등위절</td><td>so he will continue to hit</td><td>결과를 나타내는 so절</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>외로움을 느끼는 아이에게는 / 꾸중 받는 것이 / 투명인간이 된 것처럼 느끼는 것보다 훨씬 낫다 / 그래서 그는 동생을 계속 때릴 것이다</div>
       </div>
     </div>
       
@@ -434,66 +493,110 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑤ 양보절 (Even though) + 주제문</div>
+      <div class="sentence-title">2 문장별 분석 — ⑥ would be better 구문 / 동명사</div>
       <div class="sentence-body">
-        <div class="sentence-en"><span class='hl-amber'>Even though she is still getting 'paid' the same amount</span> for her effort of sourcing rocks, and so her particular situation has not changed, <span class='hl-purple'>the comparison to another makes the situation unfair</span>.</div>
+        <div class="sentence-en">In this case, his mother <span class='hl-amber'>would be better adopting</span> a different strategy.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>양보절</td><td>Even though she is still getting paid the same amount</td><td>비록 같은 양을 여전히 받고 있지만</td></tr>
+              <tr><td>전치사구</td><td>In this case</td><td>이 경우에</td></tr>
             
-              <tr><td>전치사구</td><td>for her effort of sourcing rocks</td><td>돌을 모은 노력의 대가로</td></tr>
+              <tr><td>주어</td><td>his mother</td><td>단수 명사</td></tr>
             
-              <tr><td>등위절</td><td>and so her particular situation has not changed</td><td>그래서 그녀의 특정 상황은 변하지 않았다</td></tr>
+              <tr><td>조동사+동사</td><td>would be better</td><td>가정법적 조언 표현</td></tr>
             
-              <tr><td>주절</td><td>the comparison to another makes the situation unfair</td><td>다른 원숭이와의 비교가 상황을 부당하게 만든다 (핵심 주제)</td></tr>
+              <tr><td>동명사</td><td>adopting a different strategy</td><td>be better 뒤 동명사</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>비록 돌을 모은 노력의 대가로 같은 양을 여전히 받고 / 그녀의 특정 상황이 변하지 않았지만 / 다른 원숭이와의 비교가 그 상황을 부당하게 만든다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이 경우에 / 그의 엄마는 / 다른 전략을 채택하는 것이 더 나을 것이다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑥ be willing to + 동격 dash + to부정사 (목적)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑦ 조동사 could / 시간부사절(when) / 현재완료</div>
       <div class="sentence-body">
-        <div class="sentence-en">Furthermore, she is now willing to <span class='hl-purple'>abandon all gains ─ the cucumbers themselves ─</span> to <span class='hl-blue'>communicate her displeasure</span> to the experimenter.</div>
+        <div class="sentence-en">For instance, she <span class='hl-blue'>could congratulate</span> Hugh <span class='hl-teal'>when he has not hit</span> his brother for a certain length of time.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>부사</td><td>Furthermore</td><td>게다가 (추가 정보)</td></tr>
+              <tr><td>전치사구</td><td>For instance</td><td>예시 도입</td></tr>
             
-              <tr><td>동사구</td><td>is willing to abandon all gains</td><td>모든 얻은 것을 기꺼이 포기한다</td></tr>
+              <tr><td>조동사+동사</td><td>could congratulate</td><td>가능성·제안</td></tr>
             
-              <tr><td>동격 설명</td><td>the cucumbers themselves</td><td>dash로 삽입, 오이 자체 (gains의 구체적 내용)</td></tr>
+              <tr><td>시간부사절</td><td>when he has not hit his brother</td><td>현재완료(계속)</td></tr>
             
-              <tr><td>목적 부정사</td><td>to communicate her displeasure</td><td>그녀의 불쾌함을 전달하기 위해</td></tr>
+              <tr><td>전치사구</td><td>for a certain length of time</td><td>일정 기간 동안</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>게다가 그녀는 이제 모든 얻은 것들, 즉 오이 자체를 기꺼이 포기한다 / 실험자에게 그녀의 불쾌함을 전달하기 위해</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>예를 들어 / 그녀는 Hugh를 축하할 수 있다 / 그가 일정 기간 동안 동생을 때리지 않았을 때</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — Summary 조건절 + 양보절 (despite ~ing)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑧ 대조구조(but) / instead of A, B / 5형식(allow+목적어+to부정사)</div>
       <div class="sentence-body">
-        <div class="sentence-en">According to the passage, <span class='hl-blue'>if the Capuchin monkey realizes the inequality in rewards</span> compared to another monkey, she will <span class='hl-purple'>reject her rewards to express her feelings</span> about the treatment, <span class='hl-amber'>despite getting exactly the same rewards as before</span>.</div>
+        <div class="sentence-en">The mother clearly <span class='hl-red'>cannot allow the child to hit</span> his little brother, but <span class='hl-amber'>instead of constantly pointing out the negatives</span>, she <span class='hl-blue'>can choose to reward the positives</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>조건절</td><td>if the Capuchin monkey realizes the inequality</td><td>Capuchin 원숭이가 불평등을 알아차린다면</td></tr>
+              <tr><td>5형식</td><td>cannot allow the child to hit</td><td>allow+목적어+to부정사</td></tr>
             
-              <tr><td>동사구</td><td>will reject her rewards</td><td>그녀의 보상을 거부할 것이다</td></tr>
+              <tr><td>대조접속사</td><td>but</td><td>앞 내용과 대조</td></tr>
             
-              <tr><td>목적 부정사</td><td>to express her feelings</td><td>그녀의 감정을 표현하기 위해</td></tr>
+              <tr><td>전치사구</td><td>instead of constantly pointing out</td><td>동명사 목적어</td></tr>
             
-              <tr><td>양보 전치사구</td><td>despite getting exactly the same rewards</td><td>정확히 똑같은 보상을 받음에도 불구하고</td></tr>
+              <tr><td>5형식</td><td>can choose to reward</td><td>choose+to부정사</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이 글에 따르면, Capuchin 원숭이가 다른 원숭이와 비교하여 보상의 불평등을 알아차린다면 / 정확히 똑같은 보상을 받더라도 / 대우에 대한 감정을 표현하기 위해 보상을 거부할 것이다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>엄마는 분명히 아이가 동생을 때리도록 허용할 수 없다 / 하지만 끊임없이 부정적인 것들을 지적하는 대신에 / 그녀는 긍정적인 것들을 보상하는 것을 선택할 수 있다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑨ 전치사구(In this way) / 조동사 can</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-teal'>In this way</span>, any parent <span class='hl-blue'>can avoid trick-punishments</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>전치사구</td><td>In this way</td><td>이런 방식으로</td></tr>
+            
+              <tr><td>주어</td><td>any parent</td><td>일반화된 주어</td></tr>
+            
+              <tr><td>조동사+동사</td><td>can avoid</td><td>가능성 표현</td></tr>
+            
+              <tr><td>목적어</td><td>trick-punishments</td><td>핵심 개념</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이런 방식으로 / 어떤 부모든지 / 역효과 처벌을 피할 수 있다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑩ 관계대명사(which) / 명사절(that절) / 동명사</div>
+      <div class="sentence-body">
+        <div class="sentence-en">A trick-punishment <span class='hl-red'>reinforces the unwanted behavior</span> of a child, <span class='hl-blue'>which implies that</span> parents <span class='hl-amber'>should focus on reducing</span> the attention to negatives <span class='hl-teal'>while rewarding positive behaviors</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주어+동사</td><td>A trick-punishment reinforces</td><td>3인칭 단수 현재</td></tr>
+            
+              <tr><td>관계대명사절</td><td>which implies that</td><td>계속적 용법 (앞 문장 전체 선행사)</td></tr>
+            
+              <tr><td>명사절</td><td>that parents should focus on</td><td>imply의 목적어절</td></tr>
+            
+              <tr><td>동명사</td><td>reducing the attention</td><td>전치사 on의 목적어</td></tr>
+            
+              <tr><td>접속사+동명사</td><td>while rewarding positive behaviors</td><td>동시 동작</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>역효과 처벌은 아이의 원치 않는 행동을 강화시킨다 / 이는 부모가 집중해야 함을 시사한다 / 부정적인 것에 대한 관심을 줄이는 것과 긍정적 행동을 보상하는 것에</div>
       </div>
     </div>
       
@@ -521,82 +624,82 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
           <thead><tr><th>단어·어구</th><th>품사</th><th>의미</th><th>유의어 / 반의어 / 비고</th></tr></thead>
           <tbody>
     <tr>
-      <td>captivity</td><td>n.</td>
-      <td>포로 상태, 갇힌 상태</td><td>in captivity: 사육 상태에서</td>
+      <td>effective</td><td>형용사</td>
+      <td>효과적인</td><td>유의어: efficient(효율적인) | 반의어: ineffective(비효과적인)</td>
     </tr>
     <tr>
-      <td>trade</td><td>v.</td>
-      <td>거래하다, 교환하다</td><td>trade A for B: A를 B와 교환하다</td>
+      <td>neuropsychologist</td><td>명사</td>
+      <td>신경심리학자</td><td>neuro(신경) + psychologist(심리학자)</td>
     </tr>
     <tr>
-      <td>universally</td><td>adv.</td>
-      <td>보편적으로, 일반적으로</td><td>universal(adj.) 보편적인</td>
+      <td>trick-punishment</td><td>명사</td>
+      <td>역효과 처벌</td><td>의도와 반대 결과를 낳는 처벌</td>
     </tr>
     <tr>
-      <td>preferred</td><td>adj.</td>
-      <td>선호되는</td><td>prefer A to B: B보다 A를 선호하다</td>
+      <td>scold</td><td>동사</td>
+      <td>꾸짖다</td><td>유의어: rebuke(질책하다), reprimand(질책하다) | 반의어: praise(칭찬하다), compliment(칭찬하다), commend(칭찬하다)</td>
     </tr>
     <tr>
-      <td>throw back</td><td>phr.v.</td>
-      <td>던져 돌려주다</td><td>항의의 표현으로 사용</td>
+      <td>discourage</td><td>동사</td>
+      <td>막다, 단념시키다</td><td>유의어: dissuade(만류하다) | 반의어: encourage(격려하다)</td>
     </tr>
     <tr>
-      <td>comparison</td><td>n.</td>
-      <td>비교</td><td>compare(v.) 비교하다</td>
+      <td>invisible</td><td>형용사</td>
+      <td>보이지 않는, 무시당하는</td><td>유의어: unseen(보이지않는), hidden(숨겨진), unnoticed(알아채지못한), overlooked(간과된) | 반의어: visible(보이는)</td>
     </tr>
     <tr>
-      <td>unfair</td><td>adj.</td>
-      <td>불공정한, 부당한</td><td>반의어: fair 공정한</td>
+      <td>adopt</td><td>동사</td>
+      <td>채택하다</td><td>유의어: embrace(받아들이다), implement(실행하다) | 반의어: reject(거부하다), abandon(버리다), discard(폐기하다)</td>
     </tr>
     <tr>
-      <td>abandon</td><td>v.</td>
-      <td>포기하다, 버리다</td><td>give up과 유사</td>
+      <td>congratulate</td><td>동사</td>
+      <td>축하하다</td><td>유의어: compliment(칭찬하다), praise(칭찬하다), commend(칭찬하다), applaud(박수보내다) | 반의어: criticize(비판하다), condemn(비난하다) | 비고: congratulate A on B: A를 B에 대해 축하하다</td>
     </tr>
     <tr>
-      <td>displeasure</td><td>n.</td>
-      <td>불쾌감, 불만</td><td>반의어: pleasure 기쁨</td>
+      <td>reinforce</td><td>동사</td>
+      <td>강화하다</td><td>유의어: strengthen(강화하다) | 반의어: weaken(약화시키다)</td>
     </tr>
     <tr>
-      <td>inequality</td><td>n.</td>
-      <td>불평등</td><td>반의어: equality 평등</td>
+      <td>imply</td><td>동사</td>
+      <td>시사하다, 암시하다</td><td>유의어: suggest(제안하다), indicate(나타내다) | 반의어: state(명시하다), declare(선언하다), express(표현하다)</td>
     </tr></tbody>
         </table>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">5</span> 변형 예상 포인트</div>
         <div class="two-col" style="padding: 8px 0;">
-          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>빈칸: 'the comparison to another makes the situation _____' → unfair (상대적 비교가 공정성 판단 기준)</li><li>빈칸: 원숭이는 절대적 보상이 아닌 _____ 보상에 반응한다 → relative/comparative</li><li>빈칸: 오이를 던지는 행동은 _____ 의 표현이다 → protest/displeasure</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">실험 관찰 기록이므로 심경 변화 없음.<br>원숭이의 행동 변화: 만족(happily eat) → 항의(throw back)</div></div>
-          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>동격 dash 용법: 'Capuchins ─ New World Monkeys that...' (삽입 설명)</li><li>독립분사구문: 'grapes being universally preferred' (주절과 주어가 다름)</li><li>양보절 Even though + 주제문 구조 (절대적 상황은 불변이지만 상대적 비교로 인식 변화)</li><li>be willing to 동사원형: 기꺼이 ~하다 (자발적 의지)</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: '원숭이도 아는 공정성' 또는 '상대적 불평등에 대한 반응'<br>주제: 동물도 절대적 이익보다 상대적 공정성을 중시한다</div></div>
+          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>역효과 처벌의 개념을 이해하고 부정적 행동 강화 메커니즘 파악</li><li>대안 전략으로서 긍정적 행동 보상의 중요성</li><li>부모가 관심을 주는 방식이 아동 행동에 미치는 영향</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">해당 없음 (논리적 설명문)</div></div>
+          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>명사절 what절 (선행사 포함 관계대명사)</li><li>5형식 구문 (allow/encourage + 목적어 + to부정사)</li><li>Instead of A, B 대조 구문</li><li>관계대명사 계속적 용법 (which)</li><li>동명사 주어 및 전치사의 목적어</li><li>현재완료 시제 (has not hit)</li><li>비교급 강조 (much better than)</li><li>while 동시동작 분사구문</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">역효과 처벌을 피하는 방법 / 긍정적 행동 보상 전략 / 효과적인 아동 훈육법 / 처벌의 역효과와 대안</div></div>
         </div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">6</span> 배경지식 요약</div>
-        <div class="background-box" style="border-radius: 0 0 4px 4px;">Capuchin 원숭이는 <strong>사회적 동물</strong>로 공정성에 대한 감각을 지닌다. 이 실험은 동물도 <strong>상대적 비교를 통해 불평등을 인식</strong>하며, 절대적 보상이 변하지 않아도 타자와의 비교로 부당함을 느끼면 항의 행동을 보임을 증명한다.</div>
+        <div class="background-box" style="border-radius: 0 0 4px 4px;">행동심리학에서 강화(reinforcement)는 특정 행동의 빈도를 증가시키는 자극을 의미한다. 부정적 관심(꾸중)도 무관심보다 나은 강화물이 될 수 있어 역효과를 낳을 수 있다.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">7</span> 문장 간 맥락 (구조도)</div>
         <table class="structure-table">
           <thead><tr><th>단계</th><th>내용</th><th>핵심 어구</th><th>논리 관계</th></tr></thead>
           <tbody><tr>
-      <td>①</td><td>배경: 거래 습성</td>
-      <td>trade with people all day long</td><td><span class="relation-tag">실험 배경 소개</span></td>
+      <td>①</td><td>문제 제기</td>
+      <td>may not be effective</td><td><span class="relation-tag">처벌의 비효과성 도입</span></td>
     </tr><tr>
-      <td>②</td><td>거래 원리</td>
-      <td>I give you this rock and you give me a treat</td><td><span class="relation-tag">교환 메커니즘</span></td>
+      <td>②-③</td><td>개념 정의</td>
+      <td>trick-punishment / encourages them to do it</td><td><span class="relation-tag">역효과 처벌 설명</span></td>
     </tr><tr>
-      <td>③</td><td>공정 상황</td>
-      <td>happily eat the cucumbers</td><td><span class="relation-tag">동등 보상 시 만족</span></td>
+      <td>④-⑤</td><td>구체적 예시</td>
+      <td>Hugh learns / being scolded is much better</td><td><span class="relation-tag">실제 사례 제시</span></td>
     </tr><tr>
-      <td>④</td><td><strong>불공정 도입 (전환점)</strong></td>
-      <td><strong>give one monkey grapes instead</strong></td><td><span class="relation-tag pivot">★ 전환점: 차등 보상</span></td>
+      <td>⑥-⑧</td><td><strong>전환점 (대안 제시)</strong></td>
+      <td><strong>adopting a different strategy / reward the positives</strong></td><td><span class="relation-tag pivot">★ 해결책 제안</span></td>
     </tr><tr>
-      <td>⑤</td><td><strong>핵심 원리 (주제문)</strong></td>
-      <td><strong>comparison to another makes the situation unfair</strong></td><td><span class="relation-tag conclusion">★ 주제: 상대적 비교</span></td>
+      <td>⑨</td><td>적용 방법</td>
+      <td>can avoid trick-punishments</td><td><span class="relation-tag">실천 가능성</span></td>
     </tr><tr>
-      <td>⑥</td><td>항의 행동</td>
-      <td>abandon all gains to communicate displeasure</td><td><span class="relation-tag">결론: 항의 표현</span></td>
+      <td>⑩</td><td><strong>결론 (핵심 원리)</strong></td>
+      <td><strong>reinforces / focus on reducing / rewarding</strong></td><td><span class="relation-tag conclusion">★ 주제문·결론</span></td>
     </tr></tbody>
         </table>
       </div>
