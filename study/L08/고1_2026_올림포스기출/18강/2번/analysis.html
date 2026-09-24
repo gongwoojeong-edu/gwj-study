@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>The Limits of Linear Thinking: Why Creativity Matters in Problem-Solving</title>
+<title>Vision and Preconceptions: Why We Don't See Like a Camera</title>
 <style>*, ::before, ::after { box-sizing: border-box; margin: 0px; padding: 0px; }
 :root { --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3; --brand-bg: #F4F2F8; --paper: #ffffff; --bg: #F7F5F0; --border: #E3DFD5; --text: #2A2A2A; --text-muted: #6E6B65; --charcoal: #3D3D3D; --accent-red: #A32D2D; --accent-teal: #0F6E56; --accent-blue: #185FA5; --accent-amber: #c8900a; --navy: var(--brand-dark); --navy-dark: var(--brand-dark); --accent-purple: var(--brand); }
 body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -15,7 +15,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .teacher-info { font-size: 11px; color: var(--text-muted); padding: 4px 10px; background: rgb(248, 247, 243); border-radius: 12px; border: 1px solid var(--border); }
 .teacher-info strong { color: var(--brand-dark); }
 .tab-group { display: flex; gap: 4px; margin-left: auto; }
-.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
+.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
 .tab-btn:hover { background: rgb(245, 245, 242); color: var(--text); }
 .tab-btn.active { background: var(--brand); color: rgb(255, 255, 255); }
 .tab-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -43,7 +43,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .passage-area { width: 100%; min-height: 180px; resize: vertical; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13.5px; line-height: 1.7; color: var(--text); background: rgb(250, 250, 247); }
 .passage-area:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
 .action-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
-.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
+.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
 .generate-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: rgba(107, 91, 149, 0.3) 0px 4px 12px; }
 .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 .status-box { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.6; display: none; }
@@ -51,7 +51,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .status-box.loading { background: rgb(254, 249, 240); border: 1px solid rgb(232, 200, 122); color: rgb(122, 69, 0); }
 .status-box.error { background: rgb(254, 242, 242); border: 1px solid rgb(244, 199, 199); color: rgb(154, 32, 16); }
 .status-box.success { background: rgb(225, 245, 238); border: 1px solid rgb(134, 212, 188); color: rgb(8, 80, 65); }
-.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: initial; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
+.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: none; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
 @keyframes spin { 
   100% { transform: rotate(360deg); }
 }
@@ -78,7 +78,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .library-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: 0.15s; position: relative; display: flex; flex-direction: column; gap: 10px; }
 .library-card:hover { border-color: var(--brand); box-shadow: rgba(107, 91, 149, 0.15) 0px 4px 14px; transform: translateY(-1px); }
 .library-card.has-selection { border-color: rgb(76, 175, 80); background: rgb(241, 248, 233); }
-.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
+.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
 .library-card .fav-btn.active { color: var(--accent-amber); }
 .library-card .fav-btn:hover { color: var(--accent-amber); }
 .card-select-check { position: absolute; top: 12px; left: 12px; cursor: pointer; user-select: none; z-index: 2; }
@@ -217,7 +217,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .hl-purple { color: rgb(74, 45, 136); font-weight: 700; }
 .ko-box { background: var(--brand-light); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: rgb(51, 51, 51); line-height: 1.7; margin-bottom: 10px; }
 .ko-box strong { color: var(--brand-dark); }
-.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: initial; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
+.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: none; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
 .point-box strong { color: rgb(154, 96, 0); }
 .close-btn { display: block; width: 100%; margin-top: 12px; padding: 8px; background: none; border: 1px solid rgb(221, 221, 221); border-radius: 8px; font-size: 12px; color: rgb(170, 170, 170); cursor: pointer; font-family: inherit; }
 .close-btn:hover { background: rgb(245, 245, 245); color: rgb(102, 102, 102); }
@@ -232,26 +232,15 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .viewing-bar strong { font-weight: 700; }
 .viewing-bar .edit-mode-toggle { padding: 4px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(134, 212, 188); border-radius: 14px; transition: 0.15s; }
 .viewing-bar .edit-mode-toggle:has(input:checked) { background: rgb(122, 69, 0); color: rgb(255, 255, 255); border-color: rgb(122, 69, 0); }
-.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
+.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
 .dropdown { position: relative; display: inline-block; }
-.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: hidden; }
+.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: visible; }
 .dropdown.open .dropdown-menu { display: block; }
-.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
+.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: none; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
 .dropdown-menu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
 .dropdown-menu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-item { position: relative; }
-.dropdown-menu .submenu-trigger { width: 100%; padding: 10px 14px; justify-content: space-between; align-items: center; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; display: flex !important; }
-.dropdown-menu .submenu-item:last-child .submenu-trigger { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu-trigger .arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.15s; }
-.dropdown-menu .submenu-trigger:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-trigger:hover .arrow { color: var(--brand); }
-.dropdown-menu .submenu { display: none; position: absolute; left: 100%; top: 0px; margin-left: 2px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 260px; z-index: 201; overflow: hidden; }
-.dropdown-menu .submenu-item:hover > .submenu, .dropdown-menu .submenu-item:focus-within > .submenu { display: block; }
-.dropdown-menu .submenu-item:hover > .submenu-trigger { background: var(--brand); color: rgb(255, 255, 255); }
-.dropdown-menu .submenu-item:hover > .submenu-trigger .arrow { color: rgb(255, 255, 255); transform: translateX(2px); }
-.dropdown-menu .submenu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
-.dropdown-menu .submenu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.dropdown-menu .download-section-label { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted); background: rgb(250, 250, 247); border-bottom: 1px solid rgb(240, 237, 230); }
+.dropdown-menu .download-section-label:not(:first-child) { border-top: 1px solid rgb(238, 238, 238); }
 .modal.json-editor { max-width: 900px; width: 90vw; max-height: 85vh; display: flex; flex-direction: column; }
 .json-editor-body { flex: 1 1 0%; min-height: 0px; display: flex; flex-direction: column; gap: 10px; }
 .json-editor-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 1px solid rgb(240, 237, 230); }
@@ -267,6 +256,21 @@ body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; trans
 body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
 body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
 body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+.line-translation-wrap { max-width: 720px; margin: 0px auto; padding: 16px 20px 40px; }
+.line-translation-note { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading { font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700; }
+.line-translation-list { list-style: none; padding: 0px; margin: 0px; display: flex; flex-direction: column; gap: 0px; }
+.line-translation-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; line-height: 1.55; font-size: 14px; padding: 5px 0px 5px 6px; border-left: 2px solid rgba(107, 91, 149, 0.18); background: transparent; }
+.line-translation-item + .line-translation-item { margin-top: 1px; }
+.line-translation-item:nth-child(2n) { background: rgba(107, 91, 149, 0.035); }
+.line-translation-num { flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55; }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
+.line-translation-passage { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.line-translation-passage:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; margin-bottom: 0px; padding-bottom: 0px; }
+.line-translation-passage h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12); }
+.line-translation-passage .passage-meta { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.line-translation-empty-line { color: rgb(153, 153, 153); font-size: 12px; margin: 2px 0px 0px 34px; }
 @media print {
   body { background: rgb(255, 255, 255); }
   body.edit-mode .page::before { display: none !important; }
@@ -280,7 +284,18 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .page:last-child { break-after: auto; }
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  #tab-line-translation.print-target .line-translation-wrap { max-width: none; padding: 0px; margin: 0px; }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage { margin-bottom: 8pt; padding-bottom: 6pt; break-inside: avoid-page; }
+  #tab-line-translation.print-target .line-translation-passage h3 { font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt; border-bottom-color: rgb(204, 204, 204); }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: rgb(85, 85, 85); }
+  #tab-line-translation.print-target .line-translation-item { grid-template-columns: 16pt 1fr; gap: 4pt; font-size: 9.5pt; line-height: 1.38; padding: 0.5pt 0px; border-left-width: medium; border-left-style: none; border-left-color: currentcolor; background: transparent !important; }
+  #tab-line-translation.print-target .line-translation-num { font-size: 9pt; color: rgb(51, 51, 51); font-weight: 600; }
+  #tab-line-translation.print-target .line-translation-empty-line { font-size: 8.5pt; margin-left: 16pt; }
   @page { size: a4; margin: 0px; }
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
 }
 </style>
 </head>
@@ -301,31 +316,31 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
       </div>
       <div class="header-right">
         <div class="title-line">18강 | 2번 | <span class="analysis-tag">2</span></div>
-        <div class="topic-line">Topic: Topic: The Necessity of Creative Thinking Beyond Linear Thinking for Solving New Problems</div>
+        <div class="topic-line">Topic: How preconceptions shape visual perception differently from cameras</div>
       </div>
     </header>
       <div class="section">
         <div class="section-title"><span class="num">1</span> 제목 및 주제</div>
         <table class="info-table">
-          <tr><th>주제</th><td>새로운 문제 해결에는 논리적·선형적 사고만으로는 부족하며, 창의적·비선형적 사고가 필요하다. 익숙한 영역에서는 논리적 사고가 효과적이지만, 혁신적 해결책을 위해서는 창의적 뇌를 활용해야 한다.</td></tr>
-          <tr><th>예상 제목</th><td>The Limits of Linear Thinking: Why Creativity Matters in Problem-Solving</td></tr>
-          <tr><th>글의 유형</th><td>논설문 (argumentative) — 대조·비교 구조 / 선형적 사고 vs 창의적 사고</td></tr>
-          <tr><th>심경 변화</th><td>논설문으로 심경 변화 없음 — 논리적 주장 전개 (logical thinking의 한계 → creative thinking의 필요성)</td></tr>
+          <tr><th>주제</th><td>우리의 시각은 대상과의 기능적 관계에 따른 선입견에 의해 영향을 받으며, 이는 카메라처럼 객관적으로 보는 능력을 방해한다. 사진은 기계적 무관심으로 세계를 있는 그대로 기록한다.</td></tr>
+          <tr><th>예상 제목</th><td>Vision and Preconceptions: Why We Don't See Like a Camera</td></tr>
+          <tr><th>글의 유형</th><td>설명문</td></tr>
+          <tr><th>심경 변화</th><td>심경 변화 없음 (객관적 설명)</td></tr>
         </table>
       </div>
       <div class="section">
         <div class="passage-label">▶ 원문 지문</div>
-        <div class="passage-box">In the course of trying to solve a problem with an invention, you may <strong>encounter a brick wall of resistance</strong> when you try to think your way logically through the problem. Such <strong>logical thinking is a linear type of process</strong>, which uses our reasoning skills. This works fine when we're operating in the area of what we know or have experienced. However, when we need to <strong>deal with new information</strong>, ideas, and viewpoints, <strong>linear thinking will often come up short</strong>. On the other hand, <strong>creativity by definition involves the application of new information to old problems</strong> and the conception of new viewpoints and ideas. For this you will be most effective if you learn to <strong>operate in a nonlinear manner</strong>; that is, use your creative brain. Stated differently, if you think in a linear manner, you'll tend to be conservative and keep coming up with techniques which are already known. This, of course, is just what you don't want.</div>
+        <div class="passage-box">Vision is <strong>influenced by our preconceptions</strong> about reality.<br>In viewing a scene, we establish unconscious hierarchies that reflect our <strong>functional relationship</strong> to objects and our momentary priorities.<br>For example, when visualizing a hammer in our mind's eye, we tend to "see" it in profile or at some other "ready for use" angle.<br>One would probably not visualize a hammer as seen from the top so that the handle is hidden by the hammer's head.<br>The <strong>functional relationship</strong> we have with objects creates <strong>visual expectations</strong> that interfere with our ability to see "like a camera."<br>The camera, like the human eye, sees only shapes and colors.<br>It documents the world impartially through a lens that is similar to the eye.<br>When we look at them carefully, photographs are often surprising because they don't interpret confusing details but simply serve them up to us with a <strong>mechanical indifference</strong>.<br>And because of their flatness, photographs often contain areas that appear as unrecognizable colors and shapes.<br>Our visual perception is <strong>shaped by an established hierarchy</strong> based on <strong>functional relationship</strong>s, which interrupts our ability to see objects as they truly are, unlike the objective perspective of a camera.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">3</span> 중심문장 &amp; 핵심 키워드</div>
         <div style="border: 1px solid var(--border); border-top: none; padding: 12px; border-radius: 0 0 4px 4px;">
           <div class="topic-sentence-label">▶ TOPIC SENTENCE (중심문장)</div>
           <div class="topic-sentence-box">
-            <div class="en">"However, when we need to deal with new information, ideas, and viewpoints, linear thinking will often come up short. On the other hand, creativity by definition involves the application of new information to old problems and the conception of new viewpoints and ideas."</div>
-            <div class="ko">→ 그러나 새로운 정보, 아이디어, 관점을 다뤄야 할 때 선형적 사고로는 흔히 충분하지 않다. 반면 창의성은 정의상 기존 문제에 대한 새로운 정보의 적용과 새로운 관점의 구상을 포함한다. — 논리적 사고의 한계와 창의적 사고의 필요성을 대조하는 핵심 주장.</div>
+            <div class="en">"Vision is influenced by our preconceptions about reality."</div>
+            <div class="ko">→ 시각은 현실에 대한 우리의 선입견에 의해 영향을 받는다.</div>
           </div>
-          <div class="keyword-row"><span class="keyword-chip">linear thinking</span><span class="keyword-chip">logical thinking</span><span class="keyword-chip">creativity</span><span class="keyword-chip">nonlinear manner</span><span class="keyword-chip">new information</span><span class="keyword-chip">brick wall of resistance</span><span class="keyword-chip highlight">대조 논증 (선형적 사고의 한계 vs 창의적 사고의 필요성)</span></div>
+          <div class="keyword-row"><span class="keyword-chip">preconceptions</span><span class="keyword-chip">visual perception</span><span class="keyword-chip">functional relationship</span><span class="keyword-chip">camera</span><span class="keyword-chip">objectivity</span><span class="keyword-chip">hierarchy</span><span class="keyword-chip highlight">없음</span></div>
         </div>
       </div>
       
@@ -349,62 +364,112 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ①-② 문제 제기 + 정의 (관계대명사 which)</div>
+      <div class="sentence-title">2 문장별 분석 — ① 수동태 구문</div>
       <div class="sentence-body">
-        <div class="sentence-en">In the course of trying to solve a problem with an invention, you may <span class='hl-red'>encounter a brick wall of resistance</span> when you try to think your way logically through the problem. Such <span class='hl-blue'>logical thinking is a linear type of process</span>, <span class='hl-amber'>which uses our reasoning skills</span>.</div>
+        <div class="sentence-en">Vision <span class='hl-blue'>is influenced by</span> our <span class='hl-teal'>preconceptions about reality</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>전치사구</td><td>In the course of ~ing</td><td>'~하는 과정에서'라는 의미의 시간 표현</td></tr>
+              <tr><td>주어</td><td>Vision</td><td>시각, 추상 명사</td></tr>
             
-              <tr><td>동사구</td><td>encounter a brick wall</td><td>'벽에 부딪히다'는 비유적 표현</td></tr>
+              <tr><td>수동태</td><td>is influenced by</td><td>be+p.p. 구조로 '영향받다'</td></tr>
             
-              <tr><td>부사절</td><td>when you try to think your way</td><td>'생각해 나가다'는 관용 표현</td></tr>
-            
-              <tr><td>관계대명사절</td><td>which uses our reasoning skills</td><td>선행사 'a linear type of process'를 추가 설명</td></tr>
+              <tr><td>전치사구</td><td>by our preconceptions about reality</td><td>행위자 표시, 현실에 대한 선입견</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>발명품의 문제를 해결하려는 과정에서 / 논리적으로 생각해 나갈 때 저항의 벽에 부딪힐 수 있다 / 이러한 논리적 사고는 선형적 과정이며 / 추론 능력을 사용한다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>시각은 / 현실에 대한 우리의 선입견에 의해 / 영향을 받는다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ③ 조건 부사절 (when + 관계대명사 what)</div>
+      <div class="sentence-title">2 문장별 분석 — ② 관계대명사절</div>
       <div class="sentence-body">
-        <div class="sentence-en">This <span class='hl-blue'>works fine</span> <span class='hl-amber'>when we're operating in the area of what we know or have experienced</span>.</div>
+        <div class="sentence-en">In viewing a scene, we establish <span class='hl-blue'>unconscious hierarchies</span> <span class='hl-red'>that reflect</span> our <span class='hl-teal'>functional relationship</span> to objects and our momentary priorities.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>동사</td><td>works fine</td><td>'잘 작동하다'는 긍정적 평가</td></tr>
+              <tr><td>전치사구</td><td>In viewing a scene</td><td>분사구문, 장면을 볼 때</td></tr>
             
-              <tr><td>부사절</td><td>when we're operating in the area</td><td>'~영역에서 작업할 때'라는 조건</td></tr>
+              <tr><td>동사</td><td>establish</td><td>수립하다, 확립하다</td></tr>
             
-              <tr><td>관계대명사</td><td>what we know</td><td>선행사 포함 관계대명사 'the thing(s) which'의 의미</td></tr>
+              <tr><td>목적어</td><td>unconscious hierarchies</td><td>무의식적 위계</td></tr>
+            
+              <tr><td>관계대명사</td><td>that reflect</td><td>선행사 hierarchies 수식</td></tr>
+            
+              <tr><td>명사구</td><td>our functional relationship to objects</td><td>대상과의 기능적 관계</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이것은 잘 작동한다 / 우리가 알고 있거나 경험한 영역에서 작업할 때는</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>장면을 볼 때 / 우리는 무의식적 위계를 수립하는데 / 그것은 대상에 대한 기능적 관계와 순간적 우선순위를 반영한다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ④ 전환 — 대조 부사절 (However + come up short)</div>
+      <div class="sentence-title">2 문장별 분석 — ③ 시간부사절과 tend to 구문</div>
       <div class="sentence-body">
-        <div class="sentence-en"><span class='hl-red'>However</span>, when we need to <span class='hl-blue'>deal with new information</span>, ideas, and viewpoints, <span class='hl-red'>linear thinking will often come up short</span>.</div>
+        <div class="sentence-en">For example, <span class='hl-blue'>when visualizing</span> a hammer <span class='hl-amber'>in our mind's eye</span>, we <span class='hl-red'>tend to</span> "see" it in profile or at some other "ready for use" angle.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>접속부사</td><td>However</td><td>앞 내용과 대조되는 논점 전환</td></tr>
+              <tr><td>시간부사절</td><td>when visualizing a hammer in our mind's eye</td><td>마음의 눈으로 망치를 시각화할 때</td></tr>
             
-              <tr><td>부사절</td><td>when we need to deal with</td><td>'~을 다뤄야 할 때'라는 조건</td></tr>
+              <tr><td>동사구</td><td>tend to see</td><td>~하는 경향이 있다</td></tr>
             
-              <tr><td>동사구</td><td>come up short</td><td>'부족하다, 충분하지 않다'는 관용 표현</td></tr>
+              <tr><td>목적어</td><td>it in profile</td><td>측면에서 본 모습으로</td></tr>
+            
+              <tr><td>전치사구</td><td>at some other ready for use angle</td><td>사용 준비된 다른 각도에서</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그러나 / 새로운 정보, 아이디어, 관점을 다뤄야 할 때 / 선형적 사고로는 흔히 충분하지 않다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>예를 들어 / 마음의 눈으로 망치를 시각화할 때 / 우리는 그것을 측면에서 또는 사용 준비된 각도에서 보는 경향이 있다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ④ 목적절을 포함한 결과구문</div>
+      <div class="sentence-body">
+        <div class="sentence-en">One <span class='hl-red'>would probably not</span> visualize a hammer <span class='hl-blue'>as seen from the top</span> <span class='hl-amber'>so that</span> the handle is hidden by the hammer's head.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주어</td><td>One</td><td>일반인, 사람들</td></tr>
+            
+              <tr><td>조동사</td><td>would probably not</td><td>아마 ~하지 않을 것이다</td></tr>
+            
+              <tr><td>동사</td><td>visualize</td><td>시각화하다</td></tr>
+            
+              <tr><td>분사구</td><td>as seen from the top</td><td>위에서 본 대로</td></tr>
+            
+              <tr><td>결과절</td><td>so that the handle is hidden</td><td>손잡이가 가려지도록</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>사람들은 아마 망치를 / 위에서 본 모습으로 / 시각화하지 않을 것이다 / 손잡이가 망치 머리에 가려지도록</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑤ 관계대명사절과 interfere with 구문</div>
+      <div class="sentence-body">
+        <div class="sentence-en">The <span class='hl-blue'>functional relationship we have</span> with objects creates <span class='hl-teal'>visual expectations</span> that <span class='hl-red'>interfere with</span> our ability to see "<span class='hl-amber'>like a camera</span>."</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주어</td><td>The functional relationship we have with objects</td><td>목적격 관계대명사 생략</td></tr>
+            
+              <tr><td>동사</td><td>creates</td><td>만들어낸다, 생성한다</td></tr>
+            
+              <tr><td>목적어</td><td>visual expectations</td><td>시각적 기대</td></tr>
+            
+              <tr><td>관계절</td><td>that interfere with our ability</td><td>능력을 방해하는</td></tr>
+            
+              <tr><td>to부정사</td><td>to see like a camera</td><td>카메라처럼 보는</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>대상과 우리가 갖는 기능적 관계는 / 시각적 기대를 만들어내고 / 그것은 카메라처럼 보는 우리 능력을 방해한다</div>
       </div>
     </div>
       
@@ -428,66 +493,122 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑤ 대조 제시 (On the other hand + by definition)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑥ 삽입구문</div>
       <div class="sentence-body">
-        <div class="sentence-en"><span class='hl-purple'>On the other hand</span>, <span class='hl-blue'>creativity by definition involves the application of new information to old problems</span> and the conception of new viewpoints and ideas.</div>
+        <div class="sentence-en">The camera, <span class='hl-blue'>like the human eye</span>, sees <span class='hl-teal'>only shapes and colors</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>접속구</td><td>On the other hand</td><td>'반면에'라는 대조 표현</td></tr>
+              <tr><td>주어</td><td>The camera</td><td>카메라</td></tr>
             
-              <tr><td>전치사구</td><td>by definition</td><td>'정의상, 본질적으로'라는 의미</td></tr>
+              <tr><td>삽입구</td><td>like the human eye</td><td>인간의 눈처럼, 콤마로 분리</td></tr>
             
-              <tr><td>동사</td><td>involves</td><td>'포함하다'는 의미로 창의성의 본질 설명</td></tr>
+              <tr><td>동사</td><td>sees</td><td>본다</td></tr>
             
-              <tr><td>명사구</td><td>the application of A to B</td><td>'A를 B에 적용하는 것'이라는 구조</td></tr>
+              <tr><td>부사</td><td>only</td><td>오직, 단지</td></tr>
+            
+              <tr><td>목적어</td><td>shapes and colors</td><td>형태와 색깔</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>반면 / 창의성은 정의상 / 기존 문제에 새로운 정보를 적용하는 것과 / 새로운 관점과 아이디어의 구상을 포함한다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>카메라는 / 인간의 눈처럼 / 오직 형태와 색깔만을 본다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑥-⑦ 조건문 + 결과 예측 (if 가정 + will tend to)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑦ 전치사구를 동반한 단문</div>
       <div class="sentence-body">
-        <div class="sentence-en">For this you will be most effective if you learn to <span class='hl-blue'>operate in a nonlinear manner</span>; that is, <span class='hl-purple'>use your creative brain</span>. Stated differently, if you <span class='hl-red'>think in a linear manner</span>, you'll <span class='hl-red'>tend to be conservative</span> and keep coming up with techniques which are already known.</div>
+        <div class="sentence-en">It <span class='hl-blue'>documents</span> the world <span class='hl-teal'>impartially</span> through a lens <span class='hl-red'>that is similar to the eye</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>조건절</td><td>if you learn to operate</td><td>'~하는 법을 배운다면'이라는 조건</td></tr>
+              <tr><td>주어</td><td>It</td><td>카메라 지칭</td></tr>
             
-              <tr><td>동사구</td><td>operate in a nonlinear manner</td><td>'비선형적 방식으로 작업하다'</td></tr>
+              <tr><td>동사</td><td>documents</td><td>기록하다</td></tr>
             
-              <tr><td>삽입구</td><td>that is</td><td>'즉, 다시 말해'라는 부연 설명 표현</td></tr>
+              <tr><td>목적어</td><td>the world</td><td>세계</td></tr>
             
-              <tr><td>분사구문</td><td>Stated differently</td><td>'다르게 말하면'이라는 수동 분사구문</td></tr>
+              <tr><td>부사</td><td>impartially</td><td>공정하게, 편견 없이</td></tr>
             
-              <tr><td>동사구</td><td>tend to be</td><td>'~하는 경향이 있다'는 습관·경향 표현</td></tr>
+              <tr><td>전치사구</td><td>through a lens that is similar to the eye</td><td>눈과 유사한 렌즈를 통해</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이를 위해 비선형적 방식으로 작업하는 법을 배우면 가장 효과적이다 / 즉 창의적 뇌를 사용하는 것이다 / 다시 말해 선형적으로 사고하면 / 보수적이 되고 이미 알려진 기술만 계속 떠올리게 된다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그것은 세계를 / 공정하게 기록한다 / 눈과 유사한 렌즈를 통해</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑧ 강조 구문 (관계대명사 what 강조)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑧ 시간절과 이유절 복합 구문</div>
       <div class="sentence-body">
-        <div class="sentence-en">This, of course, is <span class='hl-purple'>just what you don't want</span>.</div>
+        <div class="sentence-en"><span class='hl-blue'>When we look at them carefully</span>, photographs are often surprising <span class='hl-red'>because they don't interpret</span> confusing details but simply serve them up to us with a <span class='hl-teal'>mechanical indifference</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>삽입어</td><td>of course</td><td>'물론'이라는 당연함 강조</td></tr>
+              <tr><td>시간절</td><td>When we look at them carefully</td><td>사진을 주의깊게 볼 때</td></tr>
             
-              <tr><td>강조 부사</td><td>just</td><td>'바로, 정확히'라는 의미로 강조</td></tr>
+              <tr><td>주어</td><td>photographs</td><td>사진들</td></tr>
             
-              <tr><td>관계대명사</td><td>what you don't want</td><td>'당신이 원하지 않는 것'이라는 선행사 포함 관계대명사</td></tr>
+              <tr><td>동사</td><td>are often surprising</td><td>자주 놀랍다</td></tr>
+            
+              <tr><td>이유절</td><td>because they don't interpret confusing details</td><td>혼란스러운 세부사항 해석 안 함</td></tr>
+            
+              <tr><td>동사구</td><td>serve them up to us</td><td>우리에게 제공하다</td></tr>
+            
+              <tr><td>전치사구</td><td>with a mechanical indifference</td><td>기계적 무관심으로</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이것이 물론 / 바로 여러분이 원하지 않는 것이다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>주의깊게 보면 / 사진은 자주 놀라운데 / 왜냐하면 혼란스러운 세부사항을 해석하지 않고 / 단지 기계적 무관심으로 우리에게 제공하기 때문이다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑨ 이유구와 관계절 구문</div>
+      <div class="sentence-body">
+        <div class="sentence-en">And <span class='hl-blue'>because of their flatness</span>, photographs often contain areas <span class='hl-red'>that appear as</span> <span class='hl-teal'>unrecognizable colors and shapes</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>이유구</td><td>because of their flatness</td><td>그것들의 평면성 때문에</td></tr>
+            
+              <tr><td>주어</td><td>photographs</td><td>사진들</td></tr>
+            
+              <tr><td>동사</td><td>contain</td><td>포함하다</td></tr>
+            
+              <tr><td>목적어</td><td>areas</td><td>영역들</td></tr>
+            
+              <tr><td>관계절</td><td>that appear as unrecognizable colors and shapes</td><td>인식 불가능한 색과 형태로 나타나는</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그리고 평면성 때문에 / 사진은 자주 영역들을 포함하는데 / 그것은 인식 불가능한 색깔과 형태로 나타난다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑩ 수동태와 관계대명사 복합 구문</div>
+      <div class="sentence-body">
+        <div class="sentence-en">Our visual perception <span class='hl-blue'>is shaped by</span> an established hierarchy <span class='hl-teal'>based on functional relationships</span>, <span class='hl-red'>which interrupts</span> our ability to see objects <span class='hl-amber'>as they truly are</span>, unlike the objective perspective of a camera.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주어</td><td>Our visual perception</td><td>우리의 시각 지각</td></tr>
+            
+              <tr><td>수동태</td><td>is shaped by</td><td>~에 의해 형성되다</td></tr>
+            
+              <tr><td>명사구</td><td>an established hierarchy based on functional relationships</td><td>기능적 관계에 기반한 확립된 위계</td></tr>
+            
+              <tr><td>관계절</td><td>which interrupts our ability to see objects</td><td>대상을 보는 능력을 방해하는</td></tr>
+            
+              <tr><td>부사절</td><td>as they truly are</td><td>그들이 진정으로 있는 그대로</td></tr>
+            
+              <tr><td>전치사구</td><td>unlike the objective perspective of a camera</td><td>카메라의 객관적 관점과 달리</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>우리의 시각 지각은 / 기능적 관계에 기반한 확립된 위계에 의해 형성되는데 / 그것은 대상을 있는 그대로 보는 능력을 방해한다 / 카메라의 객관적 관점과 달리</div>
       </div>
     </div>
       
@@ -515,82 +636,82 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
           <thead><tr><th>단어·어구</th><th>품사</th><th>의미</th><th>유의어 / 반의어 / 비고</th></tr></thead>
           <tbody>
     <tr>
-      <td>encounter</td><td>v.</td>
-      <td>맞닥뜨리다, 직면하다</td><td>meet, come across</td>
+      <td>preconception</td><td>명사</td>
+      <td>선입견, 편견</td><td>유의어: bias(편향), prejudice(편견) | 반의어: objectivity(객관성)</td>
     </tr>
     <tr>
-      <td>brick wall</td><td>n.</td>
-      <td>벽돌 벽, (비유) 장애물</td><td>obstacle, barrier</td>
+      <td>hierarchy</td><td>명사</td>
+      <td>위계, 계층</td><td>유의어: ranking(순위), order(질서) | 반의어: equality(평등), uniformity(균일성)</td>
     </tr>
     <tr>
-      <td>linear</td><td>adj.</td>
-      <td>선형적인, 직선의</td><td>↔ nonlinear 비선형적인</td>
+      <td>visualize</td><td>동사</td>
+      <td>시각화하다, 마음속에 그리다</td><td>유의어: imagine(상상하다), picture(그리다)</td>
     </tr>
     <tr>
-      <td>reasoning</td><td>n.</td>
-      <td>추론, 논리적 사고</td><td>logical thinking</td>
+      <td>interfere with</td><td>동사구</td>
+      <td>방해하다, 간섭하다</td><td>유의어: hinder(방해하다), obstruct(막다) | 반의어: facilitate(촉진하다)</td>
     </tr>
     <tr>
-      <td>come up short</td><td>idiom</td>
-      <td>부족하다, 충분하지 않다</td><td>fall short, be insufficient</td>
+      <td>impartially</td><td>부사</td>
+      <td>공정하게, 편견 없이</td><td>유의어: objectively(객관적으로), fairly(공평하게) | 반의어: partially(부분적으로)</td>
     </tr>
     <tr>
-      <td>by definition</td><td>idiom</td>
-      <td>정의상, 본질적으로</td><td>inherently, essentially</td>
+      <td>document</td><td>동사</td>
+      <td>기록하다, 문서화하다</td><td>유의어: record(기록하다), chronicle(연대기로 기록하다) | 반의어: erase(지우다), delete(삭제하다)</td>
     </tr>
     <tr>
-      <td>conception</td><td>n.</td>
-      <td>구상, 개념화</td><td></td>
+      <td>indifference</td><td>명사</td>
+      <td>무관심, 냉담</td><td>유의어: apathy(무감동), detachment(초연) | 반의어: concern(관심)</td>
     </tr>
     <tr>
-      <td>nonlinear</td><td>adj.</td>
-      <td>비선형적인</td><td>creative, not straightforward</td>
+      <td>unrecognizable</td><td>형용사</td>
+      <td>인식할 수 없는</td><td>유의어: unidentifiable(식별 불가능한) | 반의어: recognizable(인식 가능한)</td>
     </tr>
     <tr>
-      <td>conservative</td><td>adj.</td>
-      <td>보수적인, 변화를 꺼리는</td><td>traditional, cautious</td>
+      <td>flatness</td><td>명사</td>
+      <td>평면성, 납작함</td><td>유의어: levelness(평탄함) | 반의어: depth(깊이)</td>
     </tr>
     <tr>
-      <td>come up with</td><td>idiom</td>
-      <td>생각해 내다, 제시하다</td><td>produce, devise</td>
+      <td>perception</td><td>명사</td>
+      <td>지각, 인식</td><td>유의어: awareness(인식), recognition(인지) | 반의어: ignorance(무지), unawareness(의식없음)</td>
     </tr></tbody>
         </table>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">5</span> 변형 예상 포인트</div>
         <div class="two-col" style="padding: 8px 0;">
-          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>④번 문장 'linear thinking will often come up ____' → short (부족함을 나타내는 표현)</li><li>⑤번 문장 'creativity ____ definition involves' → by (정의상이라는 의미)</li><li>⑥번 문장 'operate in a ____ manner' → nonlinear (선형적 vs 비선형적 대조)</li><li>⑦번 문장 'you'll ____ to be conservative' → tend (경향성을 나타내는 동사)</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">논설문으로 심경 변화는 없으며, 논리적 주장이 단계적으로 전개됨.<br>① 문제 상황 제시 (논리적 사고의 한계) → ③ 긍정적 측면 인정 → ④ 전환·한계 지적 (However) → ⑤ 대안 제시 (창의적 사고) → ⑥-⑦ 결론 및 경고</div></div>
-          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>관계대명사 'which' 계속적 용법: 'a linear type of process, which uses'는 추가 설명</li><li>관계대명사 'what' 선행사 포함: 'what we know' = 'the thing(s) which we know'</li><li>come up short: '부족하다'는 관용 표현, come up with와 구별</li><li>분사구문 'Stated differently': '다르게 말하면'이라는 수동 분사구문</li><li>tend to: '~하는 경향이 있다'는 습관·성향 표현</li><li>강조 구문 'just what': 'what' 앞에 'just'로 '바로 ~인 것' 강조</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: '창의적 사고의 필요성' 또는 '선형적 사고를 넘어서' / 주제: 새로운 문제 해결에는 논리적 사고의 한계를 넘어 창의적·비선형적 사고가 필요하다</div></div>
+          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>선입견이 시각에 미치는 영향</li><li>기능적 관계에 따른 시각적 기대의 형성</li><li>카메라의 객관적 관점과 인간 지각의 차이</li><li>사진이 보여주는 기계적 무관심</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">심경 변화 없음. 시각 지각의 메커니즘을 객관적으로 설명하는 설명문.</div></div>
+          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>수동태: is influenced by, is shaped by - 행위자 강조</li><li>관계대명사 that: hierarchies that reflect, expectations that interfere - 선행사 수식</li><li>목적격 관계대명사 생략: The functional relationship (that) we have</li><li>so that 결과절: so that the handle is hidden - 결과 표현</li><li>삽입구: like the human eye - 콤마로 분리된 부가 설명</li><li>분사구문: when visualizing, as seen from the top</li><li>비교구문: unlike the objective perspective - 대조 표현</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">선입견과 시각 지각의 관계 / 카메라와 인간 지각의 차이 / 기능적 관계가 만드는 시각적 한계 / 객관적 관찰의 어려움</div></div>
         </div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">6</span> 배경지식 요약</div>
-        <div class="background-box" style="border-radius: 0 0 4px 4px;">문제 해결 과정에서 <strong>논리적·선형적 사고(linear thinking)</strong>는 익숙한 영역에서는 효과적이지만, 새로운 정보나 관점을 다룰 때는 한계가 있다. 혁신적 해결책을 위해서는 <strong>창의적·비선형적 사고(creative, nonlinear thinking)</strong>가 필수적이다.</div>
+        <div class="background-box" style="border-radius: 0 0 4px 4px;">인간의 시각 체계는 진화 과정에서 생존에 유리한 방식으로 발달했으며, 대상의 기능과 용도에 따라 선택적으로 정보를 처리한다. 반면 카메라는 기계적으로 모든 정보를 동등하게 기록하므로, 사진을 보면 우리가 평소 인식하지 못했던 세부사항이나 패턴이 드러난다.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">7</span> 문장 간 맥락 (구조도)</div>
         <table class="structure-table">
           <thead><tr><th>단계</th><th>내용</th><th>핵심 어구</th><th>논리 관계</th></tr></thead>
           <tbody><tr>
-      <td>①-②</td><td>문제 제기 및 정의</td>
-      <td>encounter a brick wall / linear thinking</td><td><span class="relation-tag">논리적 사고의 정의</span></td>
+      <td>①</td><td>주제 제시</td>
+      <td>Vision is influenced by our preconceptions</td><td><span class="relation-tag">주제 도입</span></td>
     </tr><tr>
-      <td>③</td><td>긍정적 측면 인정</td>
-      <td>works fine / what we know</td><td><span class="relation-tag">익숙한 영역에서 효과</span></td>
+      <td>②</td><td>무의식적 위계</td>
+      <td>establish unconscious hierarchies</td><td><span class="relation-tag">주제 구체화</span></td>
     </tr><tr>
-      <td>④</td><td><strong>한계 지적 (전환)</strong></td>
-      <td><strong>However / come up short</strong></td><td><span class="relation-tag pivot">★ 전환점 — 새로운 정보 다룰 때 한계</span></td>
+      <td>③④</td><td>구체적 예시</td>
+      <td>visualizing a hammer in profile</td><td><span class="relation-tag">사례 설명</span></td>
     </tr><tr>
-      <td>⑤</td><td>대안 제시</td>
-      <td>On the other hand / creativity by definition</td><td><span class="relation-tag">창의성의 본질 설명</span></td>
+      <td>⑤</td><td><strong>문제점</strong></td>
+      <td><strong>interfere with our ability to see like a camera</strong></td><td><span class="relation-tag pivot">★ 전환점</span></td>
     </tr><tr>
-      <td>⑥</td><td>실천 방안</td>
-      <td>operate in a nonlinear manner / creative brain</td><td><span class="relation-tag">비선형적 사고 학습 필요</span></td>
+      <td>⑥⑦⑧⑨</td><td>카메라 대조</td>
+      <td>documents the world impartially</td><td><span class="relation-tag">대조 설명</span></td>
     </tr><tr>
-      <td>⑦-⑧</td><td><strong>결론 및 경고</strong></td>
-      <td><strong>conservative / just what you don't want</strong></td><td><span class="relation-tag conclusion">★ 결론 — 선형적 사고의 문제점</span></td>
+      <td>⑩</td><td><strong>결론</strong></td>
+      <td><strong>shaped by an established hierarchy</strong></td><td><span class="relation-tag conclusion">★ 주제문·결론</span></td>
     </tr></tbody>
         </table>
       </div>
