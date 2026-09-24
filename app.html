@@ -9452,6 +9452,14 @@ function openSendPreviewModal(rec) {
 
       passageInputChoiceHtml('send', (rec.data.passage_input === 'whole' || (rec.learnerMeta && rec.learnerMeta.passage_input === 'whole')) ? 'whole' : 'sentence') +
 
+      '<div id="send-attach-summary" style="background:#eef6ff;border:1px solid #90caf9;border-radius:8px;padding:12px;font-size:12px;line-height:1.65;margin:0 0 12px;">' +
+        '<div style="font-weight:700;color:#0d47a1;margin-bottom:6px;">📎 함께 전송되는 자료 (자동 · 별도 지정 없음)</div>' +
+        '<div>📄 분석교안 HTML — <span id="send-attach-analysis">준비 중…</span></div>' +
+        '<div>🗂 구조도 HTML — <span id="send-attach-structure">준비 중…</span></div>' +
+        '<div>🧩 구조도 JSON 노드 — <span id="send-attach-nodes">' + ((d.diagram_nodes || []).length) + '개</span></div>' +
+        '<div style="color:#555;margin-top:6px;">📥 상단 다운로드 ▾ 은 PC 저장용입니다. 구문랩 전송은 카드의 <strong>📚</strong> 에서 합니다.</div>' +
+      '</div>' +
+
       // ═══ 제목 ═══
       '<div style="margin-bottom: 10px;">' +
         '<label style="display:block; font-size:11px; color: #666; margin-bottom: 4px; font-weight:600;">📖 한글 제목 (title_ko)</label>' +
@@ -9563,6 +9571,24 @@ function openSendPreviewModal(rec) {
   }
 
   updatePreview();
+
+  // 분석교안·구조도 첨부 용량 미리보기 (전송 payload와 동일 경로)
+  (function previewSendAttachments() {
+    const aEl = document.getElementById('send-attach-analysis');
+    const sEl = document.getElementById('send-attach-structure');
+    try {
+      const aHtml = (typeof renderAnalysisToString === 'function') ? (renderAnalysisToString(rec.data) || '') : '';
+      let sHtml = '';
+      try {
+        sHtml = buildStructureStandaloneHtml(rec, inferLearnerMeta(rec)) || '';
+      } catch (e) { sHtml = ''; }
+      if (aEl) aEl.textContent = aHtml.length ? ('포함 · ' + aHtml.length.toLocaleString() + '자') : '없음 (분석 데이터 비어 있음)';
+      if (sEl) sEl.textContent = sHtml.length ? ('포함 · ' + sHtml.length.toLocaleString() + '자') : '없음 (구조도 데이터 비어 있음)';
+    } catch (e) {
+      if (aEl) aEl.textContent = '확인 실패';
+      if (sEl) sEl.textContent = '확인 실패';
+    }
+  })();
 
   // 첫 필드 포커스
   setTimeout(() => {
