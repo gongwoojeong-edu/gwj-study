@@ -9669,6 +9669,12 @@ function openBulkSendPreviewModal(selected) {
           'style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brand,#6B5B95);border-radius:6px;background:#fffbea;">' +
       '</div>' +
       passageInputChoiceHtml('bulk', 'sentence') +
+      '<div id="bulk-attach-summary" style="background:#eef6ff;border:1px solid #90caf9;border-radius:8px;padding:12px;font-size:12px;line-height:1.65;margin:0 0 12px;">' +
+        '<div style="font-weight:700;color:#0d47a1;margin-bottom:6px;">📎 함께 전송되는 자료 (자동 · 체크박스 없음)</div>' +
+        '<div>📄 분석교안 HTML — 각 자료마다 자동 첨부</div>' +
+        '<div>🗂 구조도 HTML + JSON — 각 자료마다 자동 첨부</div>' +
+        '<div style="color:#555;margin-top:6px;">위 <strong>본문통합</strong>만 선택하면 됩니다. 분석·구조도는 별도 옵션 없이 항상 같이 갑니다.</div>' +
+      '</div>' +
       '<div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-left:4px solid #4caf50;padding:12px;border-radius:4px;font-size:12px;margin-bottom:12px;">' +
         '📍 <strong>공통 저장 경로</strong> (구문랩에 실제로 들어가는 위치)<br>' +
         '<div id="bulk-send-path-preview" style="font-family:monospace;font-size:12px;margin-top:4px;color:#1b5e20;"></div>' +
