@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>The Paradox of Trick-Punishments: Rewarding Positives Over Punishing Negatives</title>
+<title>The Necessity of Creative Thinking: Breaking Through Linear Limitations</title>
 <style>*, ::before, ::after { box-sizing: border-box; margin: 0px; padding: 0px; }
 :root { --brand: #6B5B95; --brand-dark: #4A3D6B; --brand-light: #E8E4F3; --brand-bg: #F4F2F8; --paper: #ffffff; --bg: #F7F5F0; --border: #E3DFD5; --text: #2A2A2A; --text-muted: #6E6B65; --charcoal: #3D3D3D; --accent-red: #A32D2D; --accent-teal: #0F6E56; --accent-blue: #185FA5; --accent-amber: #c8900a; --navy: var(--brand-dark); --navy-dark: var(--brand-dark); --accent-purple: var(--brand); }
 body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -15,7 +15,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .teacher-info { font-size: 11px; color: var(--text-muted); padding: 4px 10px; background: rgb(248, 247, 243); border-radius: 12px; border: 1px solid var(--border); }
 .teacher-info strong { color: var(--brand-dark); }
 .tab-group { display: flex; gap: 4px; margin-left: auto; }
-.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
+.tab-btn { padding: 8px 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; transition: 0.15s; white-space: nowrap; }
 .tab-btn:hover { background: rgb(245, 245, 242); color: var(--text); }
 .tab-btn.active { background: var(--brand); color: rgb(255, 255, 255); }
 .tab-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -43,7 +43,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .passage-area { width: 100%; min-height: 180px; resize: vertical; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13.5px; line-height: 1.7; color: var(--text); background: rgb(250, 250, 247); }
 .passage-area:focus { outline: none; border-color: var(--brand); background: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.12) 0px 0px 0px 3px; }
 .action-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
-.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
+.generate-btn { flex: 1 1 0%; padding: 14px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 10px; background: var(--brand); color: rgb(255, 255, 255); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; }
 .generate-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: rgba(107, 91, 149, 0.3) 0px 4px 12px; }
 .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 .status-box { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.6; display: none; }
@@ -51,7 +51,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .status-box.loading { background: rgb(254, 249, 240); border: 1px solid rgb(232, 200, 122); color: rgb(122, 69, 0); }
 .status-box.error { background: rgb(254, 242, 242); border: 1px solid rgb(244, 199, 199); color: rgb(154, 32, 16); }
 .status-box.success { background: rgb(225, 245, 238); border: 1px solid rgb(134, 212, 188); color: rgb(8, 80, 65); }
-.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: initial; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
+.spinner { display: inline-block; width: 12px; height: 12px; border-width: 2px; border-style: solid; border-color: transparent rgb(200, 144, 10) rgb(200, 144, 10); border-image: none; border-radius: 50%; animation: 0.8s linear 0s infinite normal none running spin; margin-right: 6px; vertical-align: middle; }
 @keyframes spin { 
   100% { transform: rotate(360deg); }
 }
@@ -78,7 +78,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .library-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: 0.15s; position: relative; display: flex; flex-direction: column; gap: 10px; }
 .library-card:hover { border-color: var(--brand); box-shadow: rgba(107, 91, 149, 0.15) 0px 4px 14px; transform: translateY(-1px); }
 .library-card.has-selection { border-color: rgb(76, 175, 80); background: rgb(241, 248, 233); }
-.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
+.library-card .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; font-size: 16px; color: rgb(221, 221, 221); transition: color 0.15s; }
 .library-card .fav-btn.active { color: var(--accent-amber); }
 .library-card .fav-btn:hover { color: var(--accent-amber); }
 .card-select-check { position: absolute; top: 12px; left: 12px; cursor: pointer; user-select: none; z-index: 2; }
@@ -217,7 +217,7 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .hl-purple { color: rgb(74, 45, 136); font-weight: 700; }
 .ko-box { background: var(--brand-light); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: rgb(51, 51, 51); line-height: 1.7; margin-bottom: 10px; }
 .ko-box strong { color: var(--brand-dark); }
-.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: initial; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
+.point-box { background: rgb(254, 249, 240); border-top: 1px solid rgb(232, 200, 122); border-right: 1px solid rgb(232, 200, 122); border-bottom: 1px solid rgb(232, 200, 122); border-image: none; border-left: 3.5px solid var(--accent-amber); border-radius: 0px 8px 8px 0px; padding: 8px 13px; font-size: 12.5px; color: rgb(90, 53, 0); line-height: 1.6; }
 .point-box strong { color: rgb(154, 96, 0); }
 .close-btn { display: block; width: 100%; margin-top: 12px; padding: 8px; background: none; border: 1px solid rgb(221, 221, 221); border-radius: 8px; font-size: 12px; color: rgb(170, 170, 170); cursor: pointer; font-family: inherit; }
 .close-btn:hover { background: rgb(245, 245, 245); color: rgb(102, 102, 102); }
@@ -232,26 +232,15 @@ body { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans
 .viewing-bar strong { font-weight: 700; }
 .viewing-bar .edit-mode-toggle { padding: 4px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(134, 212, 188); border-radius: 14px; transition: 0.15s; }
 .viewing-bar .edit-mode-toggle:has(input:checked) { background: rgb(122, 69, 0); color: rgb(255, 255, 255); border-color: rgb(122, 69, 0); }
-.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
+.viewing-bar .close-x { background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; cursor: pointer; color: rgb(8, 80, 65); font-weight: 700; font-size: 13px; }
 .dropdown { position: relative; display: inline-block; }
-.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: hidden; }
+.dropdown-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 280px; z-index: 200; overflow: visible; }
 .dropdown.open .dropdown-menu { display: block; }
-.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
+.dropdown-menu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: none; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
 .dropdown-menu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
 .dropdown-menu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-item { position: relative; }
-.dropdown-menu .submenu-trigger { width: 100%; padding: 10px 14px; justify-content: space-between; align-items: center; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; display: flex !important; }
-.dropdown-menu .submenu-item:last-child .submenu-trigger { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu-trigger .arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.15s; }
-.dropdown-menu .submenu-trigger:hover { background: var(--brand-bg); color: var(--brand-dark); }
-.dropdown-menu .submenu-trigger:hover .arrow { color: var(--brand); }
-.dropdown-menu .submenu { display: none; position: absolute; left: 100%; top: 0px; margin-left: 2px; background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 14px; min-width: 260px; z-index: 201; overflow: hidden; }
-.dropdown-menu .submenu-item:hover > .submenu, .dropdown-menu .submenu-item:focus-within > .submenu { display: block; }
-.dropdown-menu .submenu-item:hover > .submenu-trigger { background: var(--brand); color: rgb(255, 255, 255); }
-.dropdown-menu .submenu-item:hover > .submenu-trigger .arrow { color: rgb(255, 255, 255); transform: translateX(2px); }
-.dropdown-menu .submenu button { display: block; width: 100%; padding: 10px 14px; border-width: medium medium 1px; border-style: none none solid; border-color: currentcolor currentcolor rgb(240, 237, 230); border-image: initial; background: rgb(255, 255, 255); color: var(--text); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.1s; }
-.dropdown-menu .submenu button:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }
-.dropdown-menu .submenu button:hover { background: var(--brand-bg); color: var(--brand-dark); }
+.dropdown-menu .download-section-label { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted); background: rgb(250, 250, 247); border-bottom: 1px solid rgb(240, 237, 230); }
+.dropdown-menu .download-section-label:not(:first-child) { border-top: 1px solid rgb(238, 238, 238); }
 .modal.json-editor { max-width: 900px; width: 90vw; max-height: 85vh; display: flex; flex-direction: column; }
 .json-editor-body { flex: 1 1 0%; min-height: 0px; display: flex; flex-direction: column; gap: 10px; }
 .json-editor-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 1px solid rgb(240, 237, 230); }
@@ -267,6 +256,21 @@ body.edit-mode [contenteditable="true"] { outline: transparent dashed 1px; trans
 body.edit-mode [contenteditable="true"]:hover { outline-color: var(--brand); background-color: rgba(107, 91, 149, 0.05); }
 body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--brand); outline-offset: 1px; background-color: rgb(255, 255, 255); box-shadow: rgba(107, 91, 149, 0.15) 0px 0px 0px 3px; }
 body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클릭 후 수정, Esc로 취소"; position: sticky; top: 0px; display: block; background: rgb(255, 249, 230); color: rgb(122, 69, 0); padding: 6px 12px; font-size: 11px; font-weight: 600; border: 1px solid rgb(232, 200, 122); border-radius: 6px; margin-bottom: 10px; text-align: center; z-index: 5; }
+.line-translation-wrap { max-width: 720px; margin: 0px auto; padding: 16px 20px 40px; }
+.line-translation-note { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.line-translation-note strong { color: var(--brand-dark); }
+.line-translation-heading { font-size: 18px; color: var(--brand-dark); margin-bottom: 6px; font-weight: 700; }
+.line-translation-list { list-style: none; padding: 0px; margin: 0px; display: flex; flex-direction: column; gap: 0px; }
+.line-translation-item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; line-height: 1.55; font-size: 14px; padding: 5px 0px 5px 6px; border-left: 2px solid rgba(107, 91, 149, 0.18); background: transparent; }
+.line-translation-item + .line-translation-item { margin-top: 1px; }
+.line-translation-item:nth-child(2n) { background: rgba(107, 91, 149, 0.035); }
+.line-translation-num { flex-shrink: 0; font-weight: 700; color: var(--brand); font-size: 13px; line-height: 1.55; }
+.line-translation-text { word-break: keep-all; overflow-wrap: break-word; }
+.line-translation-passage { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.line-translation-passage:last-child { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; margin-bottom: 0px; padding-bottom: 0px; }
+.line-translation-passage h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; line-height: 1.45; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid rgba(107, 91, 149, 0.12); }
+.line-translation-passage .passage-meta { display: block; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; }
+.line-translation-empty-line { color: rgb(153, 153, 153); font-size: 12px; margin: 2px 0px 0px 34px; }
 @media print {
   body { background: rgb(255, 255, 255); }
   body.edit-mode .page::before { display: none !important; }
@@ -280,7 +284,18 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
   .page:last-child { break-after: auto; }
   .structure-view { break-before: page; }
   .detail-wrap { display: block !important; }
+  #selection-bar { display: none !important; }
+  #tab-line-translation.print-target .line-translation-wrap { max-width: none; padding: 0px; margin: 0px; }
+  #tab-line-translation.print-target .line-translation-heading { font-size: 11pt; margin-bottom: 4pt; }
+  #tab-line-translation.print-target .line-translation-note { display: none; }
+  #tab-line-translation.print-target .line-translation-passage { margin-bottom: 8pt; padding-bottom: 6pt; break-inside: avoid-page; }
+  #tab-line-translation.print-target .line-translation-passage h3 { font-size: 10pt; margin-bottom: 3pt; padding-bottom: 2pt; border-bottom-color: rgb(204, 204, 204); }
+  #tab-line-translation.print-target .passage-meta { font-size: 8pt; margin-bottom: 2pt; color: rgb(85, 85, 85); }
+  #tab-line-translation.print-target .line-translation-item { grid-template-columns: 16pt 1fr; gap: 4pt; font-size: 9.5pt; line-height: 1.38; padding: 0.5pt 0px; border-left-width: medium; border-left-style: none; border-left-color: currentcolor; background: transparent !important; }
+  #tab-line-translation.print-target .line-translation-num { font-size: 9pt; color: rgb(51, 51, 51); font-weight: 600; }
+  #tab-line-translation.print-target .line-translation-empty-line { font-size: 8.5pt; margin-left: 16pt; }
   @page { size: a4; margin: 0px; }
+  #tab-line-translation.print-target { padding: 10mm 12mm 8mm; box-sizing: border-box; }
 }
 </style>
 </head>
@@ -301,31 +316,31 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
       </div>
       <div class="header-right">
         <div class="title-line">18강 | 3번 | <span class="analysis-tag">3</span></div>
-        <div class="topic-line">Topic: Topic: Avoiding trick-punishments by rewarding positive behaviors</div>
+        <div class="topic-line">Topic: Linear vs. Creative Thinking in Problem Solving</div>
       </div>
     </header>
       <div class="section">
         <div class="section-title"><span class="num">1</span> 제목 및 주제</div>
         <table class="info-table">
-          <tr><th>주제</th><td>신경심리학자 Alvaro Bilbao가 제시한 '트릭 처벌' 개념을 통해, 부정적 행동에 관심을 주는 처벌이 오히려 그 행동을 강화할 수 있음을 설명한다. 부모는 부정적 측면을 지적하는 대신 긍정적 행동을 보상하는 전략을 채택해야 한다.</td></tr>
-          <tr><th>예상 제목</th><td>The Paradox of Trick-Punishments: Rewarding Positives Over Punishing Negatives</td></tr>
-          <tr><th>글의 유형</th><td>설명문 (expository) — 개념 소개 및 사례 분석 중심</td></tr>
-          <tr><th>심경 변화</th><td>해당 없음 (개념 설명 중심의 논리적 전개)</td></tr>
+          <tr><th>주제</th><td>문제 해결 과정에서 논리적·선형적 사고는 익숙한 영역에서는 효과적이지만, 새로운 정보나 관점을 다룰 때는 창의적·비선형적 사고가 필요하다. 혁신적 해결책을 위해서는 창의적 두뇌 활용이 중요하다.</td></tr>
+          <tr><th>예상 제목</th><td>The Necessity of Creative Thinking: Breaking Through Linear Limitations</td></tr>
+          <tr><th>글의 유형</th><td>논설문 (설명·주장)</td></tr>
+          <tr><th>심경 변화</th><td>논리적 사고의 한계 인식 → 창의적 사고 방식 제안</td></tr>
         </table>
       </div>
       <div class="section">
         <div class="passage-label">▶ 원문 지문</div>
-        <div class="passage-box">Punishing a child may not be effective due to what Alvaro Bilbao, a neuropsychologist, calls <strong>'trick-punishments.'</strong> A trick-punishment is a scolding, a moment of anger or a punishment in the most classic sense of the word. <strong>Instead of discouraging the child from doing something, it encourages them to do it.</strong> For example, Hugh learns that when he hits his little brother, his mother scolds him. For a child who feels lonely, <strong>being scolded is much better than feeling invisible</strong>, so he will continue to hit his brother. In this case, his mother would be better adopting a different strategy. For instance, she could congratulate Hugh when he has not hit his brother for a certain length of time. The mother clearly cannot allow the child to hit his little brother, but <strong>instead of constantly pointing out the negatives, she can choose to reward the positives.</strong> In this way, any parent can avoid trick-punishments. A trick-punishment <strong>reinforces the unwanted behavior</strong> of a child, which implies that parents should <strong>focus on reducing the attention to negatives while rewarding positive behaviors.</strong></div>
+        <div class="passage-box">In the course of trying to solve a problem with an invention, you may encounter a <strong>brick wall of resistance</strong> when you try to think your way logically through the problem.<br>Such logical thinking is a <strong>linear type of process</strong>, which uses our reasoning skills.<br>This works fine when we're operating in the area of what we know or have experienced.<br>However, when we need to deal with new information, ideas, and viewpoints, linear thinking will often <strong>come up short</strong>.<br>On the other hand, creativity <strong>by definition</strong> involves the application of new information to old problems and the conception of new viewpoints and ideas.<br>For this you will be most effective if you learn to operate in a <strong>nonlinear manner</strong>; that is, use your <strong>creative brain</strong>.<br>Stated differently, if you think in a linear manner, you'll tend to be conservative and keep coming up with techniques which are already known.<br>This, of course, is just what you don't want.<br>Logical thinking works well with familiar problems but falls short in dealing with new ideas, for which creative thinking is needed to come up with <strong>innovative solutions</strong>.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">3</span> 중심문장 &amp; 핵심 키워드</div>
         <div style="border: 1px solid var(--border); border-top: none; padding: 12px; border-radius: 0 0 4px 4px;">
           <div class="topic-sentence-label">▶ TOPIC SENTENCE (중심문장)</div>
           <div class="topic-sentence-box">
-            <div class="en">"A trick-punishment reinforces the unwanted behavior of a child, which implies that parents should focus on reducing the attention to negatives while rewarding positive behaviors."</div>
-            <div class="ko">→ 트릭 처벌은 아이의 바람직하지 못한 행동을 강화하며, 이는 부모가 부정적 측면에 대한 관심을 줄이고 긍정적 행동을 보상하는 데 집중해야 함을 시사한다.</div>
+            <div class="en">"On the other hand, creativity by definition involves the application of new information to old problems and the conception of new viewpoints and ideas."</div>
+            <div class="ko">→ 반면에, 창의성은 정의상 새로운 정보를 기존 문제에 적용하고 새로운 관점과 아이디어를 구상하는 것을 포함한다.</div>
           </div>
-          <div class="keyword-row"><span class="keyword-chip">trick-punishment</span><span class="keyword-chip">reinforce</span><span class="keyword-chip">unwanted behavior</span><span class="keyword-chip">reward positives</span><span class="keyword-chip">reduce attention</span><span class="keyword-chip">parenting strategy</span><span class="keyword-chip highlight">개념 설명 → 전략 제시 (논리적 전개)</span></div>
+          <div class="keyword-row"><span class="keyword-chip">linear thinking</span><span class="keyword-chip">creativity</span><span class="keyword-chip">nonlinear manner</span><span class="keyword-chip">new information</span><span class="keyword-chip">innovative solutions</span><span class="keyword-chip">reasoning skills</span><span class="keyword-chip highlight">logical limitation → creative approach</span></div>
         </div>
       </div>
       
@@ -349,66 +364,98 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ① 주장 제시 (may not be + 원인 제시)</div>
+      <div class="sentence-title">2 문장별 분석 — ① 전치사구 + 시간부사절 + 주절</div>
       <div class="sentence-body">
-        <div class="sentence-en">Punishing a child <span class='hl-red'>may not be effective</span> due to what Alvaro Bilbao, a neuropsychologist, calls <span class='hl-blue'>'trick-punishments.'</span></div>
+        <div class="sentence-en"><span class='hl-blue'>In the course of trying to solve a problem</span> with an invention, you may encounter a <span class='hl-red'>brick wall of resistance</span> <span class='hl-teal'>when you try to think your way logically</span> through the problem.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>동명사 주어</td><td>Punishing a child</td><td>동명사구가 문장의 주어 역할</td></tr>
+              <tr><td>전치사구</td><td>In the course of trying to solve a problem with an invention</td><td>시간적 배경, '발명품 문제 해결 시도 중'</td></tr>
             
-              <tr><td>조동사 부정</td><td>may not be effective</td><td>가능성을 나타내는 조동사의 부정형</td></tr>
+              <tr><td>주절</td><td>you may encounter a brick wall of resistance</td><td>주요 내용, 은유적 표현</td></tr>
             
-              <tr><td>원인 표현</td><td>due to what...</td><td>what절이 전치사 to의 목적어로 사용됨</td></tr>
-            
-              <tr><td>동격 명사</td><td>a neuropsychologist</td><td>Alvaro Bilbao를 보충 설명하는 동격어</td></tr>
+              <tr><td>부사절</td><td>when you try to think your way logically through the problem</td><td>시간·조건, 논리적 사고 시도 시점</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>아이를 벌주는 것은 / 신경심리학자 Alvaro Bilbao가 '트릭 처벌'이라고 부르는 것으로 인해 / 효과적이지 않을 수 있다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>발명품 문제를 해결하려고 시도하는 과정에서 / 당신이 논리적으로 문제를 헤쳐 나가려 할 때 / 저항의 벽돌 벽에 부딪힐 수 있다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ③ 대조 구문 (Instead of A, B)</div>
+      <div class="sentence-title">2 문장별 분석 — ② 주격보어 + 관계대명사절</div>
       <div class="sentence-body">
-        <div class="sentence-en"><span class='hl-amber'>Instead of discouraging the child from doing something</span>, it <span class='hl-red'>encourages them to do it.</span></div>
+        <div class="sentence-en"><span class='hl-blue'>Such logical thinking</span> is <span class='hl-red'>a linear type of process</span>, <span class='hl-teal'>which uses our reasoning skills</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>전치사구</td><td>Instead of discouraging</td><td>동명사를 목적어로 취하는 전치사구로 대조 표현</td></tr>
+              <tr><td>주어</td><td>Such logical thinking</td><td>앞 문장 지칭, 지시형용사</td></tr>
             
-              <tr><td>discourage A from B</td><td>discourage the child from doing</td><td>'A가 B하는 것을 단념시키다' 구문</td></tr>
+              <tr><td>보어</td><td>a linear type of process</td><td>주어의 성질 설명</td></tr>
             
-              <tr><td>encourage A to B</td><td>encourages them to do</td><td>'A가 B하도록 장려하다' 구문</td></tr>
-            
-              <tr><td>대명사 it</td><td>it</td><td>trick-punishment를 가리킴</td></tr>
+              <tr><td>관계대명사절</td><td>which uses our reasoning skills</td><td>선행사 process 수식, 계속적 용법</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>아이가 무언가를 하는 것을 단념시키는 대신 / 트릭 처벌은 그들이 그것을 하도록 장려한다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그러한 논리적 사고는 / 선형적 유형의 과정이며 / 우리의 추론 기술을 사용한다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑤ 비교 구문 + 결과 표현 (so)</div>
+      <div class="sentence-title">2 문장별 분석 — ③ 주절 + 부사절(시간)</div>
       <div class="sentence-body">
-        <div class="sentence-en">For a child who feels lonely, <span class='hl-purple'>being scolded is much better than feeling invisible</span>, so he will continue to hit his brother.</div>
+        <div class="sentence-en"><span class='hl-blue'>This works fine</span> <span class='hl-teal'>when we're operating in the area of what we know or have experienced</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>동명사 주어</td><td>being scolded</td><td>동명사구가 주어로 사용됨</td></tr>
+              <tr><td>주어</td><td>This</td><td>앞 문장의 linear thinking 지칭</td></tr>
             
-              <tr><td>비교급 표현</td><td>much better than</td><td>much가 비교급 better를 강조</td></tr>
+              <tr><td>동사</td><td>works fine</td><td>'잘 작동하다' 긍정적 평가</td></tr>
             
-              <tr><td>동명사 비교</td><td>than feeling invisible</td><td>비교 대상으로 동명사구 사용</td></tr>
-            
-              <tr><td>결과 표현</td><td>so he will continue</td><td>앞 내용의 결과를 나타내는 접속사 so</td></tr>
+              <tr><td>부사절</td><td>when we're operating in the area of what we know or have experienced</td><td>조건·시간, 관계대명사 what 포함</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>외로움을 느끼는 아이에게는 / 꾸중을 듣는 것이 눈에 띄지 않는다고 느끼는 것보다 훨씬 나아서 / 그는 자신의 남동생을 때리는 것을 계속할 것이다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이것은 잘 작동한다 / 우리가 알고 있거나 경험한 것의 영역에서 활동할 때</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ④ 양보·전환 + 부사절 + 주절</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-amber'>However</span>, <span class='hl-teal'>when we need to deal with new information, ideas, and viewpoints</span>, linear thinking will often <span class='hl-red'>come up short</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>접속부사</td><td>However</td><td>전환, 대조 관계 도입</td></tr>
+            
+              <tr><td>부사절</td><td>when we need to deal with new information, ideas, and viewpoints</td><td>조건·시간, 병렬구조</td></tr>
+            
+              <tr><td>주절</td><td>linear thinking will often come up short</td><td>부족함, 한계 표현</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>그러나 / 새로운 정보, 아이디어, 관점을 다룰 필요가 있을 때 / 선형적 사고는 종종 부족하게 된다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑤ 대조 + 주어 + 병렬동명사구</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-amber'>On the other hand</span>, <span class='hl-blue'>creativity by definition</span> involves <span class='hl-teal'>the application of new information to old problems</span> and <span class='hl-teal'>the conception of new viewpoints and ideas</span>.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>접속구</td><td>On the other hand</td><td>대조 전환, '반면에'</td></tr>
+            
+              <tr><td>주어</td><td>creativity by definition</td><td>'정의상 창의성', 부사구 삽입</td></tr>
+            
+              <tr><td>동사+목적어</td><td>involves the application ~ and the conception ~</td><td>병렬구조, 창의성의 두 요소</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>반면에 / 창의성은 정의상 / 새 정보를 기존 문제에 적용하는 것과 / 새로운 관점과 아이디어의 구상을 포함한다</div>
       </div>
     </div>
       
@@ -432,66 +479,79 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
     </header>
       
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑥ 가정법 과거 (would be better ~ing)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑥ 조건절 + 주절 + 부연설명</div>
       <div class="sentence-body">
-        <div class="sentence-en">In this case, his mother <span class='hl-blue'>would be better adopting</span> a different strategy.</div>
+        <div class="sentence-en"><span class='hl-blue'>For this</span> you will be most effective <span class='hl-teal'>if you learn to operate in a nonlinear manner</span>; <span class='hl-purple'>that is, use your creative brain</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>조건 표현</td><td>In this case</td><td>앞 상황을 가정하는 조건 표현</td></tr>
+              <tr><td>전치사구</td><td>For this</td><td>앞 내용(창의성) 지칭</td></tr>
             
-              <tr><td>would be better ~ing</td><td>would be better adopting</td><td>'~하는 것이 더 나을 것이다' 구문</td></tr>
+              <tr><td>조건절</td><td>if you learn to operate in a nonlinear manner</td><td>가정, 'learn to 부정사' 구조</td></tr>
             
-              <tr><td>동명사</td><td>adopting</td><td>better 뒤에 동명사가 와서 구체적 행동 제시</td></tr>
+              <tr><td>동격구</td><td>that is, use your creative brain</td><td>부연 설명, nonlinear manner의 환언</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이 경우에 / 그의 어머니는 다른 전략을 채택하는 것이 / 더 나을 것이다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이를 위해 / 비선형적 방식으로 활동하는 법을 배운다면 / 가장 효과적일 것이다 / 즉, 창의적 두뇌를 사용하라</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑧ 대조 구문 + choose to (전략 제시)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑦ 분사구문 + 조건절 + 주절(병렬동사)</div>
       <div class="sentence-body">
-        <div class="sentence-en">The mother clearly cannot allow the child to hit his little brother, but <span class='hl-blue'>instead of constantly pointing out the negatives</span>, she can <span class='hl-purple'>choose to reward the positives.</span></div>
+        <div class="sentence-en"><span class='hl-amber'>Stated differently</span>, <span class='hl-teal'>if you think in a linear manner</span>, you'll <span class='hl-red'>tend to be conservative and keep coming up with</span> techniques which are already known.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>allow A to B</td><td>allow the child to hit</td><td>'A가 B하도록 허용하다' 구문</td></tr>
+              <tr><td>분사구문</td><td>Stated differently</td><td>조건·양보, '달리 말하면'</td></tr>
             
-              <tr><td>전치사구</td><td>instead of constantly pointing out</td><td>동명사를 목적어로 취하며 부사 constantly가 수식</td></tr>
+              <tr><td>조건절</td><td>if you think in a linear manner</td><td>가정 조건</td></tr>
             
-              <tr><td>choose to</td><td>choose to reward</td><td>to부정사를 목적어로 취하는 동사</td></tr>
-            
-              <tr><td>대조 명사</td><td>the negatives vs the positives</td><td>형용사의 명사화로 추상적 개념 표현</td></tr>
+              <tr><td>주절</td><td>you'll tend to be conservative and keep coming up with techniques which are already known</td><td>병렬 동사구, 관계대명사절 포함</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>어머니는 분명 아이가 그의 남동생을 때리도록 내버려둘 수 없고 / 부정적 측면을 계속 지적하는 대신에 / 그녀는 긍정적 측면을 보상하는 것을 선택할 수 있다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>달리 말하면 / 선형적 방식으로 생각한다면 / 보수적이 되는 경향이 있고 / 이미 알려진 기법들을 계속 내놓게 된다</div>
       </div>
     </div>
     <div class="sentence-block">
-      <div class="sentence-title">2 문장별 분석 — ⑩ 관계절 + 동사 imply (주제문)</div>
+      <div class="sentence-title">2 문장별 분석 — ⑧ 강조구문 what절</div>
       <div class="sentence-body">
-        <div class="sentence-en">A trick-punishment <span class='hl-red'>reinforces the unwanted behavior</span> of a child, <span class='hl-blue'>which implies that</span> parents should <span class='hl-purple'>focus on reducing the attention to negatives while rewarding positive behaviors.</span></div>
+        <div class="sentence-en"><span class='hl-red'>This, of course, is just what you don't want</span>.</div>
         <table class="analysis-table">
           <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
           <tbody>
             
-              <tr><td>동사 reinforce</td><td>reinforces</td><td>'강화하다'는 의미의 타동사</td></tr>
+              <tr><td>주어</td><td>This</td><td>앞 문장 내용 전체 지칭</td></tr>
             
-              <tr><td>관계대명사</td><td>which implies that</td><td>계속적 용법의 which, 앞 절 전체를 선행사로 받음</td></tr>
+              <tr><td>삽입구</td><td>of course</td><td>부사구, '당연히'</td></tr>
             
-              <tr><td>that절</td><td>that parents should focus</td><td>동사 imply의 목적어로 사용된 명사절</td></tr>
-            
-              <tr><td>focus on ~ing</td><td>focus on reducing</td><td>'~하는 데 집중하다' 구문</td></tr>
-            
-              <tr><td>분사구문</td><td>while rewarding</td><td>동시 행동을 나타내는 접속사 while + 분사</td></tr>
+              <tr><td>보어</td><td>just what you don't want</td><td>관계대명사 what절, 강조 부사 just</td></tr>
             
           </tbody>
         </table>
-        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>트릭 처벌은 아이의 바람직하지 못한 행동을 강화하는데 / 이는 부모가 긍정적인 행동을 보상하면서 / 부정적 측면에 관한 관심을 줄이는 데 집중해야 한다는 것을 시사한다</div>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>이것은 물론 / 당신이 원하지 않는 바로 그것이다</div>
+      </div>
+    </div>
+    <div class="sentence-block">
+      <div class="sentence-title">2 문장별 분석 — ⑨ 대조구문 but + 관계대명사 for which</div>
+      <div class="sentence-body">
+        <div class="sentence-en"><span class='hl-blue'>Logical thinking works well with familiar problems</span> <span class='hl-red'>but falls short in dealing with new ideas</span>, <span class='hl-teal'>for which creative thinking is needed</span> to come up with innovative solutions.</div>
+        <table class="analysis-table">
+          <thead><tr><th>성분·품사</th><th>어구</th><th>설명</th></tr></thead>
+          <tbody>
+            
+              <tr><td>주절1</td><td>Logical thinking works well with familiar problems</td><td>긍정적 측면</td></tr>
+            
+              <tr><td>주절2</td><td>but falls short in dealing with new ideas</td><td>대조, 부정적 측면</td></tr>
+            
+              <tr><td>관계사절</td><td>for which creative thinking is needed to come up with innovative solutions</td><td>계속적 용법, for which = for new ideas</td></tr>
+            
+          </tbody>
+        </table>
+        <div class="direct-trans"><span class="trans-label">▶ 직독·의역</span>논리적 사고는 친숙한 문제에서는 잘 작동하지만 / 새로운 아이디어를 다루는 데는 부족하다 / 그것을 위해 창의적 사고가 필요하며 / 혁신적 해결책을 내놓기 위해서</div>
       </div>
     </div>
       
@@ -519,82 +579,82 @@ body.edit-mode .page::before { content: "✏️ 편집 모드 — 텍스트 클�
           <thead><tr><th>단어·어구</th><th>품사</th><th>의미</th><th>유의어 / 반의어 / 비고</th></tr></thead>
           <tbody>
     <tr>
-      <td>punish</td><td>v.</td>
-      <td>벌주다, 처벌하다</td><td>punishment (n. 처벌)</td>
+      <td>encounter</td><td>동사</td>
+      <td>마주치다, 직면하다</td><td>유의어: meet(만나다), face(직면하다) | 반의어: avoid(피하다)</td>
     </tr>
     <tr>
-      <td>trick-punishment</td><td>n.</td>
-      <td>트릭 처벌 (역효과를 내는 처벌)</td><td>Bilbao가 만든 용어</td>
+      <td>brick wall</td><td>명사구</td>
+      <td>벽돌 벽, 장애물</td><td>유의어: obstacle(장애물), barrier(장벽), impediment(방해물), hurdle(장애) | 반의어: pathway(통로), opening(개구부), gateway(통로) | 비고: 은유: 극복하기 어려운 장벽</td>
     </tr>
     <tr>
-      <td>scold</td><td>v.</td>
-      <td>꾸짖다, 야단치다</td><td>scolding (n. 꾸지람)</td>
+      <td>linear</td><td>형용사</td>
+      <td>선형의, 직선적인</td><td>유의어: sequential(순차적인) | 반의어: nonlinear(비선형의)</td>
     </tr>
     <tr>
-      <td>discourage A from B</td><td>phr.</td>
-      <td>A가 B하는 것을 단념시키다</td><td>encourage A to B (반의)</td>
+      <td>reasoning</td><td>명사</td>
+      <td>추론, 논리적 사고</td><td>유의어: logic(논리), thinking(사고), rationale(논리적 근거), inference(추론) | 반의어: intuition(직관), instinct(본능), irrationality(비합리성) | 비고: 동사형: reason(추론하다)</td>
     </tr>
     <tr>
-      <td>invisible</td><td>adj.</td>
-      <td>눈에 띄지 않는, 보이지 않는</td><td>visible (반의)</td>
+      <td>come up short</td><td>동사구</td>
+      <td>부족하다, 미치지 못하다</td><td>유의어: fall short(부족하다), lack(부족하다) | 반의어: succeed(성공하다), suffice(충분하다), exceed(초과하다)</td>
     </tr>
     <tr>
-      <td>adopt</td><td>v.</td>
-      <td>채택하다, 받아들이다</td><td>adoption (n. 채택)</td>
+      <td>by definition</td><td>부사구</td>
+      <td>정의상, 본질적으로</td><td>유의어: inherently(본질적으로), essentially(본질적으로), necessarily(필연적으로), intrinsically(본래) | 반의어: accidentally(우연히), incidentally(우연히) | 비고: 강조 표현</td>
     </tr>
     <tr>
-      <td>congratulate</td><td>v.</td>
-      <td>축하하다, 자랑스러워하다</td><td>congratulation (n. 축하)</td>
+      <td>conception</td><td>명사</td>
+      <td>개념, 구상</td><td>유의어: idea(아이디어) | 반의어: misconception(오개념), misunderstanding(오해)</td>
     </tr>
     <tr>
-      <td>constantly</td><td>adv.</td>
-      <td>계속해서, 끊임없이</td><td>constant (adj. 지속적인)</td>
+      <td>nonlinear</td><td>형용사</td>
+      <td>비선형의</td><td>유의어: curved(곡선의), irregular(불규칙한), complex(복잡한), indirect(간접적인) | 반의어: linear(선형의)</td>
     </tr>
     <tr>
-      <td>reinforce</td><td>v.</td>
-      <td>강화하다, 보강하다</td><td>reinforcement (n. 강화)</td>
+      <td>conservative</td><td>형용사</td>
+      <td>보수적인</td><td>유의어: traditional(전통적인), conventional(관습적인), cautious(신중한), moderate(온건한) | 반의어: innovative(혁신적인), progressive(진보적인)</td>
     </tr>
     <tr>
-      <td>unwanted</td><td>adj.</td>
-      <td>바람직하지 못한, 원치 않는</td><td>un- (부정 접두사) + wanted</td>
+      <td>innovative</td><td>형용사</td>
+      <td>혁신적인</td><td>유의어: creative(창의적인), original(독창적인), inventive(창의적인), novel(새로운) | 반의어: conventional(전통적인)</td>
     </tr></tbody>
         </table>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">5</span> 변형 예상 포인트</div>
         <div class="two-col" style="padding: 8px 0;">
-          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>트릭 처벌의 역설: 처벌이 오히려 행동을 '강화'한다는 점</li><li>외로운 아이에게 꾸중이 '관심'으로 인식되는 심리</li><li>대안 전략: '부정 지적' 대신 '긍정 보상'</li><li>빈칸: reward the positives / reduce attention to negatives</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">이 지문은 심경 변화가 아닌 개념 설명 중심의 논리적 전개입니다.<br>① 문제 제기 (트릭 처벌 개념 소개)<br>② 개념 정의 및 메커니즘 설명<br>③ 구체적 사례 (Hugh의 경우)<br>④ 대안 전략 제시<br>⑤ 결론 (주제문)</div></div>
-          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>동명사 주어: 'Punishing a child'처럼 동명사구가 주어로 사용됨</li><li>대조 구문: 'Instead of A, B' 형태로 두 가지를 대조</li><li>비교급 강조: 'much better than'에서 much가 비교급 강조</li><li>관계대명사 계속적 용법: 'which implies that'에서 which가 앞 절 전체를 받음</li><li>분사구문: 'while rewarding'에서 접속사 + 분사 형태</li><li>조동사 may: 'may not be'로 가능성의 부정 표현</li></ul></div></div>
-          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: '트릭 처벌의 역설' 또는 '긍정 보상의 육아법'<br>주제: 부모가 부정적 행동에 관심을 주는 대신 긍정적 행동을 보상해야 한다는 양육 전략<br>빈칸: 'reinforces' (강화하다) 또는 'reward the positives' (긍정을 보상하다)</div></div>
+          <div class="transform-box"><div class="box-label">① 빈칸 추론 (핵심어)</div><div class="box-body"><ul><li>논리적 사고의 한계를 나타내는 come up short 위치</li><li>창의성 정의를 설명하는 by definition 부분</li><li>대조를 나타내는 On the other hand, However 등 접속어</li><li>비선형적 사고 방식인 nonlinear manner 표현</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">② 심경 변화 (수능 빈출 유형)</div><div class="box-body">논리적·선형적 사고가 익숙한 문제에는 효과적이지만 새로운 영역에서는 한계가 있다는 인식(①~④)에서, 창의적·비선형적 사고의 필요성과 그 효과를 강조하는 주장(⑤~⑨)으로 전환된다.</div></div>
+          <div class="transform-box"><div class="box-label">③ 어법 포인트</div><div class="box-body"><ul><li>관계대명사 which의 계속적 용법 (②, ⑦)</li><li>관계대명사 what절 (③, ⑧)</li><li>분사구문 Stated differently (⑦)</li><li>전치사 + 관계대명사 for which (⑨)</li><li>병렬구조 the application ~ and the conception ~ (⑤)</li><li>동명사 trying to solve, dealing with (①, ④)</li></ul></div></div>
+          <div class="transform-box"><div class="box-label">④ 제목·주제 선택</div><div class="box-body">제목: 창의적 사고의 중요성 / 선형적 사고의 한계 / 문제 해결과 창의성 | 주제: 혁신을 위해서는 논리적 사고를 넘어 창의적 사고가 필요하다 / 새로운 문제 해결에 비선형적 접근이 효과적이다</div></div>
         </div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">6</span> 배경지식 요약</div>
-        <div class="background-box" style="border-radius: 0 0 4px 4px;"><strong>트릭 처벌(trick-punishment)</strong>은 신경심리학자 Alvaro Bilbao가 제시한 개념으로, 아이의 부정적 행동을 억제하려는 처벌이 오히려 그 행동을 강화하는 역설적 현象을 의미한다. 외로운 아이는 꾸중이라도 받는 것이 무시당하는 것보다 낫다고 느껴 문제 행동을 반복하게 된다.</div>
+        <div class="background-box" style="border-radius: 0 0 4px 4px;">선형적(linear) 사고는 논리와 추론에 기반한 단계적 문제 해결 방식으로, 익숙한 영역에서는 효과적이지만 혁신이 필요한 새로운 상황에서는 한계가 있다. 창의적(creative) 사고는 비선형적 방식으로 새로운 연결과 관점을 만들어내며, 발명과 혁신에 필수적이다.</div>
       </div>
       <div class="section">
         <div class="section-title"><span class="num">7</span> 문장 간 맥락 (구조도)</div>
         <table class="structure-table">
           <thead><tr><th>단계</th><th>내용</th><th>핵심 어구</th><th>논리 관계</th></tr></thead>
           <tbody><tr>
-      <td>①</td><td>문제 제기</td>
-      <td>may not be effective</td><td><span class="relation-tag">개념 도입</span></td>
+      <td>①</td><td>문제 상황 제시</td>
+      <td>brick wall of resistance</td><td><span class="relation-tag">발명 과정의 논리적 한계</span></td>
     </tr><tr>
-      <td>②</td><td>개념 정의</td>
-      <td>trick-punishment</td><td><span class="relation-tag">용어 설명</span></td>
+      <td>②</td><td>논리적 사고 정의</td>
+      <td>linear type of process</td><td><span class="relation-tag">개념 설명</span></td>
     </tr><tr>
-      <td>③</td><td>메커니즘</td>
-      <td>encourages them to do it</td><td><span class="relation-tag">역설 설명</span></td>
+      <td>③</td><td>긍정적 측면</td>
+      <td>works fine when we're operating in the area of what we know</td><td><span class="relation-tag">익숙한 영역에서의 효과</span></td>
     </tr><tr>
-      <td>④</td><td><strong>구체적 사례 (전환점)</strong></td>
-      <td><strong>Hugh hits his brother</strong></td><td><span class="relation-tag pivot">★ 사례 제시</span></td>
+      <td>④</td><td><strong>전환점: 한계 지적</strong></td>
+      <td><strong>come up short</strong></td><td><span class="relation-tag pivot">★ 논리적 사고의 한계</span></td>
     </tr><tr>
-      <td>⑤</td><td>대안 전략</td>
-      <td>reward the positives</td><td><span class="relation-tag">해결책 제시</span></td>
+      <td>⑤</td><td>창의성 정의</td>
+      <td>creativity by definition</td><td><span class="relation-tag">대안 제시</span></td>
     </tr><tr>
-      <td>⑥</td><td><strong>결론 (주제문)</strong></td>
-      <td><strong>focus on reducing attention to negatives</strong></td><td><span class="relation-tag conclusion">★ 주제 강조</span></td>
+      <td>⑥~⑨</td><td><strong>창의적 사고 주장</strong></td>
+      <td><strong>nonlinear manner, creative brain, innovative solutions</strong></td><td><span class="relation-tag conclusion">★ 주제문·결론</span></td>
     </tr></tbody>
         </table>
       </div>
