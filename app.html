@@ -5875,8 +5875,8 @@ function passageInputChoiceHtml(name, selected) {
   const sel = selected === 'whole' ? 'whole' : 'sentence';
   const nSent = (sel === 'sentence') ? ' checked' : '';
   const nWhole = (sel === 'whole') ? ' checked' : '';
-  return '<div class="passage-input-choice" style="border:1px solid #d6cfe9;border-radius:8px;padding:12px;margin:0 0 12px;background:#faf9fc;">' +
-    '<div style="font-size:12px;font-weight:700;color:#4A3D6B;margin-bottom:8px;">📦 구문랩 저장 방식</div>' +
+  return '<div class="passage-input-choice" style="border:2px solid #6B5B95;border-radius:8px;padding:12px;margin:0 0 12px;background:#f5f0ff;">' +
+    '<div style="font-size:13px;font-weight:800;color:#4A3D6B;margin-bottom:8px;">📦 구문랩 저장 방식 (여기서 선택)</div>' +
     '<label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.55;cursor:pointer;margin-bottom:8px;">' +
       '<input type="radio" name="' + name + '-passage-input" value="sentence"' + nSent + ' style="margin-top:2px;">' +
       '<span><strong>문장별</strong> — 문장 수만큼 행을 만듭니다. (기본 · 단어학습·구문분석에 맞음)</span>' +
