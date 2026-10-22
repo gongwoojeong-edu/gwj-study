@@ -6124,10 +6124,14 @@ function inferLearnerMeta(rec) {
     }
   }
 
-  // 6) item_code (러버블 규칙: 유닛명-지문번호)
+  // 6) item_code — 구문랩 textbook_passages.code 전역 UNIQUE 충돌 방지
+  //    (예전: "1번-1" → slug "1-1" 로 다른 교재와 충돌해 Passage 생성 실패)
   let newItemCode = stored.new_item_code || '';
   if (!newItemCode) {
-    newItemCode = unit_title ? (unit_title + '-1') : (itemCode || '');
+    const parts = [series_title, volume_title, unit_title || itemCode || 'item']
+      .map((s) => String(s || '').trim())
+      .filter(Boolean);
+    newItemCode = (parts.join('-') + '-1').replace(/\s+/g, ' ').slice(0, 200);
   }
 
   // 구문랩 시리즈명: 교과서 천재이상기 → M1 천재이상기 (책장 폴더명과 일치)
