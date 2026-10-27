@@ -1,0 +1,225 @@
+diff --git a/supabase/functions/import-claude-handout/index.ts b/supabase/functions/import-claude-handout/index.ts
+index d79a2c3..877c487 100644
+--- a/supabase/functions/import-claude-handout/index.ts
++++ b/supabase/functions/import-claude-handout/index.ts
+@@ -594,6 +594,20 @@ const handleRequest = async (req: Request): Promise<Response> => {
+   const fidelityErr = assertSentenceFidelity(p.passage, sentences);
+   if (fidelityErr) return json({ ok: false, error: fidelityErr }, 400);
+ 
++  // 본문통합은 코드 할당·행 수 결정 전에 먼저 1행으로 합친다
++  let koreanSentences = extractPayloadKoreanSentences(p, sentences.length);
++  if (p.passage_input === "whole") {
++    const explicitKo = Array.isArray(p.sentences)
++      ? p.sentences.map((s) => String(s?.ko || s?.translation || s?.korean || "")
++          .replace(/^▶?\s*직독[·ㆍ]\s*의역\s*/i, "")
++          .replace(/\s+/g, " ")
++          .trim()).filter(Boolean)
++      : [];
++    const koJoined = (explicitKo.length ? explicitKo : koreanSentences).join("\n");
++    sentences = [sentences.join(" ")];
++    koreanSentences = [koJoined];
++  }
++
+   const { data: existing } = await admin
+     .from("textbook_passages")
+     .select("passage_no")
+@@ -605,15 +619,27 @@ const handleRequest = async (req: Request): Promise<Response> => {
+   const startNo = explicitPassageNo ?? ((existing?.[0]?.passage_no ?? 0) + 1);
+ 
+   const itemSlug = safeSlug(p.item_code || `${unit!.unit_no}-${startNo}`);
+-  const preferredCode = p.item_code?.trim()
+-    ? safeSlug(p.item_code)
+-    : `${safeSlug(seriesTitle)}-${unit!.unit_no}-${startNo}`;
+-
+-  // 같은 유닛(또는 같은 교재)에서 이 item_code 계열 문장 찾기 → 있으면 덮어쓰기
+-  const codeFamilyFilter = [
++  // item_code만 slug하면 "1번-1" → "1-1" 처럼 짧아져 전역 UNIQUE(code)와 충돌함.
++  // 시리즈·권·유닛을 붙인 네임스페이스 코드를 기본으로 쓴다.
++  const rawItem = (p.item_code || `${unit!.unit_no}-${startNo}`).trim();
++  const preferredCode = [
++    safeSlug(seriesTitle),
++    safeSlug(volumeTitle),
++    safeSlug(String(unit!.unit_no)),
++    safeSlug(rawItem),
++  ].filter(Boolean).join("-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 100)
++    || `unit-${unit!.unit_no}-${startNo}`;
++
++  // 레거시 짧은 코드(예: 1-1)도 같은 유닛/교재에서 찾아 덮어쓰기
++  const legacyShort = safeSlug(rawItem);
++  const familyOrParts = [
+     `code.eq.${preferredCode}`,
+     `code.like.${preferredCode}-%`,
+-  ].join(",");
++  ];
++  if (legacyShort && legacyShort !== preferredCode) {
++    familyOrParts.push(`code.eq.${legacyShort}`, `code.like.${legacyShort}-%`);
++  }
++  const codeFamilyFilter = familyOrParts.join(",");
+ 
+   let existingFamily: Array<{ id: string; code: string; passage_no: number; unit_id: string; created_at: string }> = [];
+   {
+@@ -649,6 +675,8 @@ const handleRequest = async (req: Request): Promise<Response> => {
+     }
+   }
+ 
++  const isMulti = sentences.length > 1;
++
+   // 코드 루트: 기존이 있으면 그 루트 유지( -alt 새로 만들지 않음 )
+   let codeRoot = preferredCode;
+   if (existingFamily.length > 0) {
+@@ -659,31 +687,23 @@ const handleRequest = async (req: Request): Promise<Response> => {
+     const alt = sample.match(/^(.*?-alt\d+)(?:-\d+)?$/);
+     if (alt) codeRoot = alt[1];
+   } else {
+-    // 신규만 충돌 시 -alt 부여
+-    for (let i = 2; i < 50; i++) {
++    // 신규만 충돌 시 -alt 부여 (계획된 코드 전부 전역 검사)
++    const rootTaken = async (root: string) => {
++      const codes = isMulti
++        ? Array.from({ length: sentences.length }, (_, i) => `${root}-${i + 1}`)
++        : [root];
+       const { data: clash } = await admin
+         .from("textbook_passages")
+-        .select("id")
+-        .or(`code.eq.${codeRoot},code.like.${codeRoot}-%`)
++        .select("id, code")
++        .in("code", codes)
+         .limit(1);
+-      if (!clash || clash.length === 0) break;
++      return !!(clash && clash.length);
++    };
++    for (let i = 2; i < 50; i++) {
++      if (!(await rootTaken(codeRoot))) break;
+       codeRoot = `${preferredCode}-alt${i}`;
+     }
+   }
+-
+-  let koreanSentences = extractPayloadKoreanSentences(p, sentences.length);
+-  if (p.passage_input === "whole") {
+-    const explicitKo = Array.isArray(p.sentences)
+-      ? p.sentences.map((s) => String(s?.ko || s?.translation || s?.korean || "")
+-          .replace(/^▶?\s*직독[·ㆍ]\s*의역\s*/i, "")
+-          .replace(/\s+/g, " ")
+-          .trim()).filter(Boolean)
+-      : [];
+-    const koJoined = (explicitKo.length ? explicitKo : koreanSentences).join("\n");
+-    sentences = [sentences.join(" ")];
+-    koreanSentences = [koJoined];
+-  }
+-  const isMulti = sentences.length > 1;
+   // 덮어쓰기 시 passage_no 도 기존 시작 번호를 유지
+   const writeStartNo = existingFamily.length > 0
+     ? Math.min(...existingFamily.map((r) => r.passage_no))
+@@ -699,6 +719,52 @@ const handleRequest = async (req: Request): Promise<Response> => {
+     analysis_status: "draft" as const,
+   }));
+ 
++  type PassageRow = (typeof rows)[number];
++
++  /** code UNIQUE(23505) 시: 같은 유닛이면 덮어쓰기, 아니면 -alt 코드로 재시도 */
++  async function insertPassageRecovering(
++    row: PassageRow,
++  ): Promise<{ ok: true; row: { id: string; code: string } } | { ok: false; error: string }> {
++    let attempt = { ...row };
++    for (let n = 0; n < 40; n++) {
++      const { data: created, error: createErr } = await admin
++        .from("textbook_passages")
++        .insert(attempt)
++        .select("id, code")
++        .single();
++      if (!createErr && created) {
++        return { ok: true, row: created as { id: string; code: string } };
++      }
++      const msg = createErr?.message || "unknown";
++      const isDup = (createErr as { code?: string } | null)?.code === "23505"
++        || /textbook_passages_code_key|duplicate key/i.test(msg);
++      if (!isDup) return { ok: false, error: msg };
++
++      const { data: byCode } = await admin
++        .from("textbook_passages")
++        .select("id, unit_id, code")
++        .eq("code", attempt.code)
++        .maybeSingle();
++      if (byCode && byCode.unit_id === unit!.id) {
++        const { data: updated, error: updateErr } = await admin
++          .from("textbook_passages")
++          .update({
++            english: attempt.english,
++            korean: attempt.korean,
++            analysis_status: attempt.analysis_status,
++          })
++          .eq("id", byCode.id)
++          .select("id, code")
++          .single();
++        if (updateErr) return { ok: false, error: updateErr.message };
++        return { ok: true, row: updated as { id: string; code: string } };
++      }
++
++      attempt = { ...attempt, code: `${preferredCode}-alt${n + 2}${isMulti ? `-${n + 1}` : ""}`.replace(/-+/g, "-") };
++    }
++    return { ok: false, error: "code unique 충돌 재시도 한도 초과" };
++  }
++
+   let insertedRows: Array<{ id: string; code: string }> = [];
+ 
+   if (existingFamily.length > 0) {
+@@ -738,13 +804,9 @@ const handleRequest = async (req: Request): Promise<Response> => {
+         if (updateErr) return json({ ok: false, error: `Passage 덮어쓰기 실패: ${updateErr.message}` }, 500);
+         insertedRows.push(updated as { id: string; code: string });
+       } else {
+-        const { data: created, error: createErr } = await admin
+-          .from("textbook_passages")
+-          .insert(row)
+-          .select("id, code")
+-          .single();
+-        if (createErr) return json({ ok: false, error: `Passage 생성 실패: ${createErr.message}` }, 500);
+-        insertedRows.push(created as { id: string; code: string });
++        const ins = await insertPassageRecovering(row);
++        if (!ins.ok) return json({ ok: false, error: `Passage 생성 실패: ${ins.error}` }, 500);
++        insertedRows.push(ins.row);
+       }
+     }
+ 
+@@ -773,12 +835,13 @@ const handleRequest = async (req: Request): Promise<Response> => {
+       targetsByNo.set(target.passage_no, list);
+     }
+ 
+-    const newRows: typeof rows = [];
+     for (const row of rows) {
+       const targets = targetsByNo.get(row.passage_no) ?? [];
+       const keeper = targets[0];
+       if (!keeper) {
+-        newRows.push(row);
++        const ins = await insertPassageRecovering(row);
++        if (!ins.ok) return json({ ok: false, error: `Passage 생성 실패: ${ins.error}` }, 500);
++        insertedRows.push(ins.row);
+         continue;
+       }
+       const { data: updated, error: updateErr } = await admin
+@@ -800,21 +863,12 @@ const handleRequest = async (req: Request): Promise<Response> => {
+         if (deleteErr) return json({ ok: false, error: `중복 Passage 정리 실패: ${deleteErr.message}` }, 500);
+       }
+     }
+-    if (newRows.length) {
+-      const { data: created, error: createErr } = await admin
+-        .from("textbook_passages")
+-        .insert(newRows)
+-        .select("id, code");
+-      if (createErr) return json({ ok: false, error: `Passage 생성 실패: ${createErr.message}` }, 500);
+-      insertedRows = [...insertedRows, ...((created ?? []) as Array<{ id: string; code: string }>)];
+-    }
+   } else {
+-    const { data: created, error: passErr } = await admin
+-      .from("textbook_passages")
+-      .insert(rows)
+-      .select("id, code");
+-    if (passErr) return json({ ok: false, error: `Passage 생성 실패: ${passErr.message}` }, 500);
+-    insertedRows = (created ?? []) as Array<{ id: string; code: string }>;
++    for (const row of rows) {
++      const ins = await insertPassageRecovering(row);
++      if (!ins.ok) return json({ ok: false, error: `Passage 생성 실패: ${ins.error}` }, 500);
++      insertedRows.push(ins.row);
++    }
+   }
+ 
+   // First row is treated as "the passage" for legacy response/upload paths
