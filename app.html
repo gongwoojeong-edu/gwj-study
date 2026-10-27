@@ -9944,9 +9944,13 @@ async function confirmAndSendToLearner(id) {
   const unit_no_raw = document.getElementById('send-unit-no')?.value || '';
   const unit_no = unit_no_raw ? parseInt(unit_no_raw, 10) : undefined;
   const passage_no = parseInt(document.getElementById('send-passage-no')?.value || '1', 10);
-  const item_code = (document.getElementById('send-item-code')?.value || '').trim();
   const title_ko = (document.getElementById('send-title-ko')?.value || '').trim();
   const passage_input = readPassageInputChoice('send');
+  // 폼의 짧은 item_code(1번-1 등)는 lab UNIQUE 충돌을 일으키므로 카드 고유 코드로 고정
+  const item_code = buildUniqueLearnerItemCode(
+    { level, series_title, volume_title, unit_title, unit_no },
+    rec
+  );
 
   // 필수 필드 검증
   if (!series_title) {
