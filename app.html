@@ -1010,7 +1010,7 @@ We received your complaint...
 (둘째 지문...)" oninput="previewBatchPassages()"></textarea>
         <label class="batch-option">
           <input type="checkbox" id="in-batch-mode" onchange="previewBatchPassages()">
-          <span><strong>여러 지문 일괄 처리</strong> — <code>N번</code> 다음 줄=제목, <code>[6강 3번] 제목</code>, 또는 <code>---</code> 구분</span>
+          <span><strong>여러 지문 일괄 처리</strong> — 지문마다 첫 줄 한글 제목(<code>…회-18</code>), <code>N번</code>/<code>[6강 3번]</code>, 또는 <code>---</code> · 유닛 칸 비워도 됨</span>
         </label>
         <div id="in-passage-input-wrap" style="margin-top:10px;"></div>
         <div class="batch-preview" id="batch-preview"></div>
@@ -11579,6 +11579,29 @@ function peelLeadingKoreanTitle(lines, startIdx) {
   return { titleKo: cand, bodyStart: j + 1 };
 }
 
+/** 한글 카탈로그 제목에서 유닛 번호 추출. 예: "...-03회-18" → 18 */
+function unitNoFromKoreanTitle(title) {
+  const t = String(title || '').trim();
+  if (!t) return null;
+  const m =
+    t.match(/(\d+)\s*회\s*[-–_]?\s*(\d+)\s*$/) ||
+    t.match(/[-–_]\s*(\d+)\s*번\s*$/) ||
+    t.match(/(\d+)\s*번\s*$/) ||
+    t.match(/[-–_]\s*(\d+)\s*$/);
+  if (!m) return null;
+  const n = parseInt(m[2] || m[1], 10);
+  return Number.isFinite(n) ? n : null;
+}
+
+function applyUnitFromTitleKo(block) {
+  if (!block) return block;
+  if (!block.unitTitle && block.titleKo) {
+    const n = unitNoFromKoreanTitle(block.titleKo);
+    if (n != null) block.unitTitle = n + '번';
+  }
+  return block;
+}
+
 function parsePassageBlocks(raw, batchMode) {
   const text = (raw || '').trim();
   if (!text) return [];
@@ -11644,7 +11667,7 @@ function parsePassageBlocks(raw, batchMode) {
     }
 
     const passage = lines.slice(bodyStart).join('\n').trim() || String(blockText || '').trim();
-    return { unitTitle, titleKo, passage };
+    return applyUnitFromTitleKo({ unitTitle, titleKo, passage });
   }
 
   const bySeparator = text.split(/\n\s*(?:-{3,}|={3,}|\*{3,}|#{3,})\s*\n/)
@@ -11683,6 +11706,7 @@ function parsePassageBlocks(raw, batchMode) {
     let passage = buf.join('\n').trim();
     buf = [];
     let titleKo = currentTitle;
+    let unitTitle = currentUnit;
     if (passage.length >= 20) {
       if (!titleKo) {
         const plines = passage.replace(/\r\n/g, '\n').split('\n');
@@ -11693,7 +11717,7 @@ function parsePassageBlocks(raw, batchMode) {
         }
       }
       if (passage.length >= 20) {
-        blocks.push({ unitTitle: currentUnit, titleKo, passage });
+        blocks.push(applyUnitFromTitleKo({ unitTitle, titleKo, passage }));
       }
     }
     currentTitle = null;
@@ -11722,6 +11746,14 @@ function parsePassageBlocks(raw, batchMode) {
       currentUnit = m ? m[1] + '번' : trimmed;
       currentTitle = null;
       expectTitle = true;
+      continue;
+    }
+    // 한글 카탈로그 제목 줄 = 새 지문 시작 (헤더/[N번]/--- 없이 붙여넣어도 일괄 분리)
+    if (isKoreanTitleLine(trimmed) && buf.join('\n').trim().length >= 20) {
+      flushBlock();
+      currentUnit = null;
+      currentTitle = trimmed;
+      expectTitle = false;
       continue;
     }
     if (expectTitle) {
@@ -11772,11 +11804,11 @@ function previewBatchPassages() {
   const blocks = parsePassageBlocks(document.getElementById('in-passage').value, true);
   el.style.display = 'block';
   if (blocks.length <= 1) {
-    el.innerHTML = '⚠️ 여러 지문이 감지되지 않았습니다. <code>[6강 1번]</code> 표시, <code>---</code> 구분선, 또는 <code>18번</code> 형식으로 나눠 주세요.';
+    el.innerHTML = '⚠️ 여러 지문이 감지되지 않았습니다. 지문마다 첫 줄에 한글 제목(<code>…-03회-18</code>), <code>[6강 1번]</code>, <code>18번</code>, 또는 <code>---</code> 구분을 넣어 주세요.';
   } else {
     const labeled = blocks.filter(b => b.unitTitle).length;
     el.innerHTML = '✅ <strong>' + blocks.length + '개</strong> 지문 감지' +
-      (labeled ? ' · 유닛명 <code>[강-번호]</code> 자동 적용 (' + labeled + '개)' : ' · 유닛 번호 자동 증가');
+      (labeled ? ' · 유닛 번호 자동 적용 (' + labeled + '개) · 유닛 칸 비워도 됨' : ' · 유닛 번호 1부터 자동 증가 · 유닛 칸 비워도 됨');
   }
 }
 
@@ -11813,7 +11845,7 @@ function validateInputMeta(meta, passage, options) {
   if (!meta.series_title) return '⚠️ 시리즈를 입력해주세요.';
   if (!meta.volume_title) return '⚠️ 권/교재를 입력해주세요.';
   if (!meta.unit_title_base && !options.skipUnit) {
-    return '⚠️ 유닛을 입력해주세요.<br><span style="font-size:11px;color:#666;">일괄 처리 + <code>[6강 1번]</code> 헤더가 있으면 유닛 칸은 비워도 됩니다.</span>';
+    return '⚠️ 유닛을 입력해주세요.<br><span style="font-size:11px;color:#666;">일괄 처리면 유닛 칸을 비워도 됩니다. 본문 첫 줄 한글 제목(<code>…-03회-18</code>)이나 <code>[6강 1번]</code> / <code>18번</code> 헤더에서 번호를 읽습니다.</span>';
   }
   if (!passage) return '⚠️ 지문을 입력해주세요.';
   if (passage.length < 50) return '⚠️ 지문이 너무 짧습니다. 최소 50자 이상 입력해주세요.';
@@ -11926,7 +11958,9 @@ async function generateAnalysis() {
   const blocks = parsePassageBlocks(rawPassage, batchMode);
   const passages = blocks.map(b => b.passage);
   const isBatch = batchMode && blocks.length > 1;
-  const skipUnit = isBatch && blocks.some(b => b.unitTitle);
+  // 유닛 칸 비워도 됨: 일괄·또는 한글 제목/헤더에서 번호 추출 가능할 때
+  const skipUnit = isBatch ||
+    blocks.some(b => b.unitTitle || unitNoFromKoreanTitle(b.titleKo) != null);
 
   // 본문 첫 줄 한글 제목을 제목 칸에 채움 (비어 있을 때만)
   if (!meta.customTitle && blocks[0] && blocks[0].titleKo) {
@@ -11955,9 +11989,13 @@ async function generateAnalysis() {
     setStatus('loading', 'Claude가 지문을 분석 중입니다... (약 30초~1분 소요)');
     try {
       let unit_no = meta.base_unit_no;
-      const unit_title = meta.unit_title_base || blocks[0].unitTitle || '';
+      let unit_title = meta.unit_title_base || blocks[0].unitTitle || '';
       if ((unit_no === null || unit_no === undefined || isNaN(unit_no)) && blocks[0].unitTitle) {
         unit_no = unitNoFromLabel(blocks[0].unitTitle, null);
+      }
+      if ((unit_no === null || unit_no === undefined || isNaN(unit_no)) && blocks[0].titleKo) {
+        unit_no = unitNoFromKoreanTitle(blocks[0].titleKo);
+        if (unit_no != null && !unit_title) unit_title = unit_no + '번';
       }
       const { record, saved } = await createRecordFromPassage(passages[0], meta, {
         unit_no,
@@ -12007,8 +12045,9 @@ async function generateAnalysis() {
       if (batchCancelRequested) break;
 
       const block = blocks[i];
-      const unit_no = unitNoFromLabel(block.unitTitle, startNo + i);
-      const unit_title = block.unitTitle || unitTitleForNo(meta.unit_title_base, unit_no);
+      const fromTitle = unitNoFromKoreanTitle(block.titleKo);
+      const unit_no = unitNoFromLabel(block.unitTitle, fromTitle != null ? fromTitle : (startNo + i));
+      const unit_title = block.unitTitle || (fromTitle != null ? (fromTitle + '번') : '') || unitTitleForNo(meta.unit_title_base, unit_no);
 
       setStatus('loading',
         '<strong>' + (i + 1) + '/' + total + '</strong> 지문 분석 중' +
