@@ -976,7 +976,7 @@ body.edit-mode .page::before {
       </div>
 
       <div class="input-field">
-        <label>📝 지문 제목 (선택 — 입력·또는 본문 `N번` 다음 줄. 둘 다 없으면 AI 생성)</label>
+        <label>📝 지문 제목 (선택 — 입력·또는 본문 첫 줄 한글 제목·`N번` 다음 줄. 없으면 AI 생성)</label>
         <input type="text" id="in-custom-title" placeholder="예: Wartime Armistice — Joy and Relief">
       </div>
 
@@ -989,6 +989,11 @@ body.edit-mode .page::before {
 동물 보호소 봉사
 July 29, Monday
 Our club arrived at the Free Animals sanctuary. ...
+
+또는 첫 줄만 한글 제목(학습 문장에서 제외):
+(고2) 2026 해커스…-03회-18
+Dear Ji Ho Kim,
+We received your complaint...
 
 또는:
 [6강 3번] 한글제목
@@ -11540,6 +11545,40 @@ function smartRepairJson(jsonStr) {
 // ============================================================
 let batchCancelRequested = false;
 
+/**
+ * 본문 첫 줄이 유닛/카탈로그용 한글 제목인지 판별.
+ * 예: "(고2) 2026 해커스 수능독해 불변의 패턴 실전편-03회-18"
+ * → 제목 필드로만 쓰고 학습 문장(passage)에서는 제외.
+ */
+function isKoreanTitleLine(line) {
+  const t = String(line || '').trim();
+  if (!t || t.length > 160) return false;
+  const hangul = (t.match(/[\uAC00-\uD7AF]/g) || []).length;
+  if (hangul < 2) return false;
+  // 영어 문장처럼 보이면 제목 아님 (한글이 조금 섞인 영문 문장 보호)
+  if (/^[A-Za-z"“‘(\[]/.test(t) && hangul < t.length * 0.25) return false;
+  const letters = (t.match(/[A-Za-z]/g) || []).length;
+  if (hangul >= letters) return true;
+  // 교재·회차 표기가 있으면 영문 약어(YBM 등)가 있어도 제목으로 봄
+  if (/(고\s*[123]|중\s*[123]|예비|수능|모의|해커스|올림포스|수특|공통영어|\d+\s*회|\d+\s*강|\d+\s*번)/.test(t)) {
+    return hangul >= 2;
+  }
+  return hangul > letters * 2;
+}
+
+function peelLeadingKoreanTitle(lines, startIdx) {
+  let j = startIdx;
+  while (j < lines.length && !String(lines[j] || '').trim()) j++;
+  if (j >= lines.length) return { titleKo: null, bodyStart: startIdx };
+  const cand = String(lines[j] || '').trim();
+  if (!isKoreanTitleLine(cand)) return { titleKo: null, bodyStart: startIdx };
+  // 다음 비어 있지 않은 줄이 있어야 제목으로 확정 (본문이 제목만인 경우 제외)
+  let k = j + 1;
+  while (k < lines.length && !String(lines[k] || '').trim()) k++;
+  if (k >= lines.length) return { titleKo: null, bodyStart: startIdx };
+  return { titleKo: cand, bodyStart: j + 1 };
+}
+
 function parsePassageBlocks(raw, batchMode) {
   const text = (raw || '').trim();
   if (!text) return [];
@@ -11583,6 +11622,24 @@ function parsePassageBlocks(raw, batchMode) {
           titleKo = lines[j].trim();
           bodyStart = j + 1;
         }
+      } else {
+        // 헤더 없음: 첫 줄이 한글 제목이면 분리
+        const peeled = peelLeadingKoreanTitle(lines, i);
+        if (peeled.titleKo) {
+          titleKo = peeled.titleKo;
+          bodyStart = peeled.bodyStart;
+        }
+      }
+    }
+
+    // 헤더 처리 후에도 본문 첫 줄이 한글 제목이면 한 번 더 분리
+    // (예: "18번"만 헤더로 잡고 다음 줄이 카탈로그 한글 제목인 경우 이미 처리됨 —
+    //  헤더 없이 붙은 경우·영문 제목 칸이 비어 카탈로그 줄만 있는 경우)
+    if (!titleKo || !isKoreanTitleLine(titleKo)) {
+      const peeled = peelLeadingKoreanTitle(lines, bodyStart);
+      if (peeled.titleKo) {
+        titleKo = peeled.titleKo;
+        bodyStart = peeled.bodyStart;
       }
     }
 
@@ -11623,10 +11680,21 @@ function parsePassageBlocks(raw, batchMode) {
   let buf = [];
 
   function flushBlock() {
-    const passage = buf.join('\n').trim();
+    let passage = buf.join('\n').trim();
     buf = [];
+    let titleKo = currentTitle;
     if (passage.length >= 20) {
-      blocks.push({ unitTitle: currentUnit, titleKo: currentTitle, passage });
+      if (!titleKo) {
+        const plines = passage.replace(/\r\n/g, '\n').split('\n');
+        const peeled = peelLeadingKoreanTitle(plines, 0);
+        if (peeled.titleKo) {
+          titleKo = peeled.titleKo;
+          passage = plines.slice(peeled.bodyStart).join('\n').trim();
+        }
+      }
+      if (passage.length >= 20) {
+        blocks.push({ unitTitle: currentUnit, titleKo, passage });
+      }
     }
     currentTitle = null;
   }
@@ -11859,6 +11927,13 @@ async function generateAnalysis() {
   const passages = blocks.map(b => b.passage);
   const isBatch = batchMode && blocks.length > 1;
   const skipUnit = isBatch && blocks.some(b => b.unitTitle);
+
+  // 본문 첫 줄 한글 제목을 제목 칸에 채움 (비어 있을 때만)
+  if (!meta.customTitle && blocks[0] && blocks[0].titleKo) {
+    const titleEl = document.getElementById('in-custom-title');
+    if (titleEl) titleEl.value = blocks[0].titleKo;
+    meta.customTitle = blocks[0].titleKo;
+  }
 
   const errMsg = validateInputMeta(meta, passages[0] || rawPassage, { skipUnit });
   if (errMsg) { setStatus('error', errMsg); return; }
